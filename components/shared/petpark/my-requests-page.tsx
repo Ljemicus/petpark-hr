@@ -1,5 +1,6 @@
 import { CalendarDays, CheckCircle2, Clock3, Eye, HeartHandshake, Home, MessageCircle, PawPrint, Sparkles, UserRound } from 'lucide-react';
-import { AppHeader, Avatar, Badge, ButtonLink, Card, LeafDecoration, PawDecoration } from '@/components/shared/petpark/design-foundation';
+import { AppHeader, Badge, ButtonLink, Card, LeafDecoration, PawDecoration } from '@/components/shared/petpark/design-foundation';
+import { PetParkLogo } from '@/components/shared/brand';
 import { cn } from '@/lib/utils';
 import type { OwnerBookingRequestSummary } from '@/lib/petpark/booking-requests/types';
 import { BookingRequestDetailSurface } from './booking-request-detail-surface';
@@ -45,7 +46,7 @@ function DashboardSidebar() {
     <aside className="hidden xl:block">
       <Card radius="28" className="sticky top-28 p-4">
         <div className="flex items-center gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-sage-surface)] p-3">
-          <Avatar initials="PP" alt="PetPark" size="md" />
+          <PetParkLogo width={104} height={25} priority className="h-6 w-auto" />
           <div>
             <p className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Owner centar</p>
             <p className="text-xs font-bold text-[color:var(--pp-color-muted-text)]">Upiti i ljubimci</p>

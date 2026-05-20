@@ -15,19 +15,7 @@ import { useLanguage } from '@/lib/i18n/context';
 import { translateFormError } from '@/lib/i18n/form-errors';
 import { loginSchema, type LoginInput } from '@/lib/validations';
 import { toast } from 'sonner';
-
-function PawLogo({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 512 512" fill="none">
-      <path d="M256 390 C 150 310 90 230 130 170 C 170 110 230 130 256 180 C 282 130 342 110 382 170 C 422 230 362 310 256 390Z" fill="#FFB347"/>
-      <ellipse cx="256" cy="290" rx="40" ry="35" fill="#14b8a6"/>
-      <ellipse cx="225" cy="245" rx="16" ry="20" fill="#14b8a6" transform="rotate(-15 225 245)"/>
-      <ellipse cx="256" cy="235" rx="15" ry="18" fill="#14b8a6"/>
-      <ellipse cx="287" cy="242" rx="15" ry="18" fill="#14b8a6" transform="rotate(10 287 242)"/>
-      <ellipse cx="305" cy="262" rx="14" ry="17" fill="#14b8a6" transform="rotate(25 305 262)"/>
-    </svg>
-  );
-}
+import { PetParkLogo } from '@/components/shared/brand';
 
 export function LoginForm() {
   const { language } = useLanguage();
@@ -117,11 +105,9 @@ export function LoginForm() {
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="text-center mb-8 animate-fade-in-up">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-warm-orange to-warm-peach shadow-lg shadow-warm-orange/20 mb-4">
-              <PawLogo className="h-10 w-10 text-white" />
-            </div>
+            <PetParkLogo width={190} height={46} priority className="mx-auto mb-4 h-11 w-auto" />
             <h1 className="text-3xl font-bold font-[var(--font-heading)]">{copy.title}</h1>
-            <p className="text-muted-foreground mt-2">{copy.subtitle}<span className="text-logo-orange" translate="no">Pet</span><span className="text-logo-teal" translate="no">Park</span>{copy.subtitleEnd}</p>
+            <p className="text-muted-foreground mt-2">{copy.subtitle}<span translate="no">PetPark</span>{copy.subtitleEnd}</p>
           </div>
 
           <div className="space-y-3 animate-fade-in-up delay-100">
@@ -230,7 +216,7 @@ export function LoginForm() {
         <div className="absolute top-20 -left-20 w-60 h-60 bg-white rounded-full opacity-10" />
         <div className="absolute bottom-10 -right-10 w-40 h-40 bg-white rounded-full opacity-10" />
         <div className="relative text-center text-white p-12 max-w-md">
-          <PawLogo className="h-16 w-16 mx-auto mb-6 opacity-90" />
+          <PetParkLogo width={211} height={51} priority className="mx-auto mb-6 h-12 w-auto rounded-xl bg-white/90 px-3 py-2 shadow-lg" />
           <h2 className="text-3xl font-bold mb-4">{copy.heroTitle}</h2>
           <p className="text-white/80 text-lg leading-relaxed">
             {copy.heroBody}

@@ -27,6 +27,7 @@ import { Cat, Dog, HelpCircle } from 'lucide-react';
 import type { Species } from '@/lib/types';
 import { toast } from 'sonner';
 import { OptimizedImage } from '@/components/ui/optimized-image';
+import { PetParkLogo } from '@/components/shared/brand';
 
 const ONBOARDING_STORAGE_KEY = 'petpark-owner-onboarding';
 
@@ -555,12 +556,7 @@ export function OwnerOnboardingWizard() {
       <div className="max-w-2xl mx-auto px-4 py-8 md:py-12">
         {/* Header with skip option */}
         <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-orange-500 flex items-center justify-center">
-              <PawPrint className="h-4 w-4 text-white" />
-            </div>
-            <span className="font-bold text-lg">PetPark</span>
-          </div>
+          <PetParkLogo width={142} height={34} priority className="h-8 w-auto" />
           {currentStep < TOTAL_STEPS - 1 && (
             <Button
               variant="ghost"

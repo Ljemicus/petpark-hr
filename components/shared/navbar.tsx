@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { useLanguage } from '@/lib/i18n';
-import { PawLogo } from '@/components/shared/navbar/paw-logo';
+import { PetParkLogo } from '@/components/shared/brand';
 import { DesktopNav } from '@/components/shared/navbar/desktop-nav';
 import { DesktopActions } from '@/components/shared/navbar/desktop-actions';
 import { MobileSheet } from '@/components/shared/navbar/mobile-sheet';
@@ -56,13 +56,8 @@ export function Navbar() {
       role="banner"
     >
       <div className="container mx-auto flex items-center justify-between px-4 h-full">
-        <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl group" aria-label={t('common.homepage')} lang={language}>
-          <div className="relative flex items-center">
-            <PawLogo className="h-10 w-10 text-warm-orange group-hover:scale-110 transition-transform duration-200" />
-          </div>
-          <span className="font-[var(--font-heading)] tracking-tight pt-1">
-            <span className="text-logo-orange">Pet</span><span className="text-logo-teal">Park</span>
-          </span>
+        <Link href="/" className="flex items-center group" aria-label={t('common.homepage')} lang={language}>
+          <PetParkLogo width={150} height={36} priority className="h-9 w-auto transition-transform duration-200 group-hover:scale-[1.03]" />
         </Link>
 
         <DesktopNav t={t} user={user} language={language} />

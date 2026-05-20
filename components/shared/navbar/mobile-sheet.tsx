@@ -5,7 +5,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { LanguageSwitcher } from '@/components/shared/language-switcher';
-import { PawLogo } from './paw-logo';
+import { PetParkLogo } from '@/components/shared/brand';
 import {
   getMobileAccountLinks,
   getMobileCommunityLinks,
@@ -66,11 +66,8 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout,
                 </div>
               ) : (
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2.5">
-                    <PawLogo className="h-9 w-9 text-orange-500" />
-                    <span className="font-extrabold text-lg" translate="no">
-                      <span className="text-logo-orange">Pet</span><span className="text-logo-teal">Park</span>
-                    </span>
+                  <div className="flex items-center">
+                    <PetParkLogo width={142} height={34} priority className="h-8 w-auto" />
                   </div>
                   <LanguageSwitcher />
                 </div>

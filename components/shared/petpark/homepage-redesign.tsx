@@ -34,6 +34,15 @@ const officialCategoryIcons: Record<CategoryIconName, string> = {
   adoption: '/images/design-lab/official/icons/icon-only/udomljavanje.svg',
 };
 
+const officialCategoryCards: Record<CategoryIconName, string> = {
+  care: '/images/design-lab/official/icons/card-with-label/cuvanje.svg',
+  walk: '/images/design-lab/official/icons/card-with-label/setnja.svg',
+  grooming: '/images/design-lab/official/icons/card-with-label/grooming.svg',
+  training: '/images/design-lab/official/icons/card-with-label/trening.svg',
+  lost: '/images/design-lab/official/icons/card-with-label/izgubljeni.svg',
+  adoption: '/images/design-lab/official/icons/card-with-label/udomljavanje.svg',
+};
+
 const navItems = [
   { label: 'Usluge', href: '/usluge' },
   { label: 'Kako radi', href: '#kako-radi' },
@@ -200,8 +209,8 @@ function CategoryCard({ label, href, icon, tone }: (typeof categories)[number]) 
       style={{ width: cardWidth }}
       className="flex h-[121px] flex-col items-center justify-center rounded-[11px] border border-[#E9E0D1] bg-[#FFFDF8] text-center shadow-[0_10px_24px_rgba(80,55,25,.09)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2"
     >
-      <span className={cn('mb-[15px] flex h-[59px] w-[59px] items-center justify-center rounded-full', tone === 'orange' ? 'bg-[#FBE9DB] text-[#E9651A]' : 'bg-[#E9F0DF] text-[#286D45]')}>
-        <CategoryGlyph name={icon} />
+      <span className={cn('mb-[15px] flex h-[59px] w-[59px] items-center justify-center rounded-full', tone === 'orange' ? 'bg-[#FBE9DB]' : 'bg-[#E9F0DF]')}>
+        <img src={officialCategoryIcons[icon]} alt="" width={44} height={44} className="h-11 w-11" aria-hidden="true" />
       </span>
       <span className="text-[14px] font-semibold leading-none text-[#141c18]">{label}</span>
     </Link>
@@ -259,13 +268,13 @@ function MobileCategoryCard({ label, href, icon, tone }: (typeof categories)[num
     <Link
       href={href}
       aria-label={label}
-      className="group flex min-h-[118px] w-full max-w-[112px] flex-col items-center justify-center rounded-[18px] border border-[#E7DDCC] bg-[#FFFDF8] px-2 text-center shadow-[0_12px_24px_rgba(80,55,25,.08)] transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF6EA] sm:min-h-[124px] sm:max-w-[120px]"
-      style={{ paddingLeft: 8, paddingRight: 8 }}
+      className="group flex min-h-[126px] w-full max-w-[112px] flex-col items-center justify-center rounded-[18px] border border-[#E7DDCC] bg-[#FFFDF8] px-2 text-center shadow-[0_12px_24px_rgba(80,55,25,.08)] transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF6EA] sm:max-w-[124px] md:max-w-[132px] md:min-h-[136px]"
+      style={{ paddingLeft: 8, paddingRight: 8, paddingTop: 12, paddingBottom: 12 }}
     >
-      <span className={cn('mb-3 flex h-[56px] w-[56px] items-center justify-center rounded-full', tone === 'orange' ? 'bg-[#FBE9DB] text-[#E9651A]' : 'bg-[#E9F0DF] text-[#286D45]')}>
-        <CategoryGlyph name={icon} />
+      <span className={cn('mb-2.5 flex h-[66px] w-[66px] items-center justify-center rounded-full md:h-[72px] md:w-[72px]', tone === 'orange' ? 'bg-[#FBE9DB]' : 'bg-[#E9F0DF]')}>
+        <img src={officialCategoryIcons[icon]} alt="" width={52} height={52} className="h-[52px] w-[52px] select-none md:h-[58px] md:w-[58px]" aria-hidden="true" draggable={false} />
       </span>
-      <span className="text-[12px] font-black leading-[14px] text-[#14231D] sm:text-[13px] sm:leading-4">{label}</span>
+      <span className="text-[13px] font-black leading-[15px] text-[#14231D] sm:text-[14px] sm:leading-4">{label}</span>
     </Link>
   );
 }
@@ -390,7 +399,7 @@ function MobileHomepage() {
           </div>
         </section>
 
-        <section aria-label="PetPark usluge" className="relative z-10 mt-6 grid grid-cols-2 justify-items-center gap-3 py-2 min-[390px]:grid-cols-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-6 md:gap-x-0">
+        <section aria-label="PetPark usluge" className="relative z-10 mt-6 grid grid-cols-2 justify-items-center gap-3 py-2 min-[390px]:grid-cols-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-6 md:gap-x-2">
           {categories.map((category) => <MobileCategoryCard key={category.label} {...category} />)}
         </section>
 

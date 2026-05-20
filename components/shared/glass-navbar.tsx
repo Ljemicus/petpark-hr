@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '@/contexts/auth-context';
 import { useLanguage } from '@/lib/i18n/context';
-import { Menu, X, User, LogOut, PawPrint, Search, Bell, MessageSquare } from 'lucide-react';
+import { Menu, X, User, LogOut, Search, Bell, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
+import { PetParkLogo } from '@/components/shared/brand';
 
 interface GlassNavbarProps {
   className?: string;
@@ -92,18 +93,12 @@ export function GlassNavbar({ className = '' }: GlassNavbarProps) {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link 
-            href="/" 
-            className="flex items-center gap-2 font-extrabold text-xl group"
+          <Link
+            href="/"
+            className="flex items-center group"
             aria-label={t('common.homepage')}
           >
-            <div className="relative">
-              <PawPrint className="h-8 w-8 text-orange-500 group-hover:scale-110 transition-transform duration-200" />
-            </div>
-            <span className="font-[var(--font-heading)] tracking-tight">
-              <span className="text-orange-500">Pet</span>
-              <span className="text-teal-600 dark:text-teal-400">Park</span>
-            </span>
+            <PetParkLogo width={150} height={36} priority className="h-9 w-auto transition-transform duration-200 group-hover:scale-[1.03]" />
           </Link>
 
           {/* Desktop Navigation */}

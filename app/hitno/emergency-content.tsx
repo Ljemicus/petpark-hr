@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getVeterinarianEmergencyLabel, getVeterinarianPrimaryPhone, type Veterinarian } from '@/lib/db/veterinarian-helpers';
+import { PetParkLogo } from '@/components/shared/brand';
 
 const emergencyGuides = [
   {
@@ -314,10 +315,10 @@ export function EmergencyContent({ veterinarians }: EmergencyContentProps) {
           <Card className="border-0 shadow-sm animate-fade-in-up delay-200 max-w-lg mx-auto">
             <CardContent className="p-6 space-y-4">
               <div className="text-center mb-4">
-                <h3 className="text-xl font-bold">
-                  <span className="text-orange-500">Pet</span><span className="text-teal-600">Park</span>
-                  {' '}— Hitni kontakti
-                </h3>
+                <div className="flex flex-col items-center gap-2">
+                  <PetParkLogo width={150} height={36} priority className="h-9 w-auto" />
+                  <h3 className="text-xl font-bold">Hitni kontakti</h3>
+                </div>
                 <p className="text-xs text-muted-foreground mt-1">Ispunite i držite na hladnjaku ili uz telefon</p>
               </div>
 

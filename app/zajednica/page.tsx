@@ -28,6 +28,7 @@ import {
   LeafDecoration,
   PawDecoration,
 } from '@/components/shared/petpark/design-foundation';
+import { PetParkLogo } from '@/components/shared/brand';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
@@ -128,7 +129,13 @@ function PostCard({ post }: { post: (typeof posts)[number] }) {
     <Link href={post.href} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
       <Card radius="28" tone={post.tone} interactive className="p-5 sm:p-6">
         <div className="flex items-start gap-4">
-          <Avatar initials={post.initials} alt={post.author} size="lg" />
+          {post.author === 'PetPark tim' ? (
+            <span className="flex h-16 min-w-28 items-center justify-center rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] px-3 shadow-[var(--pp-shadow-small-card)]">
+              <PetParkLogo width={104} height={25} priority className="h-6 w-auto" />
+            </span>
+          ) : (
+            <Avatar initials={post.initials} alt={post.author} size="lg" />
+          )}
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <p className="font-black text-[color:var(--pp-color-forest-text)]">{post.author}</p>

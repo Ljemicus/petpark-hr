@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import type { PetCardData } from '@/lib/db';
+import { PetParkLogo } from '@/components/shared/brand';
 
 interface PetCardContentProps {
   petId: string;
@@ -93,9 +94,8 @@ export function PetCardContent({ petId, pet }: PetCardContentProps) {
               <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-50" />
               
               {/* PetPark branding */}
-              <div className="absolute top-4 right-4 flex items-center gap-1.5 text-white/80">
-                <PawPrint className="h-4 w-4" />
-                <span className="text-sm font-bold">PetPark</span>
+              <div className="absolute top-4 right-4 rounded-xl bg-white/90 px-2.5 py-1.5 shadow-sm">
+                <PetParkLogo width={102} height={25} priority className="h-5 w-auto" />
               </div>
 
               <div className="relative flex items-center gap-5">

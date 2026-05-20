@@ -9,19 +9,7 @@ import { CookieSettingsButton } from '@/components/shared/cookie-consent-banner'
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
-
-function PawLogo({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 512 512" fill="none">
-      <path d="M256 390 C 150 310 90 230 130 170 C 170 110 230 130 256 180 C 282 130 342 110 382 170 C 422 230 362 310 256 390Z" fill="#FFB347"/>
-      <ellipse cx="256" cy="290" rx="40" ry="35" fill="#14b8a6"/>
-      <ellipse cx="225" cy="245" rx="16" ry="20" fill="#14b8a6" transform="rotate(-15 225 245)"/>
-      <ellipse cx="256" cy="235" rx="15" ry="18" fill="#14b8a6"/>
-      <ellipse cx="287" cy="242" rx="15" ry="18" fill="#14b8a6" transform="rotate(10 287 242)"/>
-      <ellipse cx="305" cy="262" rx="14" ry="17" fill="#14b8a6" transform="rotate(25 305 262)"/>
-    </svg>
-  );
-}
+import { PetParkLogo } from '@/components/shared/brand';
 
 function FacebookIcon({ className }: { className?: string }) {
   return (
@@ -204,11 +192,8 @@ export function Footer() {
         <div className="container mx-auto px-4 py-14 relative">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
             <div className="lg:col-span-2">
-              <Link href="/" className="flex items-center gap-2.5 font-extrabold text-xl text-white mb-4 group">
-                <PawLogo className="h-7 w-7 text-warm-orange group-hover:scale-110 transition-transform duration-300" />
-                <span translate="no">
-                  <span className="text-logo-orange">Pet</span><span className="text-logo-teal">Park</span>
-                </span>
+              <Link href="/" className="mb-4 inline-flex items-center group" aria-label="PetPark">
+                <PetParkLogo width={162} height={39} priority className="h-10 w-auto transition-transform duration-300 group-hover:scale-[1.03]" />
               </Link>
               <p className="text-sm text-gray-400 leading-relaxed mb-6 max-w-md">{t('footer.tagline')}</p>
               

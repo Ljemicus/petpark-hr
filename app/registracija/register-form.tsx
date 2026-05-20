@@ -17,19 +17,7 @@ import { translateFormError } from '@/lib/i18n/form-errors';
 import { registerSchema, type RegisterInput } from '@/lib/validations';
 import { CITIES } from '@/lib/types';
 import { toast } from 'sonner';
-
-function PawLogo({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 512 512" fill="none">
-      <path d="M256 390 C 150 310 90 230 130 170 C 170 110 230 130 256 180 C 282 130 342 110 382 170 C 422 230 362 310 256 390Z" fill="#FFB347"/>
-      <ellipse cx="256" cy="290" rx="40" ry="35" fill="#14b8a6"/>
-      <ellipse cx="225" cy="245" rx="16" ry="20" fill="#14b8a6" transform="rotate(-15 225 245)"/>
-      <ellipse cx="256" cy="235" rx="15" ry="18" fill="#14b8a6"/>
-      <ellipse cx="287" cy="242" rx="15" ry="18" fill="#14b8a6" transform="rotate(10 287 242)"/>
-      <ellipse cx="305" cy="262" rx="14" ry="17" fill="#14b8a6" transform="rotate(25 305 262)"/>
-    </svg>
-  );
-}
+import { PetParkLogo } from '@/components/shared/brand';
 
 export function RegisterForm() {
   const { language } = useLanguage();
@@ -106,8 +94,8 @@ export function RegisterForm() {
         <div className="absolute bottom-20 -left-20 w-60 h-60 bg-white rounded-full opacity-10" />
         <div className="absolute top-10 -right-10 w-40 h-40 bg-white rounded-full opacity-10" />
         <div className="relative text-center text-white p-12 max-w-md">
-          <PawLogo className="h-64 w-64 mx-auto mb-10 opacity-90" />
-          <h2 className="text-3xl font-bold mb-4 font-[var(--font-heading)]">{language === 'en' ? <>Join <span className="text-white/90" translate="no">Pet</span><span className="text-white/70" translate="no">Park</span>!</> : <>Pridružite se <span className="text-white/90" translate="no">Pet</span><span className="text-white/70" translate="no">Parku</span>!</>}</h2>
+          <PetParkLogo width={260} height={63} priority className="mx-auto mb-10 h-16 w-auto rounded-2xl bg-white/90 px-4 py-3 shadow-lg" />
+          <h2 className="text-3xl font-bold mb-4 font-[var(--font-heading)]">{language === 'en' ? 'Join PetPark!' : 'Pridružite se PetParku!'}</h2>
           <p className="text-white/80 text-lg leading-relaxed">
             {selectedRole === 'sitter'
               ? (language === 'en' ? 'Earn by doing what you love — offer services in your city and become part of our community.' : 'Zarađujte radeći ono što volite — pružajte usluge u svom gradu i postanite dio naše zajednice.')
@@ -129,11 +117,9 @@ export function RegisterForm() {
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <div className="text-center mb-8 animate-fade-in-up">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-warm-orange to-warm-peach shadow-lg shadow-warm-orange/20 mb-4 lg:hidden">
-              <PawLogo className="h-10 w-10 text-white" />
-            </div>
+            <PetParkLogo width={190} height={46} priority className="mx-auto mb-4 h-11 w-auto lg:hidden" />
             <h1 className="text-3xl font-bold font-[var(--font-heading)]">{language === 'en' ? 'Register' : 'Registracija'}</h1>
-            <p className="text-muted-foreground mt-2">{language === 'en' ? 'Create your ' : 'Kreirajte svoj '}<span className="text-logo-orange" translate="no">Pet</span><span className="text-logo-teal" translate="no">Park</span>{language === 'en' ? ' account' : ' račun'}</p>
+            <p className="text-muted-foreground mt-2">{language === 'en' ? 'Create your ' : 'Kreirajte svoj '}<span translate="no">PetPark</span>{language === 'en' ? ' account' : ' račun'}</p>
           </div>
 
           <div className="space-y-2 mb-6 animate-fade-in-up delay-100">
