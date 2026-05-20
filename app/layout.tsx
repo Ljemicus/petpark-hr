@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from 'next';
-import { headers } from 'next/headers';
 import Script from 'next/script';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -15,7 +14,7 @@ import { AuthProvider } from '@/contexts/auth-context';
 import { CartProvider } from '@/lib/cart-context';
 import { CookieConsentProvider } from '@/contexts/cookie-consent-context';
 import { CookieConsentBanner } from '@/components/shared/cookie-consent-banner';
-import { LanguageProvider, DEFAULT_LOCALE, LOCALE_HEADER } from '@/lib/i18n';
+import { LanguageProvider, DEFAULT_LOCALE } from '@/lib/i18n';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DeferredUI } from '@/components/shared/deferred-ui';
 import { ChatWidget } from '@/components/chat/chat-widget';
@@ -120,9 +119,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const headerStore = await headers();
-  const routeLocale = headerStore.get(LOCALE_HEADER) ?? DEFAULT_LOCALE;
-  const cspNonce = headerStore.get('X-CSP-Nonce') ?? undefined;
+  const routeLocale = DEFAULT_LOCALE;
 
   return (
     <html lang={routeLocale} className={`${inter.variable} ${nunito.variable} h-full antialiased`} suppressHydrationWarning>
@@ -141,7 +138,7 @@ export default async function RootLayout({
         <link rel="alternate" hrefLang="x-default" href="https://petpark.hr" />
         
         {/* Inline Critical CSS */}
-        <style nonce={cspNonce} dangerouslySetInnerHTML={{ __html: readFileSync(join(process.cwd(), 'public', 'critical.css'), 'utf-8') }} />
+        <style dangerouslySetInnerHTML={{ __html: readFileSync(join(process.cwd(), 'public', 'critical.css'), 'utf-8') }} />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="PetPark" />
@@ -169,7 +166,7 @@ export default async function RootLayout({
                   </ErrorBoundary>
                 </main>
                 <PerformanceMonitor />
-                <Script id="register-sw" strategy="afterInteractive" nonce={cspNonce}>
+                <Script id="register-sw" strategy="afterInteractive">
                   {`if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('/sw.js').then(function(reg) { console.log('[SW] Registered:', reg.scope); }).catch(function(err) { console.error('[SW] Registration failed:', err); }); }); }`}
                 </Script>
                 <div className="pb-20 md:pb-0">

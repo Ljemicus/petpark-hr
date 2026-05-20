@@ -205,6 +205,7 @@ function CategoryCard({ label, href, icon, tone }: (typeof categories)[number]) 
 
   return (
     <Link
+      prefetch={false}
       href={href}
       style={{ width: cardWidth }}
       className="flex h-[121px] flex-col items-center justify-center rounded-[11px] border border-[#E9E0D1] bg-[#FFFDF8] text-center shadow-[0_10px_24px_rgba(80,55,25,.09)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2"
@@ -266,6 +267,7 @@ function QuickIcon({ tone, Icon }: { tone: Tone; Icon: React.ComponentType<{ cla
 function MobileCategoryCard({ label, href, icon, tone }: (typeof categories)[number]) {
   return (
     <Link
+      prefetch={false}
       href={href}
       aria-label={label}
       className="group flex min-h-[126px] w-full max-w-[112px] flex-col items-center justify-center rounded-[18px] border border-[#E7DDCC] bg-[#FFFDF8] px-2 text-center shadow-[0_12px_24px_rgba(80,55,25,.08)] transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF6EA] sm:max-w-[124px] md:max-w-[132px] md:min-h-[136px]"
@@ -322,7 +324,7 @@ function MobileFeedItem({ item, featured = false }: { item: (typeof feedItems)[n
 
 function MobileQuickCard({ title, body, href, Icon, tone }: (typeof quickAccess)[number]) {
   return (
-    <Link href={href} className="group relative overflow-hidden rounded-[22px] border border-[#E7DDCC] bg-[#FFFDF8] p-4 shadow-[0_12px_24px_rgba(80,55,25,.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(80,55,25,.10)]" style={{ padding: 16 }}>
+    <Link prefetch={false} href={href} className="group relative overflow-hidden rounded-[22px] border border-[#E7DDCC] bg-[#FFFDF8] p-4 shadow-[0_12px_24px_rgba(80,55,25,.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(80,55,25,.10)]" style={{ padding: 16 }}>
       <span className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-[#FBE9DB]/70" />
       <div className="relative flex items-start gap-3">
         <QuickIcon tone={tone} Icon={Icon} />
@@ -344,14 +346,14 @@ function MobileHomepage() {
         <div className="pointer-events-none absolute left-1/2 top-[120px] h-[440px] w-[440px] -translate-x-1/2 rounded-full bg-[#F8E3C9]/30 blur-3xl" />
 
         <header className="relative z-10 flex items-center justify-between gap-2 sm:gap-4">
-          <Link href="/" aria-label="PetPark početna" className="block min-w-0 shrink">
+          <Link prefetch={false} href="/" aria-label="PetPark početna" className="block min-w-0 shrink">
             <PetParkLogo width={154} height={36} priority className="h-[30px] w-auto max-w-[130px] min-[380px]:h-[33px] min-[380px]:max-w-[154px] sm:h-[42px] sm:max-w-none" />
           </Link>
           <div className="flex shrink-0 items-center gap-1.5 min-[380px]:gap-2">
-            <Link href="/prijava" className="inline-flex h-10 items-center justify-center rounded-full bg-[#F26A00] px-3 text-[11px] font-black text-white shadow-[0_10px_22px_rgba(242,106,0,.22)] min-[380px]:px-4 min-[380px]:text-[12px] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
+            <Link prefetch={false} href="/prijava" className="inline-flex h-10 items-center justify-center rounded-full bg-[#F26A00] px-3 text-[11px] font-black text-white shadow-[0_10px_22px_rgba(242,106,0,.22)] min-[380px]:px-4 min-[380px]:text-[12px] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
               Prijava
             </Link>
-            <Link href="/objavi-uslugu" className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-full border border-[#D8CBB8] bg-[#FFFDF8] px-3 text-[11px] font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.07)] min-[380px]:text-[12px] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
+            <Link prefetch={false} href="/objavi-uslugu" className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-full border border-[#D8CBB8] bg-[#FFFDF8] px-3 text-[11px] font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.07)] min-[380px]:text-[12px] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
               Spremi nacrt
             </Link>
           </div>
@@ -359,7 +361,7 @@ function MobileHomepage() {
 
         <nav aria-label="Brza navigacija" className="relative z-10 -mx-1 mt-4 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
           {navItems.map((item) => (
-            <Link key={item.label} href={item.href} className="shrink-0 rounded-full border border-[#E2D7C6] bg-[#FFFDF8]/88 px-3 py-2 text-center text-[12px] font-extrabold text-[#123D36] shadow-[0_5px_14px_rgba(80,55,25,.06)] sm:px-4 sm:text-[13px]" style={{ padding: '8px 12px' }}>
+            <Link key={item.label} prefetch={false} href={item.href} className="shrink-0 rounded-full border border-[#E2D7C6] bg-[#FFFDF8]/88 px-3 py-2 text-center text-[12px] font-extrabold text-[#123D36] shadow-[0_5px_14px_rgba(80,55,25,.06)] sm:px-4 sm:text-[13px]" style={{ padding: '8px 12px' }}>
               {item.label}
             </Link>
           ))}
@@ -378,11 +380,11 @@ function MobileHomepage() {
               Usluge, upozorenja, savjeti i udomljavanje — sve za ljubimce na jednom mjestu.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link href="/izgubljeni/prijavi" className="inline-flex h-12 items-center justify-center gap-2 rounded-[14px] bg-[#F26A00] px-5 text-[14px] font-black text-white shadow-[0_14px_26px_rgba(242,106,0,.22)] sm:w-auto sm:text-[15px]" style={{ paddingLeft: 20, paddingRight: 20 }}>
+              <Link prefetch={false} href="/izgubljeni/prijavi" className="inline-flex h-12 items-center justify-center gap-2 rounded-[14px] bg-[#F26A00] px-5 text-[14px] font-black text-white shadow-[0_14px_26px_rgba(242,106,0,.22)] sm:w-auto sm:text-[15px]" style={{ paddingLeft: 20, paddingRight: 20 }}>
                 <Bell className="h-5 w-5" />
                 Objavi upozorenje
               </Link>
-              <Link href="/usluge" className="inline-flex h-12 items-center justify-center gap-2 rounded-[14px] border border-[#4F7772] bg-[#FFFDF8] px-5 text-[14px] font-extrabold text-[#103D3A] shadow-[0_8px_18px_rgba(80,55,25,.06)] sm:w-auto sm:text-[15px]" style={{ paddingLeft: 20, paddingRight: 20 }}>
+              <Link prefetch={false} href="/usluge" className="inline-flex h-12 items-center justify-center gap-2 rounded-[14px] border border-[#4F7772] bg-[#FFFDF8] px-5 text-[14px] font-extrabold text-[#103D3A] shadow-[0_8px_18px_rgba(80,55,25,.06)] sm:w-auto sm:text-[15px]" style={{ paddingLeft: 20, paddingRight: 20 }}>
                 <Search className="h-5 w-5" />
                 Pogledaj usluge
               </Link>
@@ -409,7 +411,7 @@ function MobileHomepage() {
               <p className="text-[11px] font-black uppercase tracking-[0.14em] text-[#C65F26]">Zajednica</p>
               <h2 className="font-serif text-[30px] font-black tracking-[-0.05em] text-[#003B2F] sm:text-[38px]">Aktualno</h2>
             </div>
-            <Link href="/zajednica" className="inline-flex items-center gap-1 rounded-full bg-[#FFFDF8] px-3 py-2 text-[13px] font-black text-[#C65F26] shadow-sm" style={{ padding: '8px 12px' }}>Sve <ChevronRight className="h-4 w-4" /></Link>
+            <Link prefetch={false} href="/zajednica" className="inline-flex items-center gap-1 rounded-full bg-[#FFFDF8] px-3 py-2 text-[13px] font-black text-[#C65F26] shadow-sm" style={{ padding: '8px 12px' }}>Sve <ChevronRight className="h-4 w-4" /></Link>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {feedItems.map((item, index) => <MobileFeedItem key={item.title} item={item} featured={index < 2} />)}
@@ -453,28 +455,28 @@ function PixelPerfectDesktopHomepage({ isPreview }: { isPreview: boolean }) {
         draggable={false}
       />
       <div className="pointer-events-none absolute left-[38px] top-[18px] h-[62px] w-[235px] bg-[#FAF6EA]" />
-      <Link href="/" aria-label="PetPark početna" className="absolute left-[45px] top-[24px] h-12 w-[211px]">
+      <Link prefetch={false} href="/" aria-label="PetPark početna" className="absolute left-[45px] top-[24px] h-12 w-[211px]">
         <PetParkLogo width={211} height={48} priority className="h-12 w-auto" />
       </Link>
-      <Link href="/usluge" aria-label="Usluge" className="absolute left-[29.2%] top-[3.2%] h-[2.4%] w-[4.4%]" />
-      <Link href="#kako-radi" aria-label="Kako radi" className="absolute left-[36.3%] top-[3.2%] h-[2.4%] w-[5.6%]" />
-      <Link href="/zajednica" aria-label="Zajednica" className="absolute left-[44.7%] top-[3.2%] h-[2.4%] w-[6.0%]" />
-      <Link href="/blog" aria-label="Blog" className="absolute left-[53.4%] top-[3.2%] h-[2.4%] w-[3.4%]" />
-      <Link href="/prijava" aria-label="Prijava" className="absolute left-[74.5%] top-[2.2%] h-[4.5%] w-[9.0%]" />
-      <Link href="/objavi-uslugu" aria-label="Spremi nacrt usluge" className="absolute left-[84.8%] top-[2.2%] h-[4.5%] w-[12.0%]" />
-      <Link href="/usluge" aria-label="Čuvanje" className="absolute left-[4.7%] top-[32.8%] h-[11.2%] w-[6.4%]" />
-      <Link href="/usluge" aria-label="Šetnja" className="absolute left-[12.2%] top-[32.8%] h-[11.2%] w-[6.4%]" />
-      <Link href="/njega" aria-label="Grooming" className="absolute left-[19.7%] top-[32.8%] h-[11.2%] w-[6.6%]" />
-      <Link href="/dresura" aria-label="Trening" className="absolute left-[27.1%] top-[32.8%] h-[11.2%] w-[6.6%]" />
-      <Link href="/izgubljeni" aria-label="Izgubljeni" className="absolute left-[34.5%] top-[32.8%] h-[11.2%] w-[6.7%]" />
-      <Link href="/udomljavanje" aria-label="Udomljavanje" className="absolute left-[42.0%] top-[32.8%] h-[11.2%] w-[7.0%]" />
-      <Link href="/izgubljeni/prijavi" aria-label="Objavi upozorenje" className="absolute left-[4.7%] top-[46.0%] h-[4.7%] w-[14.7%]" />
-      <Link href="/usluge" aria-label="Pogledaj usluge" className="absolute left-[20.8%] top-[46.0%] h-[4.7%] w-[13.4%]" />
-      <Link href="/zajednica" aria-label="Pogledaj sve iz zajednice" className="absolute left-[53.0%] top-[53.7%] h-[3.0%] w-[8.0%]" />
-      <Link href="/forum" aria-label="Forum" className="absolute left-[62.5%] top-[57.1%] h-[6.4%] w-[33.7%]" />
-      <Link href="/izgubljeni" aria-label="Izgubljeni i pronađeni" className="absolute left-[62.5%] top-[64.4%] h-[6.4%] w-[33.7%]" />
-      <Link href="/udomljavanje" aria-label="Udomljavanje" className="absolute left-[62.5%] top-[71.8%] h-[6.4%] w-[33.7%]" />
-      <Link href="/blog" aria-label="Blog savjeti" className="absolute left-[62.5%] top-[79.1%] h-[6.4%] w-[33.7%]" />
+      <Link prefetch={false} href="/usluge" aria-label="Usluge" className="absolute left-[29.2%] top-[3.2%] h-[2.4%] w-[4.4%]" />
+      <Link prefetch={false} href="#kako-radi" aria-label="Kako radi" className="absolute left-[36.3%] top-[3.2%] h-[2.4%] w-[5.6%]" />
+      <Link prefetch={false} href="/zajednica" aria-label="Zajednica" className="absolute left-[44.7%] top-[3.2%] h-[2.4%] w-[6.0%]" />
+      <Link prefetch={false} href="/blog" aria-label="Blog" className="absolute left-[53.4%] top-[3.2%] h-[2.4%] w-[3.4%]" />
+      <Link prefetch={false} href="/prijava" aria-label="Prijava" className="absolute left-[74.5%] top-[2.2%] h-[4.5%] w-[9.0%]" />
+      <Link prefetch={false} href="/objavi-uslugu" aria-label="Spremi nacrt usluge" className="absolute left-[84.8%] top-[2.2%] h-[4.5%] w-[12.0%]" />
+      <Link prefetch={false} href="/usluge" aria-label="Čuvanje" className="absolute left-[4.7%] top-[32.8%] h-[11.2%] w-[6.4%]" />
+      <Link prefetch={false} href="/usluge" aria-label="Šetnja" className="absolute left-[12.2%] top-[32.8%] h-[11.2%] w-[6.4%]" />
+      <Link prefetch={false} href="/njega" aria-label="Grooming" className="absolute left-[19.7%] top-[32.8%] h-[11.2%] w-[6.6%]" />
+      <Link prefetch={false} href="/dresura" aria-label="Trening" className="absolute left-[27.1%] top-[32.8%] h-[11.2%] w-[6.6%]" />
+      <Link prefetch={false} href="/izgubljeni" aria-label="Izgubljeni" className="absolute left-[34.5%] top-[32.8%] h-[11.2%] w-[6.7%]" />
+      <Link prefetch={false} href="/udomljavanje" aria-label="Udomljavanje" className="absolute left-[42.0%] top-[32.8%] h-[11.2%] w-[7.0%]" />
+      <Link prefetch={false} href="/izgubljeni/prijavi" aria-label="Objavi upozorenje" className="absolute left-[4.7%] top-[46.0%] h-[4.7%] w-[14.7%]" />
+      <Link prefetch={false} href="/usluge" aria-label="Pogledaj usluge" className="absolute left-[20.8%] top-[46.0%] h-[4.7%] w-[13.4%]" />
+      <Link prefetch={false} href="/zajednica" aria-label="Pogledaj sve iz zajednice" className="absolute left-[53.0%] top-[53.7%] h-[3.0%] w-[8.0%]" />
+      <Link prefetch={false} href="/forum" aria-label="Forum" className="absolute left-[62.5%] top-[57.1%] h-[6.4%] w-[33.7%]" />
+      <Link prefetch={false} href="/izgubljeni" aria-label="Izgubljeni i pronađeni" className="absolute left-[62.5%] top-[64.4%] h-[6.4%] w-[33.7%]" />
+      <Link prefetch={false} href="/udomljavanje" aria-label="Udomljavanje" className="absolute left-[62.5%] top-[71.8%] h-[6.4%] w-[33.7%]" />
+      <Link prefetch={false} href="/blog" aria-label="Blog savjeti" className="absolute left-[62.5%] top-[79.1%] h-[6.4%] w-[33.7%]" />
       <h1 className="sr-only">Mjesto gdje zajednica pomaže ljubimcima. PetPark povezuje usluge, upozorenja, savjete i udomljavanje — sve za ljubimce na jednom mjestu.</h1>
       {isPreview ? <span className="sr-only">Preview mode</span> : null}
     </div>

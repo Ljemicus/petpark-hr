@@ -59,17 +59,33 @@ function isCsrfExcludedRoute(pathname: string): boolean {
 }
 
 export async function proxy(request: NextRequest) {
-  // Generate CSP nonce for this request
-  const nonce = generateNonce();
-  
   // Assign a request ID for end-to-end correlation across logs.
   // Honour an existing header (e.g. from an upstream load-balancer).
   const requestId = request.headers.get(REQUEST_ID_HEADER) || generateRequestId();
-  const locale = detectLocaleFromPathname(request.nextUrl.pathname);
+  const pathname = request.nextUrl.pathname;
+  const locale = detectLocaleFromPathname(pathname);
   request.headers.set(REQUEST_ID_HEADER, requestId);
   request.headers.set(LOCALE_HEADER, locale);
 
-  if (request.nextUrl.pathname.startsWith('/admin/service-listings')) {
+  // Fast path for the public homepage: avoid per-request nonce/cookie work so
+  // Vercel can serve the static landing page from cache and keep first load sub-second.
+  if (pathname === '/') {
+    const response = NextResponse.next({ request });
+    response.headers.set(REQUEST_ID_HEADER, requestId);
+    response.headers.set(LOCALE_HEADER, locale);
+    response.headers.set('X-Frame-Options', 'DENY');
+    response.headers.set('X-Content-Type-Options', 'nosniff');
+    response.headers.set('X-XSS-Protection', '1; mode=block');
+    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), interest-cohort=()');
+    response.headers.set('Content-Security-Policy', buildCSPHeader());
+    return response;
+  }
+
+  // Generate CSP nonce for dynamic requests.
+  const nonce = generateNonce();
+
+  if (pathname.startsWith('/admin/service-listings')) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     let isAdmin = false;
@@ -146,8 +162,6 @@ export async function proxy(request: NextRequest) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-
-    const pathname = request.nextUrl.pathname;
 
     if (!user && pathname === '/moji-upiti') {
       const url = request.nextUrl.clone();
