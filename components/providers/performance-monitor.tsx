@@ -17,20 +17,7 @@ export function PerformanceMonitor() {
       });
     }
 
-    // Prefetch critical pages
-    const prefetchLinks = [
-      '/pretraga',
-      '/veterinari',
-      '/njega',
-      '/dresura',
-    ];
-
-    prefetchLinks.forEach((href) => {
-      const link = document.createElement('link');
-      link.rel = 'prefetch';
-      link.href = href;
-      document.head.appendChild(link);
-    });
+    // Do not prefetch route documents on initial load; it competes with LCP on mobile.
 
     // Preconnect to critical domains
     const preconnectDomains = [

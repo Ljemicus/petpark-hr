@@ -1,8 +1,6 @@
-const CACHE_NAME = 'petpark-v1';
+const CACHE_NAME = 'petpark-v2';
 const STATIC_ASSETS = [
   '/',
-  '/pretraga',
-  '/veterinari',
   '/offline',
 ];
 
