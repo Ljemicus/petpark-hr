@@ -392,8 +392,8 @@ function MobileHomepage() {
           </div>
 
           <div className="petpark-mobile-hero-visual relative mt-7 h-[238px] overflow-hidden rounded-[30px] border border-[#E7DDCC] bg-[#FFFDF8]/75 shadow-[0_22px_46px_rgba(80,55,25,.12)] sm:h-[330px] md:mt-0 md:h-[340px] md:w-[310px] md:shrink-0 md:rounded-[34px]">
-            <Image src="/images/design-lab/petpark-reference-hero-mobile-clean.webp" alt="Pas i mačka u PetPark zajednici" fill priority sizes="(max-width: 640px) 100vw, 0px" className="object-cover object-center sm:hidden" />
-            <Image src="/images/design-lab/petpark-reference-hero-tablet-clean.webp" alt="Pas i mačka u PetPark zajednici" fill priority sizes="(min-width: 640px) 720px, 0px" className="hidden object-cover object-center sm:block" />
+            <Image src="/images/design-lab/petpark-reference-hero-mobile-clean.webp" alt="Pas i mačka u PetPark zajednici" fill sizes="(max-width: 640px) 100vw, 0px" className="object-cover object-center sm:hidden" />
+            <Image src="/images/design-lab/petpark-reference-hero-tablet-clean.webp" alt="Pas i mačka u PetPark zajednici" fill sizes="(min-width: 640px) 720px, 0px" className="hidden object-cover object-center sm:block" />
             <div className="absolute bottom-3 left-3 right-3 rounded-[18px] border border-white/70 bg-[#FFFDF8]/88 px-4 py-3 shadow-[0_10px_24px_rgba(80,55,25,.12)] backdrop-blur" style={{ padding: '12px 16px' }}>
               <p className="text-[12px] font-black uppercase tracking-[0.12em] text-[#C65F26]">Danas na PetParku</p>
               <p className="mt-0.5 text-[14px] font-extrabold text-[#123D36] sm:text-[15px]">Pronađi pomoć, objavi upozorenje ili pitaj zajednicu.</p>
