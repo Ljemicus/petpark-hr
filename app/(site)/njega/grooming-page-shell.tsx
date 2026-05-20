@@ -1,4 +1,4 @@
-import { GroomingContent, type PublicGroomingListingItem } from '@/app/grooming/grooming-content';
+import { GroomingContent, type PublicGroomingListingItem } from '@/app/(site)/grooming/grooming-content';
 import { DiscoveryPageShell } from '@/components/shared/discovery-page-shell';
 import { getProviderGroomers } from '@/lib/db/provider-groomers';
 import type { Groomer, GroomingServiceType } from '@/lib/types';

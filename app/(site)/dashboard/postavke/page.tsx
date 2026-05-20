@@ -22,7 +22,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import type { LostPetAlertSubscription, LostPetAlertSpecies } from '@/lib/types';
 import { LOST_PET_ALERT_SPECIES_LABELS } from '@/lib/types';
-import { AlertSubscribeDialog } from '@/app/izgubljeni/alert-subscribe-dialog';
+import { AlertSubscribeDialog } from '@/app/(site)/izgubljeni/alert-subscribe-dialog';
 
 export default function PostavkePage() {
   const [emailEnabled, setEmailEnabled] = useState(true);

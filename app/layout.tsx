@@ -4,18 +4,8 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { Inter, Nunito } from 'next/font/google';
 import './globals.css';
-import { Navbar } from '@/components/shared/navbar';
-import { Footer } from '@/components/shared/footer';
-import { PageTransition } from '@/components/providers/page-transition';
-import { ErrorBoundary } from '@/components/providers/error-boundary';
-import { BottomNav } from '@/components/shared/bottom-nav';
-import { AuthProvider } from '@/contexts/auth-context';
-import { CartProvider } from '@/lib/cart-context';
-import { CookieConsentProvider } from '@/contexts/cookie-consent-context';
-import { LanguageProvider, DEFAULT_LOCALE } from '@/lib/i18n';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
-import { SkipToContentLink } from '@/components/shared/skip-to-content-link';
-import { DelayedGlobalUI } from '@/components/providers/delayed-global-ui';
+import { DEFAULT_LOCALE } from '@/lib/i18n';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -149,26 +139,7 @@ export default async function RootLayout({
         <SiteNavigationJsonLd />
       </head>
       <body className="min-h-full flex flex-col font-sans">
-        <CookieConsentProvider>
-          <AuthProvider>
-            <CartProvider>
-              <LanguageProvider>
-                <SkipToContentLink />
-                <Navbar />
-                <main id="main-content" className="flex-1">
-                  <ErrorBoundary>
-                    <PageTransition>{children}</PageTransition>
-                  </ErrorBoundary>
-                </main>
-                <div className="pb-20 md:pb-0">
-                  <Footer />
-                </div>
-                <BottomNav />
-                <DelayedGlobalUI />
-              </LanguageProvider>
-            </CartProvider>
-          </AuthProvider>
-        </CookieConsentProvider>
+        {children}
       </body>
     </html>
   );

@@ -1,5 +1,5 @@
 import { STATUS_LABELS } from '@/lib/types';
-import { dashboardBookingStatusConfig } from '@/app/dashboard/shared/dashboard-booking-status';
+import { dashboardBookingStatusConfig } from '@/app/(site)/dashboard/shared/dashboard-booking-status';
 import type { FilterTab } from './booking-history-types';
 
 export const statusConfig = dashboardBookingStatusConfig;

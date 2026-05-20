@@ -1,5 +1,5 @@
 import type { ServiceType } from '@/lib/types';
-import type { UnifiedProvider, ProviderCategory } from '@/app/pretraga/types';
+import type { UnifiedProvider, ProviderCategory } from '@/app/(site)/pretraga/types';
 import { getUnifiedProvidersFromProviderModel } from './provider-adapters';
 
 export type ProviderSort = 'rating' | 'reviews' | 'price';

@@ -9,7 +9,7 @@ import type {
   UpdateType,
   User,
 } from '@/lib/types';
-import { dashboardBookingStatusColors } from '@/app/dashboard/shared/dashboard-booking-status';
+import { dashboardBookingStatusColors } from '@/app/(site)/dashboard/shared/dashboard-booking-status';
 
 export interface SitterDashboardProps {
   user: User;

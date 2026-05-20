@@ -1,5 +1,5 @@
 import { createAdminClient } from '@/lib/supabase/admin';
-import type { UnifiedProvider } from '@/app/pretraga/types';
+import type { UnifiedProvider } from '@/app/(site)/pretraga/types';
 import type { GroomingServiceType, ServiceType, Trainer } from '@/lib/types';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 

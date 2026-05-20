@@ -1,5 +1,5 @@
 import type { BookingStatus, OwnerDashboardBooking as OwnerBookingShape, Pet, ServiceType, Species, User, Walk } from '@/lib/types';
-import { dashboardBookingStatusColors, dashboardBookingStatusDotColors } from '@/app/dashboard/shared/dashboard-booking-status';
+import { dashboardBookingStatusColors, dashboardBookingStatusDotColors } from '@/app/(site)/dashboard/shared/dashboard-booking-status';
 
 export interface OwnerDashboardProps {
   user: User;
