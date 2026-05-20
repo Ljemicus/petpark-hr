@@ -7,19 +7,15 @@ import './globals.css';
 import { Navbar } from '@/components/shared/navbar';
 import { Footer } from '@/components/shared/footer';
 import { PageTransition } from '@/components/providers/page-transition';
-import { PerformanceMonitor } from '@/components/providers/performance-monitor';
 import { ErrorBoundary } from '@/components/providers/error-boundary';
 import { BottomNav } from '@/components/shared/bottom-nav';
 import { AuthProvider } from '@/contexts/auth-context';
 import { CartProvider } from '@/lib/cart-context';
 import { CookieConsentProvider } from '@/contexts/cookie-consent-context';
-import { CookieConsentBanner } from '@/components/shared/cookie-consent-banner';
 import { LanguageProvider, DEFAULT_LOCALE } from '@/lib/i18n';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
-import { DeferredUI } from '@/components/shared/deferred-ui';
-import { ChatWidget } from '@/components/chat/chat-widget';
-import { WebVitals } from '@/components/monitoring/web-vitals';
 import { SkipToContentLink } from '@/components/shared/skip-to-content-link';
+import { DelayedGlobalUI } from '@/components/providers/delayed-global-ui';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -147,9 +143,8 @@ export default async function RootLayout({
           defer
           data-domain="petpark.hr"
           src="https://plausible.io/js/script.js"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
-        <WebVitals />
         <WebsiteJsonLd />
         <SiteNavigationJsonLd />
       </head>
@@ -165,17 +160,11 @@ export default async function RootLayout({
                     <PageTransition>{children}</PageTransition>
                   </ErrorBoundary>
                 </main>
-                <PerformanceMonitor />
-                <Script id="register-sw" strategy="afterInteractive">
-                  {`if ('serviceWorker' in navigator) { window.addEventListener('load', function() { navigator.serviceWorker.register('/sw.js').then(function(reg) { console.log('[SW] Registered:', reg.scope); }).catch(function(err) { console.error('[SW] Registration failed:', err); }); }); }`}
-                </Script>
                 <div className="pb-20 md:pb-0">
                   <Footer />
                 </div>
                 <BottomNav />
-                <DeferredUI />
-                <CookieConsentBanner />
-                <ChatWidget />
+                <DelayedGlobalUI />
               </LanguageProvider>
             </CartProvider>
           </AuthProvider>
