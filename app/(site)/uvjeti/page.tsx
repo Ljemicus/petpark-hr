@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
 import { FileText, Mail, AlertTriangle, Users, ShieldCheck, BookOpen, Ban, CreditCard, Camera, Scale, HeartHandshake } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';

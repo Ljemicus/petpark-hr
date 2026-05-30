@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
 import { Heart, MapPin, Users, PawPrint, Shield, Search } from 'lucide-react';
 

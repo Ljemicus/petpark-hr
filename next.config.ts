@@ -1,20 +1,19 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from '@sentry/nextjs';
 
-const csp = [
-  "default-src 'self'",
-  "base-uri 'self'",
-  "frame-ancestors 'none'",
-  "object-src 'none'",
-  "script-src 'self' 'unsafe-inline' https://plausible.io",
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: https: blob:",
-  "font-src 'self' data:",
-  "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://plausible.io https://api.resend.com https://api.stripe.com",
-  "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com",
-  "form-action 'self' https://checkout.stripe.com",
-  "upgrade-insecure-requests",
-].join('; ');
+// -----------------------------------------------------------------------------
+// PATCHED (P0 render fix):
+//   The static `csp` constant and its Content-Security-Policy header have been
+//   REMOVED from headers() below. Reason: it emitted a SECOND, conflicting CSP
+//   (script-src ... 'unsafe-inline') alongside the nonce-CSP set by proxy.ts.
+//   When two CSP headers are present the browser enforces their INTERSECTION,
+//   and 'unsafe-inline' is ignored whenever a nonce/hash is present — so the
+//   strict policy still blocked every script on statically prerendered pages.
+//
+//   CSP is now owned by exactly ONE place: proxy.ts.
+//     - dynamic routes  -> nonce-based CSP (per request)
+//     - affected public landing routes are force-dynamic fallback for nonce CSP
+// -----------------------------------------------------------------------------
 
 const nextConfig: NextConfig = {
   async redirects() {
@@ -41,7 +40,8 @@ const nextConfig: NextConfig = {
         { key: 'Link', value: '<https://res.cloudinary.com>; rel=preconnect' },
         { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
-        { key: 'Content-Security-Policy', value: csp },
+        // Content-Security-Policy intentionally removed here — see note above.
+        // It is now set per-request in proxy.ts.
       ],
     }];
   },
@@ -82,21 +82,15 @@ const withSentry = withSentryConfig(nextConfig, {
   automaticVercelMonitors: true,
 
   // Tree-shaking: Only include necessary Sentry features
-  // Disable features we don't use to reduce bundle size
   bundleSizeOptimizations: {
-    // Disable if not using session replay
     excludeReplayShadowDom: true,
     excludeReplayIframe: true,
-    // Disable canvas recording (we don't use it)
     excludeReplayWorker: true,
   },
 
   // Disable Sentry debug logging in production
   debug: false,
 
-  // Tree-shake Sentry internals
-  // Only enable error monitoring, disable performance monitoring if not needed
-  // If you want performance monitoring, set this to true
   disableLogger: true,
 });
 

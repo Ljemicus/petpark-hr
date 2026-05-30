@@ -1,14 +1,20 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Cookie, ChevronDown, ChevronUp, Shield, BarChart3, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useCookieConsent } from "@/contexts/cookie-consent-context";
 
+// Routes where the banner must never obscure primary content. On these pages
+// the collapsed banner is rendered as a slim, low-height bar.
+const CRITICAL_ROUTES = ["/hitno", "/hitna-pomoc", "/veterinari", "/izgubljeni"];
+
 export function CookieConsentBanner() {
   const { showBanner, acceptAll, acceptNecessaryOnly, acceptSelected, isLoaded } = useCookieConsent();
+  const pathname = usePathname() || "";
   const [isExpanded, setIsExpanded] = useState(false);
   const [preferences, setPreferences] = useState({
     analytics: false,
@@ -16,6 +22,8 @@ export function CookieConsentBanner() {
   });
 
   if (!isLoaded || !showBanner) return null;
+
+  const isCritical = CRITICAL_ROUTES.some((r) => pathname.startsWith(r));
 
   const handleAcceptSelected = () => {
     acceptSelected(preferences);
@@ -29,35 +37,58 @@ export function CookieConsentBanner() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
           transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6"
+          className="fixed bottom-0 left-0 right-0 z-50 p-2 sm:p-4 md:p-6 pb-[calc(0.5rem+env(safe-area-inset-bottom))]"
+          role="dialog"
+          aria-label="Postavke kolačića"
         >
           <div className="mx-auto max-w-4xl">
-            <div className="rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden">
-              {/* Header */}
-              <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-6 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                    <Cookie className="h-5 w-5 text-white" />
+            {/*
+              Mobile: compact bottom sheet. Collapsed banner is capped so it
+              never exceeds ~28% of the viewport; when expanded it is scrollable
+              instead of growing past the screen. Desktop keeps the roomy layout.
+            */}
+            <div
+              className={[
+                "rounded-2xl bg-white shadow-2xl border border-gray-100 overflow-hidden flex flex-col",
+                isExpanded
+                  ? "max-h-[80vh] sm:max-h-none"
+                  : isCritical
+                    ? "max-h-[22vh] sm:max-h-none"
+                    : "max-h-[28vh] sm:max-h-none",
+              ].join(" ")}
+            >
+              {/* Header — compact on mobile */}
+              <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-4 py-2.5 sm:px-6 sm:py-4 flex items-center justify-between shrink-0">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                    <Cookie className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white">Kolačići</h3>
-                    <p className="text-sm text-white/80">Vaša privatnost je važna</p>
+                    <h3 className="font-semibold text-white text-sm sm:text-base leading-tight">Kolačići</h3>
+                    <p className="hidden sm:block text-sm text-white/80">Vaša privatnost je važna</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className="text-white/80 hover:text-white transition-colors"
+                  className="text-white/80 hover:text-white transition-colors p-1"
                   aria-label={isExpanded ? "Smanji" : "Proširi"}
+                  aria-expanded={isExpanded}
                 >
                   {isExpanded ? <ChevronDown className="h-5 w-5" /> : <ChevronUp className="h-5 w-5" />}
                 </button>
               </div>
 
-              {/* Content */}
-              <div className="p-6">
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  Koristimo kolačiće za poboljšanje vašeg iskustva. Necessary kolačići su obavezni za rad stranice. 
-                  Analytics kolačići nam pomažu razumjeti kako koristite stranicu. Marketing kolačići koriste se za personalizirane oglase.
+              {/* Content — scrolls within the capped sheet rather than overflowing */}
+              <div className="p-4 sm:p-6 overflow-y-auto">
+                {/* Short copy on mobile; full copy from sm: up */}
+                <p className="text-gray-600 mb-3 sm:mb-4 leading-relaxed text-sm sm:text-base">
+                  <span className="sm:hidden">
+                    Koristimo kolačiće za bolje iskustvo. Neophodni su obavezni; analitiku i marketing možete odbiti.
+                  </span>
+                  <span className="hidden sm:inline">
+                    Koristimo kolačiće za poboljšanje vašeg iskustva. Neophodni kolačići su obavezni za rad stranice.
+                    Analitički kolačići nam pomažu razumjeti kako koristite stranicu. Marketinški kolačići koriste se za personalizirane oglase.
+                  </span>
                 </p>
 
                 {/* Expandable Preferences */}
@@ -70,10 +101,10 @@ export function CookieConsentBanner() {
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden"
                     >
-                      <div className="space-y-4 mb-6 pb-6 border-b border-gray-100">
+                      <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-gray-100">
                         {/* Necessary - Always On */}
-                        <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50">
-                          <div className="w-10 h-10 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
+                        <div className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-gray-50">
+                          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-green-100 flex items-center justify-center flex-shrink-0">
                             <Shield className="h-5 w-5 text-green-600" />
                           </div>
                           <div className="flex-1">
@@ -84,15 +115,15 @@ export function CookieConsentBanner() {
                               </span>
                             </div>
                             <p className="text-sm text-gray-600">
-                              Ovi kolačići su neophodni za funkcioniranje stranice i ne mogu se isključiti. 
+                              Ovi kolačići su neophodni za funkcioniranje stranice i ne mogu se isključiti.
                               Uključuju autentikaciju i sigurnosne funkcije.
                             </p>
                           </div>
                         </div>
 
                         {/* Analytics */}
-                        <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50">
-                          <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <div className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-gray-50">
+                          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
                             <BarChart3 className="h-5 w-5 text-blue-600" />
                           </div>
                           <div className="flex-1">
@@ -106,15 +137,15 @@ export function CookieConsentBanner() {
                               />
                             </div>
                             <p className="text-sm text-gray-600">
-                              Pomažu nam razumjeti kako posjetitelji koriste našu stranicu. 
+                              Pomažu nam razumjeti kako posjetitelji koriste našu stranicu.
                               Koristimo Plausible Analytics koji poštuje privatnost.
                             </p>
                           </div>
                         </div>
 
                         {/* Marketing */}
-                        <div className="flex items-start gap-4 p-4 rounded-xl bg-gray-50">
-                          <div className="w-10 h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
+                        <div className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-gray-50">
+                          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-purple-100 flex items-center justify-center flex-shrink-0">
                             <Megaphone className="h-5 w-5 text-purple-600" />
                           </div>
                           <div className="flex-1">
@@ -137,8 +168,8 @@ export function CookieConsentBanner() {
                   )}
                 </AnimatePresence>
 
-                {/* Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3">
+                {/* Buttons — primary actions always reachable */}
+                <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
                   <Button
                     onClick={acceptAll}
                     className="flex-1 bg-warm-orange hover:bg-warm-orange/90 text-white"
@@ -159,7 +190,7 @@ export function CookieConsentBanner() {
                       variant="outline"
                       className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
                     >
-                      Prilagodi
+                      Postavke
                     </Button>
                   )}
                   <Button
@@ -171,8 +202,8 @@ export function CookieConsentBanner() {
                   </Button>
                 </div>
 
-                {/* Privacy Link */}
-                <p className="text-center text-sm text-gray-500 mt-4">
+                {/* Privacy Link — hidden on mobile to save vertical space */}
+                <p className="hidden sm:block text-center text-sm text-gray-500 mt-4">
                   Više informacija u našoj{" "}
                   <a href="/privatnost" className="text-warm-orange hover:underline font-medium">
                     Politici privatnosti

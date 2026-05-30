@@ -1,3 +1,7 @@
+import { headers } from 'next/headers';
+import { CSP_NONCE_HEADER } from '@/lib/security/csp';
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Star, Shield, Heart, Scissors, Sparkles, CheckCircle2 } from 'lucide-react';
@@ -100,7 +104,8 @@ const FAQS = [
   },
 ];
 
-export default function GroomingZagrebEnPage() {
+export default async function GroomingZagrebEnPage() {
+  const nonce = (await headers()).get(CSP_NONCE_HEADER) ?? undefined;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -142,8 +147,8 @@ export default function GroomingZagrebEnPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" nonce={nonce} dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" nonce={nonce} dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Breadcrumbs items={[{ label: 'Grooming', href: '/njega' }, { label: 'Zagreb', href: '/grooming-zagreb/en' }]} />
 
       <section className="relative overflow-hidden bg-gradient-to-br from-purple-50 via-white to-pink-50 dark:from-purple-950/20 dark:via-background dark:to-pink-950/20">

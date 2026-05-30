@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
 import { Shield, Mail, Lock, Eye, Trash2, Download, PenLine } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
