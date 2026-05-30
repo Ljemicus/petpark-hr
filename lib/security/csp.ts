@@ -1,10 +1,15 @@
 /**
- * Content Security Policy utilities with nonce support
+ * Content Security Policy utilities with nonce support.
+ *
+ * Next.js reads the nonce for framework inline scripts from the `x-nonce`
+ * request header. PetPark also exposes the same value as `X-CSP-Nonce` for
+ * app-level server components that need to render nonce-bearing inline tags.
  */
 
 import { randomBytes } from 'crypto';
 
 export const CSP_NONCE_HEADER = 'X-CSP-Nonce';
+export const NEXT_NONCE_HEADER = 'x-nonce';
 
 export interface CSPConfig {
   nonce?: string;
@@ -24,6 +29,7 @@ export function generateNonce(): string {
  */
 export function buildCSPHeader(config: CSPConfig = {}): string {
   const { nonce, reportUri, reportOnly = false } = config;
+  void reportOnly;
   
   const nonceString = nonce ? `'nonce-${nonce}'` : "'unsafe-inline'";
   
@@ -75,6 +81,8 @@ export function createCSPMiddleware(config: Omit<CSPConfig, 'nonce'> = {}) {
       headerName,
       headers: {
         [headerName]: cspValue,
+        [CSP_NONCE_HEADER]: nonce,
+        [NEXT_NONCE_HEADER]: nonce,
       },
     };
   };
