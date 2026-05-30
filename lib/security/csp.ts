@@ -18,27 +18,32 @@ export interface CSPConfig {
 }
 
 /**
- * Generate a cryptographically secure nonce
+ * Generate a cryptographically secure nonce.
  */
 export function generateNonce(): string {
   return randomBytes(16).toString('base64');
 }
 
 /**
- * Build CSP header value with nonce support
+ * Build CSP header value with nonce support.
  */
 export function buildCSPHeader(config: CSPConfig = {}): string {
   const { nonce, reportUri, reportOnly = false } = config;
   void reportOnly;
-  
-  const nonceString = nonce ? `'nonce-${nonce}'` : "'unsafe-inline'";
-  
+
+  const scriptSources = [
+    "'self'",
+    nonce ? `'nonce-${nonce}'` : "'unsafe-inline'",
+    ...(process.env.NODE_ENV === 'development' ? ["'unsafe-eval'"] : []),
+    'https://plausible.io',
+  ];
+
   const directives = [
     "default-src 'self'",
     "base-uri 'self'",
     "frame-ancestors 'none'",
     "object-src 'none'",
-    `script-src 'self' ${nonceString} https://plausible.io`,
+    `script-src ${scriptSources.join(' ')}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data:",
@@ -47,34 +52,32 @@ export function buildCSPHeader(config: CSPConfig = {}): string {
     "form-action 'self' https://checkout.stripe.com",
     "upgrade-insecure-requests",
   ];
-  
+
   if (reportUri) {
     directives.push(`report-uri ${reportUri}`);
   }
-  
-  const headerValue = directives.join('; ');
-  
-  return headerValue;
+
+  return directives.join('; ');
 }
 
 /**
- * Get CSP header name based on configuration
+ * Get CSP header name based on configuration.
  */
 export function getCSPHeaderName(reportOnly = false): string {
-  return reportOnly 
-    ? 'Content-Security-Policy-Report-Only' 
+  return reportOnly
+    ? 'Content-Security-Policy-Report-Only'
     : 'Content-Security-Policy';
 }
 
 /**
- * Create CSP middleware for Next.js
+ * Create CSP middleware for Next.js.
  */
 export function createCSPMiddleware(config: Omit<CSPConfig, 'nonce'> = {}) {
   return function cspMiddleware() {
     const nonce = generateNonce();
     const cspValue = buildCSPHeader({ ...config, nonce });
     const headerName = getCSPHeaderName(config.reportOnly);
-    
+
     return {
       nonce,
       cspValue,
