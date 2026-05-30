@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
 
 import { buildEnglishCityMetadata, CityLandingPageEn } from '@/components/seo/city-landing-page-en';

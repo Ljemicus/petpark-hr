@@ -58,32 +58,66 @@ function isCsrfExcludedRoute(pathname: string): boolean {
   return CSRF_EXCLUDED_ROUTES.some(route => pathname.startsWith(route));
 }
 
+/**
+ * Standard security headers applied to every response.
+ * NOTE: Content-Security-Policy is intentionally NOT set here — it is applied
+ * per-branch below so the nonce stays consistent. CSP must come from exactly
+ * ONE place; the duplicate CSP in next.config.ts headers() has been removed.
+ */
+function applyBaseSecurityHeaders(res: NextResponse) {
+  res.headers.set('X-Frame-Options', 'DENY');
+  res.headers.set('X-Content-Type-Options', 'nosniff');
+  res.headers.set('X-XSS-Protection', '1; mode=block');
+  res.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.headers.set(
+    'Permissions-Policy',
+    'camera=(), microphone=(), geolocation=(self), interest-cohort=()'
+  );
+}
+
 export async function proxy(request: NextRequest) {
   // Assign a request ID for end-to-end correlation across logs.
-  // Honour an existing header (e.g. from an upstream load-balancer).
   const requestId = request.headers.get(REQUEST_ID_HEADER) || generateRequestId();
   const pathname = request.nextUrl.pathname;
   const locale = detectLocaleFromPathname(pathname);
   request.headers.set(REQUEST_ID_HEADER, requestId);
   request.headers.set(LOCALE_HEADER, locale);
 
-  // Fast path for the public homepage: avoid per-request nonce/cookie work so
-  // Vercel can serve the static landing page from cache and keep first load sub-second.
+  // ---------------------------------------------------------------------------
+  // CSP / nonce — generate ONCE and keep request + response perfectly in sync.
+  //
+  // CRITICAL: the SAME nonce must be (a) set on the REQUEST headers so Next's
+  // renderer stamps it onto every <script> it emits, and (b) set on the
+  // RESPONSE CSP header so the browser enforces that exact nonce. Previously
+  // buildCSPHeader() was called with no args -> degraded CSP, and the nonce was
+  // never placed on the request, so server-rendered scripts had no nonce.
+  //
+  // Statically prerendered routes do NOT hit this dynamic path the same way:
+  // they are served from cache without a per-request nonce, so they rely on
+  // SRI hashes (experimental.sri in next.config.ts) + a staticBuild CSP. We
+  // therefore must NOT emit a nonce-CSP for a response whose HTML was frozen at
+  // build time. The homepage fast-path below is the canonical example.
+  // ---------------------------------------------------------------------------
+  const nonce = generateNonce();
+
+  // Make the nonce available to the renderer for dynamically-rendered routes.
+  request.headers.set(CSP_NONCE_HEADER, nonce);
+  request.headers.set('Content-Security-Policy', buildCSPHeader({ nonce, strict: true }));
+
+  // Fast path for statically-served public homepage: it is prerendered and
+  // cached, so it must use the staticBuild CSP (SRI-backed), NOT a per-request
+  // nonce that its frozen HTML cannot carry.
   if (pathname === '/') {
-    const response = NextResponse.next({ request });
+    const response = NextResponse.next({ request: { headers: request.headers } });
     response.headers.set(REQUEST_ID_HEADER, requestId);
     response.headers.set(LOCALE_HEADER, locale);
-    response.headers.set('X-Frame-Options', 'DENY');
-    response.headers.set('X-Content-Type-Options', 'nosniff');
-    response.headers.set('X-XSS-Protection', '1; mode=block');
-    response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-    response.headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(self), interest-cohort=()');
-    response.headers.set('Content-Security-Policy', buildCSPHeader());
+    applyBaseSecurityHeaders(response);
+    response.headers.set('Content-Security-Policy', buildCSPHeader({ staticBuild: true }));
     return response;
   }
 
-  // Generate CSP nonce for dynamic requests.
-  const nonce = generateNonce();
+  // For all dynamic responses below we use this single nonce-backed value.
+  const cspValue = buildCSPHeader({ nonce, strict: true });
 
   if (pathname.startsWith('/admin/service-listings')) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -111,7 +145,7 @@ export async function proxy(request: NextRequest) {
       const admin404 = NextResponse.rewrite(url, { status: 404 });
       admin404.headers.set(REQUEST_ID_HEADER, requestId);
       admin404.headers.set(LOCALE_HEADER, locale);
-      admin404.headers.set('Content-Security-Policy', buildCSPHeader({ nonce }));
+      admin404.headers.set('Content-Security-Policy', cspValue);
       admin404.headers.set(CSP_NONCE_HEADER, nonce);
       return admin404;
     }
@@ -123,8 +157,6 @@ export async function proxy(request: NextRequest) {
     if (csrfResponse) {
       csrfResponse.headers.set(REQUEST_ID_HEADER, requestId);
       csrfResponse.headers.set(LOCALE_HEADER, locale);
-      // Add CSP headers
-      const cspValue = buildCSPHeader({ nonce });
       csrfResponse.headers.set('Content-Security-Policy', cspValue);
       csrfResponse.headers.set(CSP_NONCE_HEADER, nonce);
       return csrfResponse;
@@ -135,8 +167,6 @@ export async function proxy(request: NextRequest) {
   if (forced404) {
     forced404.headers.set(REQUEST_ID_HEADER, requestId);
     forced404.headers.set(LOCALE_HEADER, locale);
-    // Add CSP headers
-    const cspValue = buildCSPHeader({ nonce });
     forced404.headers.set('Content-Security-Policy', cspValue);
     forced404.headers.set(CSP_NONCE_HEADER, nonce);
     return forced404;
@@ -229,22 +259,13 @@ export async function proxy(request: NextRequest) {
 
   response.headers.set(REQUEST_ID_HEADER, requestId);
   response.headers.set(LOCALE_HEADER, locale);
-  
-  // Add security headers
-  response.headers.set('X-Frame-Options', 'DENY');
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-XSS-Protection', '1; mode=block');
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set(
-    'Permissions-Policy',
-    'camera=(), microphone=(), geolocation=(self), interest-cohort=()'
-  );
-  
-  // Add CSP header with nonce
-  const cspValue = buildCSPHeader({ nonce });
+
+  applyBaseSecurityHeaders(response);
+
+  // Add CSP header with the SAME nonce that was placed on the request headers.
   response.headers.set('Content-Security-Policy', cspValue);
   response.headers.set(CSP_NONCE_HEADER, nonce);
-  
+
   return response;
 }
 

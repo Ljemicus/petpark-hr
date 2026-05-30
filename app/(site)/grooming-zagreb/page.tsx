@@ -1,3 +1,7 @@
+import { headers } from 'next/headers';
+import { CSP_NONCE_HEADER } from '@/lib/security/csp';
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Star, Shield, Heart, Scissors, Sparkles, CheckCircle2 } from 'lucide-react';
@@ -53,7 +57,8 @@ const FAQS = [
   },
 ];
 
-export default function GroomingZagreb() {
+export default async function GroomingZagreb() {
+  const nonce = (await headers()).get(CSP_NONCE_HEADER) ?? undefined;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -95,8 +100,8 @@ export default function GroomingZagreb() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" nonce={nonce} dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" nonce={nonce} dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Breadcrumbs items={[{ label: 'Grooming', href: '/njega' }, { label: 'Zagreb', href: '/grooming-zagreb' }]} />
 
       {/* Hero */}

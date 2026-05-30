@@ -86,7 +86,7 @@ function getCategoryLabel(category: DogFriendlyLocation['category'], isEn: boole
   return labels[category];
 }
 
-export function DogFriendlyContent({ locations, forcedLanguage }: { locations: DogFriendlyLocation[]; forcedLanguage?: 'hr' | 'en' }) {
+export function DogFriendlyContent({ locations, forcedLanguage, nonce }: { locations: DogFriendlyLocation[]; forcedLanguage?: 'hr' | 'en'; nonce?: string }) {
   const { language } = useLanguage();
   const activeLanguage = forcedLanguage || language;
   const isEn = activeLanguage === 'en';
@@ -191,6 +191,7 @@ export function DogFriendlyContent({ locations, forcedLanguage }: { locations: D
       {/* JSON-LD */}
       <script
         type="application/ld+json"
+        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 

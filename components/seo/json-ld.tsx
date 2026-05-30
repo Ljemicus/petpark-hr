@@ -1,13 +1,18 @@
+import { headers } from 'next/headers';
+import { CSP_NONCE_HEADER } from '@/lib/security/csp';
 import type { Article } from '@/lib/types';
 
 interface JsonLdProps {
   data: Record<string, unknown>;
 }
 
-function JsonLdScript({ data }: JsonLdProps) {
+async function JsonLdScript({ data }: JsonLdProps) {
+  const nonce = (await headers()).get(CSP_NONCE_HEADER) ?? undefined;
+
   return (
     <script
       type="application/ld+json"
+      nonce={nonce}
       dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
     />
   );

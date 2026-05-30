@@ -1,3 +1,7 @@
+import { headers } from 'next/headers';
+import { CSP_NONCE_HEADER } from '@/lib/security/csp';
+export const dynamic = 'force-dynamic';
+
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { MapPin, ArrowRight, Shield, Clock, Heart, TreePine, Scissors, GraduationCap } from 'lucide-react';
@@ -53,7 +57,8 @@ const FAQS = [
   },
 ];
 
-export default function CuvanjePasaZagreb() {
+export default async function CuvanjePasaZagreb() {
+  const nonce = (await headers()).get(CSP_NONCE_HEADER) ?? undefined;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -101,8 +106,8 @@ export default function CuvanjePasaZagreb() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" nonce={nonce} dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" nonce={nonce} dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <Breadcrumbs items={[{ label: 'Čuvanje pasa', href: '/pretraga' }, { label: 'Zagreb', href: '/cuvanje-pasa-zagreb' }]} />
 
       {/* Hero */}

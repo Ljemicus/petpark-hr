@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { ShieldCheck, Award, ArrowRight, CheckCircle2, PawPrint, Upload, UserCheck, Star } from 'lucide-react';

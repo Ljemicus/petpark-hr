@@ -1,3 +1,5 @@
+import { headers } from 'next/headers';
+import { CSP_NONCE_HEADER } from '@/lib/security/csp';
 import { getDogFriendlyLocations } from '@/lib/db/dog-friendly';
 import { DogFriendlyContent } from './dog-friendly-content';
 import { DiscoveryPageShell } from '@/components/shared/discovery-page-shell';
@@ -26,6 +28,7 @@ interface DogFriendlyPageShellProps {
 export async function DogFriendlyPageShell({ locale }: DogFriendlyPageShellProps) {
   const locations = await getDogFriendlyLocations();
   const copy = DOG_FRIENDLY_COPY[locale];
+  const nonce = (await headers()).get(CSP_NONCE_HEADER) ?? undefined;
 
   return (
     <DiscoveryPageShell
@@ -36,7 +39,7 @@ export async function DogFriendlyPageShell({ locale }: DogFriendlyPageShellProps
       serviceType="Dog Friendly Places"
       areaServed={['Zagreb', 'Split', 'Rijeka', 'Osijek', 'Zadar', 'Pula']}
     >
-      <DogFriendlyContent locations={locations} forcedLanguage={locale} />
+      <DogFriendlyContent locations={locations} forcedLanguage={locale} nonce={nonce} />
     </DiscoveryPageShell>
   );
 }
