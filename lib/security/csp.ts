@@ -57,16 +57,20 @@ export function buildCSPHeader(config: CSPConfig = {}): string {
     ? `'nonce-${nonce}'`
     : "'unsafe-inline'";
 
+  const isVercelPreview = process.env.VERCEL_ENV === 'preview';
+  const previewScriptSrc = isVercelPreview ? ' https://vercel.live' : '';
+  const previewConnectSrc = isVercelPreview ? ' https://vercel.live https://*.vercel.live' : '';
+
   const directives = [
     "default-src 'self'",
     "base-uri 'self'",
     "frame-ancestors 'none'",
     "object-src 'none'",
-    `script-src 'self' ${scriptSrcAuth} https://plausible.io`,
+    `script-src 'self' ${scriptSrcAuth} https://plausible.io${previewScriptSrc}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: https: blob:",
     "font-src 'self' data:",
-    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://plausible.io https://api.resend.com https://api.stripe.com",
+    `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://plausible.io https://api.resend.com https://api.stripe.com${previewConnectSrc}`,
     "frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://checkout.stripe.com",
     "form-action 'self' https://checkout.stripe.com",
     "upgrade-insecure-requests",
