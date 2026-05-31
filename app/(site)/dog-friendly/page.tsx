@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 import { DogFriendlyPageShell } from './dog-friendly-page-shell';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Dog-Friendly lokacije u Hrvatskoj',
   description: 'Pronađite dog-friendly kafiće, restorane, plaže, parkove i hotele diljem Hrvatske. Kompletni vodič za vlasnike pasa — Zagreb, Split, Rijeka, Dubrovnik i više.',

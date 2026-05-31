@@ -4,6 +4,8 @@ import { Heart, MapPin, Users, PawPrint, Shield, Search } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: { absolute: 'About Us — Our Story | PetPark' },
   description: 'PetPark was born from a simple problem — pet owners in Croatia didn\'t have everything in one place. Pet sitting, grooming, training, vets, adoption — now they do.',

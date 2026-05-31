@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Shield, Mail, Lock, Eye, Trash2, Download, PenLine } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Politika privatnosti',
   description: 'Politika privatnosti platforme PetPark. Saznajte kako prikupljamo, koristimo i štitimo vaše osobne podatke.',

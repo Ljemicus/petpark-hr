@@ -6,6 +6,8 @@ import { FaqContent } from './faq-content';
 import { PublicPageShell } from '@/components/shared/public-page-shell';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
+export const dynamic = 'force-dynamic';
+
 export const FAQ_ITEMS = {
   hr: [
     { q: 'Kako funkcionira rezervacija?', a: 'Pretražite sittere u vašem gradu, pregledajte profile i recenzije te pošaljite upit za željene datume. Sitter potvrđuje termin, a vi zatim dovršavate rezervaciju.' },

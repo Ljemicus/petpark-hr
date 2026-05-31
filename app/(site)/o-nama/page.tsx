@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: { absolute: 'O nama — Naša priča | PetPark' },
   description: 'PetPark je nastao iz jednostavnog problema — vlasnici ljubimaca u Hrvatskoj nisu imali sve na jednom mjestu. Čuvanje, grooming, školovanje, veterinari, udomljavanje — sad imaju.',

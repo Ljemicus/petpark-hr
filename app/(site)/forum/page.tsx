@@ -26,6 +26,8 @@ import {
   PawDecoration,
 } from '@/components/shared/petpark/design-foundation';
 
+export const dynamic = 'force-dynamic';
+
 export function buildForumMetadata(lang: string = 'hr'): Metadata {
   const titles: Record<string, string> = {
     hr: 'Forum za vlasnike ljubimaca | PetPark',

@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { FileText, Mail, AlertTriangle, Users, ShieldCheck, BookOpen, Ban, CreditCard, Camera, Scale, HeartHandshake } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Uvjeti korištenja',
   description: 'Uvjeti korištenja platforme PetPark. Pravila i odgovornosti korisnika, čuvara ljubimaca i vlasnika.',

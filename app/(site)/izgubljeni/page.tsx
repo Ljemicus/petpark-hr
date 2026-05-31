@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 import { LostPetsPageShell } from './lost-pets-page-shell';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Izgubljeni ljubimci — prijavite ili pronađite',
   description: 'Pomozite pronaći izgubljene ljubimce u Hrvatskoj. Prijavite nestanak, pretražite oglase i podijelite — svako dijeljenje pomaže.',

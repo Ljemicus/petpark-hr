@@ -4,6 +4,8 @@ import { buildEnglishCityMetadata, CityLandingPageEn } from '@/components/seo/ci
 
 import { zagrebEnPageData } from './page-data';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = buildEnglishCityMetadata(zagrebEnPageData);
 
 export default function DogSittingZagrebEn() {

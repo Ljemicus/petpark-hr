@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { FaqPageShell } from '../page';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Frequently asked questions',
   description: 'Find answers to the most common PetPark questions — bookings, payments, safety, pet sitting, and more.',

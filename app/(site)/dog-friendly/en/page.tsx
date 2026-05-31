@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 import { DogFriendlyPageShell } from '../dog-friendly-page-shell';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Dog-friendly places in Croatia',
   description: 'Find dog-friendly cafés, restaurants, beaches, parks and hotels across Croatia. A practical guide for dog owners visiting Zagreb, Split, Rijeka and more.',

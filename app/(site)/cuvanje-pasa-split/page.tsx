@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { MapPin, ArrowRight, Shield, Clock, Heart, Sun, Waves, Scissors, GraduationCap } from 'lucide-react';
 
 // ISR: Revalidate every 1 hour for static landing pages
+export const dynamic = 'force-dynamic';
+
 export const revalidate = 3600;
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';

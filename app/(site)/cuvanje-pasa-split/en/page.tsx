@@ -4,6 +4,8 @@ import { buildEnglishCityMetadata, CityLandingPageEn } from '@/components/seo/ci
 
 import { splitEnPageData } from './page-data';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = buildEnglishCityMetadata(splitEnPageData);
 
 export default function DogSittingSplitEn() {

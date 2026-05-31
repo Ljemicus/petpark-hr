@@ -3,6 +3,8 @@ import type { Metadata } from 'next';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 import { LostPetsPageShell } from '../lost-pets-page-shell';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'Lost pets — report or find them',
   description: 'Help find lost pets in Croatia. Report a missing pet, browse active notices and share them quickly — every share helps.',

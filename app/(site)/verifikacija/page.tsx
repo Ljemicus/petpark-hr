@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: { absolute: 'Verifikacija sittera | PetPark' },
   description: 'Saznajte više o statusima profila na PetParku — osnovni profil, provjera i dodatne oznake koje pomažu vlasnicima pri odabiru.',

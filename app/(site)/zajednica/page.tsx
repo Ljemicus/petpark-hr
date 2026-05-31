@@ -28,6 +28,8 @@ import {
   LeafDecoration,
   PawDecoration,
 } from '@/components/shared/petpark/design-foundation';
+
+export const dynamic = 'force-dynamic';
 import { PetParkLogo } from '@/components/shared/brand';
 import { cn } from '@/lib/utils';
 
