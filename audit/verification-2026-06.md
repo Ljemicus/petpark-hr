@@ -43,3 +43,9 @@ Placeholder tokeni {{...}} pronađeni izvan dopuštenog T2 impressum izvora:
 - [x] Stari blog slug redirecta na novi slug u next.config.ts
 - [x] Uvjeti: uklonjen Stripe/provizija/povrat online naplate; dodan ARS/ODR; potreban human legal review
 - [x] Logo i homepage slider nisu dirani namjerno; promjena feeda je ispod slidera
+
+## Final grep after enum-key cleanup
+
+```text
+PASS: no matches for Nacrt Service Listing / within_2_hours / MVP payment copy / 1.220 / PetPark | PetPark / GSC placeholder.
+```
