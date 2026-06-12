@@ -30,10 +30,11 @@ function walk(path) {
   if (!/\.(js|mjs|cjs|ts|tsx|html|json|txt|rsc)$/i.test(path)) return;
   const rel = relative(root, path);
   const text = readFileSync(path, 'utf8');
-  if (!text.includes('{{')) return;
+  const matches = text.match(/\{\{[A-Z0-9_]+\}\}/g);
+  if (!matches) return;
 
   if (scanSource && allowedFiles.has(rel)) return;
-  hits.push(rel);
+  hits.push(`${rel}: ${[...new Set(matches)].join(', ')}`);
 }
 
 for (const target of targets) walk(join(root, target));
