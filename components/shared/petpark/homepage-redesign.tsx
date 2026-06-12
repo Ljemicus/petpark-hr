@@ -61,20 +61,20 @@ const categories: { label: string; href: string; icon: CategoryIconName; tone: '
 
 const feedItems = [
   {
-    title: 'Nestao mačak u Trešnjevci',
-    body: 'Sivi mačak, zelenih očiju, odaziva se na ime Leo.',
-    location: 'Trešnjevka, Zagreb',
-    badge: 'UPOZORENJE',
-    time: 'Prije 2 h',
+    title: 'Primjer upozorenja o nestalom ljubimcu',
+    body: 'Ovako će izgledati objava kada zajednica objavi stvarno upozorenje.',
+    location: 'Primjer prikaza',
+    badge: 'PRIMJER PRIKAZA',
+    time: 'Demo',
     tone: 'orange' as Tone,
     image: '/images/design-lab/petpark-reference-feed-cat.png',
   },
   {
-    title: 'Pronađen pas kod Maksimira',
-    body: 'Prijateljski pas, s crnom ogrlicom.',
-    location: 'Maksimir, Zagreb',
-    badge: 'PRONAĐENO',
-    time: 'Prije 5 h',
+    title: 'Primjer objave o pronađenom ljubimcu',
+    body: 'Kartice će se zamijeniti stvarnim objavama kada budu dostupne.',
+    location: 'Primjer prikaza',
+    badge: 'PRIMJER PRIKAZA',
+    time: 'Demo',
     tone: 'green' as Tone,
     image: '/images/design-lab/petpark-reference-feed-dog.png',
   },
@@ -83,7 +83,7 @@ const feedItems = [
     body: 'Kako pomoći psu da se osjeća sigurno i opušteno dok ste vi odsutni.',
     location: 'Forum zajednice',
     badge: 'FORUM',
-    time: 'Prije 6 h',
+    time: 'Demo',
     tone: 'teal' as Tone,
     Icon: MessageCircle,
   },
@@ -92,7 +92,7 @@ const feedItems = [
     body: 'Savjeti koji će vam pomoći pronaći pravog stručnjaka za vašeg ljubimca.',
     location: 'PetPark blog',
     badge: 'BLOG',
-    time: 'Prije 1 d',
+    time: 'Demo',
     tone: 'yellow' as Tone,
     Icon: BookOpen,
   },
@@ -477,7 +477,7 @@ function PixelPerfectDesktopHomepage({ isPreview }: { isPreview: boolean }) {
       <Link prefetch={false} href="/izgubljeni" aria-label="Izgubljeni i pronađeni" className="absolute left-[62.5%] top-[64.4%] h-[6.4%] w-[33.7%]" />
       <Link prefetch={false} href="/udomljavanje" aria-label="Udomljavanje" className="absolute left-[62.5%] top-[71.8%] h-[6.4%] w-[33.7%]" />
       <Link prefetch={false} href="/blog" aria-label="Blog savjeti" className="absolute left-[62.5%] top-[79.1%] h-[6.4%] w-[33.7%]" />
-      <h1 className="sr-only">Mjesto gdje zajednica pomaže ljubimcima. PetPark povezuje usluge, upozorenja, savjete i udomljavanje — sve za ljubimce na jednom mjestu.</h1>
+      <p className="sr-only">Mjesto gdje zajednica pomaže ljubimcima. PetPark povezuje usluge, upozorenja, savjete i udomljavanje — sve za ljubimce na jednom mjestu.</p>
       {isPreview ? <span className="sr-only">Preview mode</span> : null}
     </div>
   );
