@@ -284,13 +284,20 @@ export function Footer() {
               </div>
             </div>
           </div>
-          <div className="border-t border-gray-800 mt-10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-500">
-            <p>{t('footer.rights')}</p>
-            <div className="flex items-center gap-4 text-xs">
+          <div className="border-t border-gray-800 mt-10 pt-8 space-y-5 text-sm text-gray-500">
+            <div className="leading-6 text-center md:text-left">
+              <p className="font-semibold text-gray-400">PetPark d.o.o. · {'{{PUNA_ADRESA}}'}, Rijeka</p>
+              <p>OIB: {'{{OIB}}'} · MBS: {'{{MBS}}'} · Trgovački sud u Rijeci</p>
+              <p>Temeljni kapital: {'{{KAPITAL}}'} EUR, uplaćen u cijelosti</p>
+            </div>
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <p>{t('footer.rights')}</p>
+              <div className="flex items-center gap-4 text-xs">
               <Link href="/privatnost" className="hover:text-warm-orange transition-colors">{t('footer.privacy')}</Link>
               <Link href="/uvjeti" className="hover:text-warm-orange transition-colors">{t('footer.terms')}</Link>
               <Link href="/kontakt" className="hover:text-warm-orange transition-colors">{t('footer.contact')}</Link>
-              <CookieSettingsButton />
+                <CookieSettingsButton />
+              </div>
             </div>
           </div>
         </div>

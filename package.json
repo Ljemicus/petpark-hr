@@ -22,7 +22,8 @@
     "preflight": "npm run validate:prod && npm run check:build && npm run lint",
     "launch:check": "npm run preflight && echo \"✅ All pre-launch checks passed\"",
     "prepare": "husky",
-    "ci:regression": "node scripts/check-regressions.mjs"
+    "ci:regression": "node scripts/check-regressions.mjs",
+    "prebuild": "node scripts/check-placeholders.mjs --source"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

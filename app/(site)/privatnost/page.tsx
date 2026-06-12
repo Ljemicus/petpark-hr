@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import type { Metadata } from 'next';
-import { Shield, Mail, Lock, Eye, Trash2, Download, PenLine } from 'lucide-react';
+import { Shield, Mail, Lock, Eye, Trash2, Download, PenLine, Building2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const metadata: Metadata = {
@@ -227,6 +227,20 @@ export default function PrivatnostPage() {
               obavijestit ćemo vas putem e-maila ili obavijesti na platformi. Preporučujemo
               da povremeno provjerite ovu stranicu.
             </p>
+          </section>
+
+
+          {/* Impressum */}
+          <section className="rounded-2xl border border-orange-100 bg-orange-50/60 p-6">
+            <div className="flex items-start gap-3">
+              <Building2 className="mt-1 h-5 w-5 text-orange-600" />
+              <div className="text-sm leading-7 text-muted-foreground">
+                <p className="font-semibold text-foreground">Impressum</p>
+                <p>PetPark d.o.o. · {'{{PUNA_ADRESA}}'}, Rijeka</p>
+                <p>OIB: {'{{OIB}}'} · MBS: {'{{MBS}}'} · Trgovački sud u Rijeci</p>
+                <p>Temeljni kapital: {'{{KAPITAL}}'} EUR, uplaćen u cijelosti</p>
+              </div>
+            </div>
           </section>
 
           {/* Kontakt */}
