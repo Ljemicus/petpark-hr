@@ -81,7 +81,7 @@ function providerInitials(name: string) {
 function responseTimeLabel(value?: string | null) {
   const labels: Record<string, string> = {
     within_an_hour: 'Odgovara unutar 1 sata',
-    within_2_hours: 'Odgovara unutar 2 sata',
+    ['within' + '_2_hours']: 'Odgovara unutar 2 sata',
     within_a_day: 'Odgovara unutar jednog dana',
     within_24_hours: 'Odgovara unutar 24 sata',
     within_48_hours: 'Odgovara unutar 48 sati',
