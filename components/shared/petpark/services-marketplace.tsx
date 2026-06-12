@@ -56,7 +56,7 @@ const services: Service[] = [
     rating: 5,
     reviews: 46,
     description: 'Topla i sigurna usluga s puno pažnje, igre i redovitih updatea za vlasnika.',
-    price: '25 EUR / dan',
+    price: '25 € / dan',
     badges: ['Dostupno', 'Provjereno'],
     tone: 'orange',
   },
@@ -68,7 +68,7 @@ const services: Service[] = [
     rating: 5,
     reviews: 46,
     description: 'Pouzdane šetnje, jasni dogovori i fotografije nakon svake rute.',
-    price: '12 EUR / 30 min',
+    price: '12 € / 30 min',
     badges: ['Brza reakcija', 'Provjereno'],
     tone: 'sage',
   },
@@ -80,7 +80,7 @@ const services: Service[] = [
     rating: 5,
     reviews: 46,
     description: 'Nježan pristup, uredan salon i njega prilagođena karakteru ljubimca.',
-    price: '35 EUR / usluga',
+    price: '35 € / usluga',
     badges: ['Iskusno', 'Provjereno'],
     tone: 'teal',
   },
@@ -92,7 +92,7 @@ const services: Service[] = [
     rating: 5,
     reviews: 46,
     description: 'Praktični treninzi za bolju svakodnevicu, mirnije šetnje i sigurniju komunikaciju.',
-    price: '30 EUR / sat',
+    price: '30 € / sat',
     badges: ['Dostupno', 'Provjereno'],
     tone: 'cream',
   },
@@ -175,7 +175,7 @@ export function FilterSidebar() {
         <div className="space-y-6 lg:space-y-4">
           <FilterRow label="Lokacija" value="Zagreb, Hrvatska" />
           <FilterRow label="Kategorija" value="Sve kategorije" />
-          <FilterRow label="Cijena" value="0 EUR - 100+ EUR" />
+          <FilterRow label="Cijena" value="0 € - 100+ €" />
           <FilterRow label="Dostupnost" value="Bilo kada" />
           <FilterRow label="Ocjena" value="4+ i više" />
           <label className="flex items-start gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-sage-surface)] p-4 text-sm font-extrabold leading-6 text-[color:var(--pp-color-forest-text)] lg:items-center lg:p-3 lg:leading-normal">
@@ -291,7 +291,7 @@ function HeroPhotoArea() {
 
 export function ServicesMarketplacePage({ realServices = [] }: { realServices?: MarketplaceServiceListing[] }) {
   const visibleServices = realServices.length > 0 ? realServices.slice(0, services.length) : services;
-  const resultCountLabel = '1.220 usluga';
+  const resultCountLabel = realServices.length > 0 ? `${realServices.length} ${realServices.length === 1 ? 'usluga' : 'usluge'}` : null;
 
   return (
     <main data-petpark-route="usluge" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
@@ -341,7 +341,7 @@ export function ServicesMarketplacePage({ realServices = [] }: { realServices?: 
             <FilterSidebar />
             <section aria-label="Rezultati pretrage" className="min-w-0">
               <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
-                <p className="text-lg font-black text-[color:var(--pp-color-forest-text)]">Pronađeno {resultCountLabel}</p>
+                <p className="text-lg font-black text-[color:var(--pp-color-forest-text)]">{resultCountLabel ? `Pronađeno ${resultCountLabel}` : 'Pronađene usluge'}</p>
                 <label className="min-w-[170px]">
                   <span className="sr-only">Sortiranje</span>
                   <Select defaultValue="najnovije" aria-label="Sortiranje rezultata">

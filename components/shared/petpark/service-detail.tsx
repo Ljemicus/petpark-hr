@@ -32,10 +32,10 @@ const fallbackService = {
   location: 'Maksimir, Zagreb',
   rating: 5.0,
   reviewCount: 28,
-  price: '25 EUR / dan',
+  price: '25 € / dan',
   range: '12. lip - 17. lip (6 noći)',
   pet: 'Leo • Labrador • 3 god.',
-  total: '150 EUR',
+  total: '150 €',
 };
 
 const features = [
@@ -54,18 +54,64 @@ const rules = [
 ];
 
 const similar = [
-  ['Šetnja i dnevno čuvanje', 'Marko P.', '18 EUR / dan'],
-  ['Čuvanje kod provjerene obitelji', 'Petra G.', '27 EUR / dan'],
+  ['Šetnja i dnevno čuvanje', 'Marko P.', '18 € / dan'],
+  ['Čuvanje kod provjerene obitelji', 'Petra G.', '27 € / dan'],
 ];
 
-function Breadcrumb() {
+const draftDescriptionFallback = 'Pružatelj još nije dodao detaljan opis usluge. Pošaljite upit za više informacija.';
+
+export function sanitizeServiceDescription(description?: string | null) {
+  const value = description?.trim();
+  if (!value) return draftDescriptionFallback;
+  // TODO(human): očistiti draft opise u bazi (zahtijeva sign-off, NE raditi ovdje)
+  if (value.startsWith('Nacrt') || value.includes('Service Listing')) return draftDescriptionFallback;
+  return value;
+}
+
+function providerInitials(name: string) {
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
+  return initials || 'PP';
+}
+
+function responseTimeLabel(value?: string | null) {
+  const labels: Record<string, string> = {
+    within_an_hour: 'Odgovara unutar 1 sata',
+    within_2_hours: 'Odgovara unutar 2 sata',
+    within_a_day: 'Odgovara unutar jednog dana',
+    within_24_hours: 'Odgovara unutar 24 sata',
+    within_48_hours: 'Odgovara unutar 48 sati',
+  };
+  if (!value) return 'Pružatelj odgovara prema dostupnosti';
+  return labels[value] || (value.includes('_') ? 'Pružatelj odgovara prema dostupnosti' : value);
+}
+
+function providerRole(service: typeof fallbackService | MarketplaceServiceListing) {
+  const category = 'category' in service ? service.category.toLowerCase() : '';
+  if (category.includes('trening')) return { breadcrumb: 'Trening', title: 'Tvoj trener' };
+  if (category.includes('groom')) return { breadcrumb: 'Grooming', title: 'Tvoj groomer' };
+  if (category.includes('veter')) return { breadcrumb: 'Veterinar', title: 'Tvoj veterinar' };
+  return { breadcrumb: 'Čuvanje', title: 'Tvoj čuvar' };
+}
+
+function isHourlyService(service: typeof fallbackService | MarketplaceServiceListing) {
+  const price = service.price.toLowerCase();
+  return price.includes('/ sat') || price.includes('/ 30 min') || price.includes('/ termin');
+}
+
+function Breadcrumb({ currentService = fallbackService }: { currentService?: typeof fallbackService | MarketplaceServiceListing }) {
+  const role = providerRole(currentService);
   return (
     <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm font-extrabold text-[color:var(--pp-color-muted-text)]">
       <Link href="/" className="transition hover:text-[color:var(--pp-color-forest-text)]">Početna</Link>
       <ChevronRight className="size-4" aria-hidden />
       <Link href="/usluge" className="transition hover:text-[color:var(--pp-color-forest-text)]">Usluge</Link>
       <ChevronRight className="size-4" aria-hidden />
-      <span className="text-[color:var(--pp-color-forest-text)]">Čuvanje</span>
+      <span className="text-[color:var(--pp-color-forest-text)]">{role.breadcrumb}</span>
     </nav>
   );
 }
@@ -183,7 +229,9 @@ export function BookingPanel({ currentService = fallbackService }: { currentServ
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">{currentService.price}</p>
-          <p className="mt-2 text-xs font-bold text-[color:var(--pp-color-muted-text)]">Minimalno 2 dana • Maksimalno 14 dana</p>
+          {!isHourlyService(currentService) ? (
+            <p className="mt-2 text-xs font-bold text-[color:var(--pp-color-muted-text)]">Minimalno 2 dana • Maksimalno 14 dana</p>
+          ) : null}
         </div>
         <Badge variant="orange">DOSTUPNO</Badge>
       </div>
@@ -215,7 +263,7 @@ export function BookingPanel({ currentService = fallbackService }: { currentServ
       <div className="my-8 h-px bg-[color:var(--pp-color-warm-border)]" />
       {'slug' in currentService ? (
         <p className="rounded-[18px] bg-[color:var(--pp-color-cream-surface)] px-5 py-4 text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
-          Pružatelj ručno potvrđuje dostupnost prije bilo kakve rezervacije. Plaćanje nije uključeno u ovaj MVP.
+          Pružatelj ručno potvrđuje dostupnost prije bilo kakve rezervacije. Online plaćanje uskoro — za sada se dogovarate izravno s pružateljem.
         </p>
       ) : (
         <>
@@ -252,17 +300,19 @@ export function PriceSummary() {
 
 export function ProviderTrustCard({ currentService = fallbackService }: { currentService?: typeof fallbackService | MarketplaceServiceListing }) {
   const items = [
-    'responseTime' in currentService ? currentService.responseTime : 'Odgovara unutar 1 h',
+    responseTimeLabel('responseTime' in currentService ? currentService.responseTime : 'within_an_hour'),
     `${currentService.rating.toFixed(1)} ocjena`,
     `${'reviews' in currentService ? currentService.reviews : currentService.reviewCount} recenzija`,
     currentService.location,
   ];
 
+  const role = providerRole(currentService);
+
   return (
     <Card radius="28" className="p-7">
-      <h2 className="text-2xl font-black tracking-[-0.03em]">Tvoj čuvar</h2>
+      <h2 className="text-2xl font-black tracking-[-0.03em]">{role.title}</h2>
       <div className="mt-6 flex flex-col gap-5 sm:flex-row lg:mt-5">
-        <Avatar initials="AK" size="lg" className="size-24 text-2xl" />
+        <Avatar initials={providerInitials(currentService.provider)} size="lg" className="size-24 text-2xl" />
         <div className="min-w-0">
           <p className="text-xl font-black tracking-[-0.02em]">{currentService.provider}</p>
           <Badge variant="success" className="mt-2">PROVJERENI PRUŽATELJ</Badge>
@@ -280,27 +330,33 @@ export function ProviderTrustCard({ currentService = fallbackService }: { curren
   );
 }
 
-export function ReviewsSection() {
+export function ReviewsSection({ currentService = fallbackService }: { currentService?: typeof fallbackService | MarketplaceServiceListing }) {
+  const reviewCount = 'reviews' in currentService ? currentService.reviews : currentService.reviewCount;
+
   return (
     <Card radius="24" className="p-8">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-2xl font-black tracking-[-0.03em]">Recenzije (28)</h2>
-        <Button variant="secondary" size="sm">Pogledaj sve recenzije</Button>
+        <h2 className="text-2xl font-black tracking-[-0.03em]">Recenzije{reviewCount > 0 ? ` (${reviewCount})` : ''}</h2>
+        {reviewCount > 0 ? <Button variant="secondary" size="sm">Pogledaj sve recenzije</Button> : null}
       </div>
-      <div className="mt-6 grid gap-6 md:grid-cols-[220px_1fr] md:items-center">
-        <div className="flex items-center gap-4">
-          <span className="text-5xl font-black tracking-[-0.06em] text-[color:var(--pp-color-forest-text)]">4.9</span>
-          <span className="text-xl text-[color:var(--pp-color-orange-primary)]" aria-label="5 zvjezdica">★★★★★</span>
+      {reviewCount > 0 ? (
+        <div className="mt-6 grid gap-6 md:grid-cols-[220px_1fr] md:items-center">
+          <div className="flex items-center gap-4">
+            <span className="text-5xl font-black tracking-[-0.06em] text-[color:var(--pp-color-forest-text)]">{currentService.rating.toFixed(1)}</span>
+            <span className="text-xl text-[color:var(--pp-color-orange-primary)]" aria-label="5 zvjezdica">★★★★★</span>
+          </div>
         </div>
-        <blockquote className="rounded-[20px] bg-[color:var(--pp-color-cream-surface)] p-5 text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)]">
-          “Ana je prekrasna! Leo je bio sretan i opušten cijelo vrijeme. Dobivali smo redovite slike i poruke.”
-        </blockquote>
-      </div>
+      ) : (
+        <p className="mt-4 rounded-[20px] bg-[color:var(--pp-color-cream-surface)] p-5 text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)]">
+          Još nema recenzija — budite prvi koji će podijeliti iskustvo.
+        </p>
+      )}
     </Card>
   );
 }
 
-export function SimilarServices() {
+export function SimilarServices({ currentService = fallbackService }: { currentService?: typeof fallbackService | MarketplaceServiceListing }) {
+  if ('slug' in currentService) return null;
   return (
     <Card radius="24" className="p-8">
       <h2 className="text-2xl font-black tracking-[-0.03em]">Slične usluge</h2>
@@ -342,7 +398,7 @@ export function ServiceDetailPage({ service = fallbackService }: { service?: typ
         <PawDecoration className="right-[17%] top-[190px] hidden size-[59px] rotate-12 opacity-70 sm:block" />
 
         <div className="mx-auto max-w-[var(--pp-content-width)]">
-          <Breadcrumb />
+          <Breadcrumb currentService={service} />
           <div className="mt-4 flex flex-wrap items-start justify-between gap-5" style={{ marginTop: 20 }}>
             <div className="min-w-0">
               <h1 className="max-w-[820px] text-4xl font-black leading-[1.02] tracking-[-0.055em] sm:text-5xl lg:text-[48px]">
@@ -366,9 +422,9 @@ export function ServiceDetailPage({ service = fallbackService }: { service?: typ
             <div className="flex flex-col gap-6">
               <ImageGallery />
               <IncludedFeatures items={'includedFeatures' in service ? service.includedFeatures : features} />
-              <ServiceDescription description={'detailDescription' in service ? service.detailDescription : undefined} rules={'houseRules' in service ? service.houseRules : rules} />
-              <ReviewsSection />
-              <SimilarServices />
+              <ServiceDescription description={sanitizeServiceDescription('detailDescription' in service ? service.detailDescription : undefined)} rules={'houseRules' in service ? service.houseRules : rules} />
+              <ReviewsSection currentService={service} />
+              <SimilarServices currentService={service} />
             </div>
             <aside className="mt-2 flex flex-col gap-8 lg:mt-5">
               <BookingPanel currentService={service} />
@@ -377,7 +433,7 @@ export function ServiceDetailPage({ service = fallbackService }: { service?: typ
                 <div className="flex gap-3">
                   <ShieldCheck className="mt-1 size-6 shrink-0 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
                   <p className="text-sm font-bold leading-6 text-[color:var(--pp-color-muted-text)]">
-                    Booking Request MVP je uključen: vlasnik šalje upit, pružatelj ga ručno potvrđuje. Nema Stripea, plaćanja ni zaključavanja kalendarskog termina.
+                    Vlasnik šalje upit, a pružatelj ga ručno potvrđuje. Online plaćanje uskoro — za sada se dogovarate izravno s pružateljem.
                   </p>
                 </div>
               </Card>

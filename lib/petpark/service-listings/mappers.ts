@@ -83,10 +83,32 @@ function asStringArray(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0) : [];
 }
 
-function formatPrice(amount: number | null | undefined, currency: string | null | undefined, unit: string) {
+export function formatPrice(amount: number | null | undefined, currency: string | null | undefined, unit: string) {
   if (typeof amount !== 'number' || Number.isNaN(amount) || amount <= 0) return 'Cijena po dogovoru';
   const suffix = currency === 'EUR' || !currency ? '€' : currency;
   return `${amount} ${suffix} / ${unit}`;
+}
+
+function sanitizeDescription(value: string | null | undefined) {
+  const description = value?.trim();
+  if (!description) return '';
+  // TODO(human): očistiti draft opise u bazi (zahtijeva sign-off, NE raditi ovdje)
+  if (description.startsWith('Nacrt') || description.includes('Service Listing')) {
+    return 'Pružatelj još nije dodao detaljan opis usluge. Pošaljite upit za više informacija.';
+  }
+  return description;
+}
+
+function responseTimeLabel(value: string | null | undefined) {
+  const labels: Record<string, string> = {
+    within_an_hour: 'Odgovara unutar 1 sata',
+    within_2_hours: 'Odgovara unutar 2 sata',
+    within_a_day: 'Odgovara unutar jednog dana',
+    within_24_hours: 'Odgovara unutar 24 sata',
+    within_48_hours: 'Odgovara unutar 48 sati',
+  };
+  if (!value) return 'Pružatelj odgovara prema dostupnosti';
+  return labels[value] || (value.includes('_') ? 'Pružatelj odgovara prema dostupnosti' : value);
 }
 
 function providerLocation(provider: ServiceListingProviderRow | null, listing?: Pick<ServiceListingRow, 'city' | 'district' | 'service_area'>) {
@@ -119,7 +141,7 @@ export function mapServiceListingRow(row: ServiceListingRow): PublicServiceListi
     location: providerLocation(provider, row),
     rating: Number(provider.rating_avg || 0),
     reviews: Number(provider.review_count || 0),
-    description: row.short_description || copy.description,
+    description: sanitizeDescription(row.short_description) || copy.description,
     price: formatPrice(providerService?.base_price, providerService?.currency, copy.unit),
     badges: ['Dostupno', 'Provjereno'],
     tone: toneByKind[String(provider.provider_kind || 'other')] || 'sage',
@@ -127,10 +149,10 @@ export function mapServiceListingRow(row: ServiceListingRow): PublicServiceListi
     providerId: provider.id,
     providerKind: provider.provider_kind || 'provider',
     serviceCode,
-    detailDescription: row.description || row.short_description || provider.bio || copy.description,
+    detailDescription: sanitizeDescription(row.description) || sanitizeDescription(row.short_description) || sanitizeDescription(provider.bio) || copy.description,
     includedFeatures: asStringArray(row.included_features).length ? asStringArray(row.included_features) : copy.features,
     houseRules: asStringArray(row.house_rules).length ? asStringArray(row.house_rules) : copy.rules,
-    responseTime: provider.response_time_label || 'Odgovara uskoro',
+    responseTime: responseTimeLabel(provider.response_time_label),
     verified: provider.verified_status === 'verified',
   };
 }
@@ -167,7 +189,7 @@ export function mapProviderServiceFallback(row: ServiceListingProviderServiceRow
     location: providerLocation(provider),
     rating: Number(provider.rating_avg || 0),
     reviews: Number(provider.review_count || 0),
-    description: copy.description,
+    description: sanitizeDescription(copy.description) || copy.description,
     price: formatPrice(row.base_price, row.currency, copy.unit),
     badges: ['Dostupno', 'Provjereno'],
     tone: toneByKind[String(provider.provider_kind || 'other')] || 'sage',
@@ -175,10 +197,10 @@ export function mapProviderServiceFallback(row: ServiceListingProviderServiceRow
     providerId: provider.id,
     providerKind: provider.provider_kind || 'provider',
     serviceCode,
-    detailDescription: provider.bio || copy.description,
+    detailDescription: sanitizeDescription(provider.bio) || copy.description,
     includedFeatures: copy.features,
     houseRules: copy.rules,
-    responseTime: provider.response_time_label || 'Odgovara uskoro',
+    responseTime: responseTimeLabel(provider.response_time_label),
     verified: provider.verified_status === 'verified',
   };
 }
