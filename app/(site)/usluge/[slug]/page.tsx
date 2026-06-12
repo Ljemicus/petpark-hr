@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { ServiceDetailPage } from '@/components/shared/petpark/service-detail';
+import { sanitizeServiceDescription, ServiceDetailPage } from '@/components/shared/petpark/service-detail';
 import { getPublicServiceListingBySlug } from '@/lib/db/service-listings';
 
 const fallbackMetadata: Metadata = {
-  title: 'Čuvanje psa u kućnom okruženju | PetPark',
+  title: 'Čuvanje psa u kućnom okruženju',
   description: 'Detalji PetPark usluge čuvanja psa, dostupnost, cijena, recenzije i rezervacija.',
 };
 
@@ -16,8 +16,8 @@ export async function generateMetadata({ params }: UslugeDetailPageProps): Promi
 
   if (!service) return fallbackMetadata;
 
-  const title = `${service.title} | PetPark`;
-  const description = service.description || service.detailDescription || `${service.title} — ${service.provider}, ${service.location}.`;
+  const title = service.title;
+  const description = sanitizeServiceDescription(service.description || service.detailDescription || `${service.title} — ${service.provider}, ${service.location}.`).slice(0, 155);
 
   return {
     title,
@@ -27,7 +27,9 @@ export async function generateMetadata({ params }: UslugeDetailPageProps): Promi
       description,
       type: 'website',
       url: `/usluge/${service.slug}`,
+      siteName: 'PetPark',
     },
+    alternates: { canonical: `/usluge/${service.slug}` },
     twitter: {
       card: 'summary',
       title,

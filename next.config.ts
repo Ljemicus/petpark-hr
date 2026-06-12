@@ -25,6 +25,8 @@ const nextConfig: NextConfig = {
       { source: '/trainers', destination: '/dresura', permanent: true },
       // NOTE: active community subroutes are excluded from legacy blog-slug redirects.
       { source: '/zajednica/:slug((?!feed|izazovi|najbolji).*)', destination: '/blog/:slug', permanent: true },
+      { source: '/blog/prilago%C4%91en%20ku%C4%87nim%20ljubimcima-plaze-parkovi-hrvatska', destination: '/blog/pet-friendly-plaze-parkovi-hrvatska', permanent: true },
+      { source: '/blog/prilagođen kućnim ljubimcima-plaze-parkovi-hrvatska', destination: '/blog/pet-friendly-plaze-parkovi-hrvatska', permanent: true },
       { source: '/grooming', destination: '/njega', permanent: true },
     ];
   },

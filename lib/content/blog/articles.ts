@@ -527,7 +527,7 @@ Mačke su teritorijalne životinje i većina ne uživa u putovanju. Ako je mogu�
 
 SMJEŠTAJ PRILAGOĐEN KUĆNIM LJUBIMCIMA U HRVATSKOJ
 
-Sve više hotela, apartmana i kampova u Hrvatskoj prima ljubimce. Cijene nadoplate: 5-15 EUR po noći. Istarski kampovi (Aminess, Maistra) posebno su prilagođen kućnim ljubimcima s ograđenim zonama za pse i plaža za pse-evima.
+Sve više hotela, apartmana i kampova u Hrvatskoj prima ljubimce. Cijene nadoplate: 5-15 EUR po noći. Istarski kampovi (Aminess, Maistra) posebno su prilagođeni kućnim ljubimcima, s ograđenim zonama i plažama za pse.
 
 Servisi poput BringFidoa i PetTravela mogu pomoći u pronalaženju smještaja koji prima ljubimce.
 
@@ -547,8 +547,8 @@ Putovanje s ljubimcem zahtijeva više planiranja, ali nagrade su neprocjenjive. 
     emoji: `✈️`,
   },
   {
-    slug: `prilagođen kućnim ljubimcima-plaze-parkovi-hrvatska`,
-    title: `10 prilagođen kućnim ljubimcima plaža i parkova u Hrvatskoj`,
+    slug: `pet-friendly-plaze-parkovi-hrvatska`,
+    title: `10 plaža i parkova u Hrvatskoj prilagođenih kućnim ljubimcima`,
     excerpt: `Od Istre do Dalmacije — najbolja mjesta gdje se vaš pas može slobodno kupati i trčati.`,
     body: `Hrvatska ima prekrasnu obalu, ali pronaći plažu gdje je vaš pas dobrodošao može biti izazov. Sve više gradova prepoznaje potrebe vlasnika s ljubimcima i otvaraju designirane plaža za pse-eve. Evo 10 najboljih mjesta za uživanje s vašim ljubimcem.
 
@@ -582,7 +582,7 @@ Najveći park u Zagrebu s kilometrima staza kroz šumu. Psi moraju biti na povod
 
 8. PLAŽA ČIKAT — MALI LOŠINJ
 
-Lošinj je jedan od najljepšijeg otoka u Kvarnerskom zaljevu i ima designiranu plaža za pse u uvali Čikat, okruženu borovima. More je nevjerojatno čisto, a otok je generalno vrlo prilagođen kućnim ljubimcima. Mnogi hoteli i apartmani primaju ljubimce.
+Lošinj je jedan od najljepših otoka u Kvarnerskom zaljevu i ima uređenu plažu za pse u uvali Čikat, okruženu borovima. More je nevjerojatno čisto, a otok je generalno vrlo prilagođen kućnim ljubimcima. Mnogi hoteli i apartmani primaju ljubimce.
 
 9. ŠUMA MARJAN — SPLIT
 

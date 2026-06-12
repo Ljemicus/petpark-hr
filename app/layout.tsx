@@ -30,18 +30,11 @@ export const metadata: Metadata = {
   other: {
     'google': 'notranslate',
   },
-  keywords: [
-    'pet sitting', 'čuvanje ljubimaca', 'šetanje pasa', 'grooming', 'školovanje pasa',
-    'čuvar za pse', 'čuvar za mačke', 'pet sitter Hrvatska', 'veterinar',
-    'udomljavanje pasa', 'dog-friendly', 'izgubljeni ljubimci',
-    'Zagreb', 'Split', 'Rijeka', 'Osijek', 'Pula', 'Zadar',
-  ],
   authors: [{ name: 'PetPark' }],
   creator: 'PetPark',
   publisher: 'PetPark',
   formatDetection: { telephone: true, email: true },
   alternates: {
-    canonical: 'https://petpark.hr',
     languages: {
       'hr-HR': 'https://petpark.hr',
       'en-US': 'https://petpark.hr/en',
@@ -78,9 +71,9 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    google: 'google-site-verification-code',
-  },
+  verification: process.env.NEXT_PUBLIC_GSC_TOKEN ? {
+    google: process.env.NEXT_PUBLIC_GSC_TOKEN,
+  } : undefined,
   icons: {
     icon: [
       { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
