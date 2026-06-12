@@ -7,7 +7,7 @@ import { BreederOnboardingWizard } from '../components/breeder-onboarding-wizard
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Dobrodošli — Uzgajivač | PetPark',
+  title: 'Dobrodošli — Uzgajivač',
   description: 'Postani PetPark uzgajivač i poveži se s budućim vlasnicima.',
 };
 

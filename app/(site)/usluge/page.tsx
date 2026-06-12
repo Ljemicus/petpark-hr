@@ -3,7 +3,7 @@ import { ServicesMarketplacePage } from '@/components/shared/petpark/services-ma
 import { getPublicServiceListings } from '@/lib/db/service-listings';
 
 export const metadata: Metadata = {
-  title: 'Usluge za ljubimce | PetPark',
+  title: 'Usluge za ljubimce',
   description: 'Pronađi provjerene PetPark usluge za čuvanje, šetnju, grooming, trening, izgubljene ljubimce i udomljavanje.',
 };
 

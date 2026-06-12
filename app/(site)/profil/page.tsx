@@ -38,7 +38,7 @@ import { getAuthUser } from '@/lib/auth';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'Profil | PetPark',
+  title: 'Profil',
   description: 'PetPark profil, ljubimci, usluge, Pet Passport i pregled računa.',
 };
 

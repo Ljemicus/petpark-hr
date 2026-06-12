@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: 'Overview of veterinary stations and clinics in Croatia with addresses and contact details.',
   keywords: ['veterinarian croatia', 'veterinary clinic croatia', 'veterinary station croatia', 'petpark veterinarians'],
   openGraph: {
-    title: 'Veterinary stations and clinics in Croatia | PetPark',
+    title: 'Veterinary stations and clinics in Croatia',
     description: 'Overview of veterinary stations and clinics in Croatia with addresses and contact details.',
     type: 'website',
     ...buildLocaleOpenGraph('/veterinari/en'),

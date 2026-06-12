@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 
 export const metadata: Metadata = {
-  title: { absolute: 'O nama — Naša priča | PetPark' },
+  title: { absolute: 'O nama — Naša priča' },
   description: 'PetPark je nastao iz jednostavnog problema — vlasnici ljubimaca u Hrvatskoj nisu imali sve na jednom mjestu. Čuvanje, grooming, školovanje, veterinari, udomljavanje — sad imaju.',
   alternates: { canonical: 'https://petpark.hr/o-nama' },
 };

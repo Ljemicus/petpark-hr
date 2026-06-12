@@ -5,7 +5,7 @@ import { Crown, ArrowLeft, Star, HeartHandshake, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
-  title: 'Najbolji ljubimac — Zajednica | PetPark',
+  title: 'Najbolji ljubimac — Zajednica',
   description: 'Prostor za favorite zajednice i objave koje vrijedi istaknuti.'
 };
 

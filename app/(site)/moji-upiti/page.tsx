@@ -5,7 +5,7 @@ import { getAuthUser } from '@/lib/auth';
 import { getOwnerBookingRequestSummaries } from '@/lib/petpark/booking-requests/read-owner';
 
 export const metadata: Metadata = {
-  title: 'Moji upiti | PetPark',
+  title: 'Moji upiti',
   description: 'Pregled upita koje si poslao pružateljima PetPark usluga.',
 };
 

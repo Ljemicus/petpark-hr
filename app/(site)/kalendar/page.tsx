@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { ProviderCalendarPage } from '@/components/shared/petpark/provider-calendar-page';
 
 export const metadata: Metadata = {
-  title: 'Kalendar i rezervacije | PetPark',
+  title: 'Kalendar i rezervacije',
   description: 'Pregled termina, dostupnosti i nadolazećih PetPark rezervacija za pružatelje usluga.',
 };
 

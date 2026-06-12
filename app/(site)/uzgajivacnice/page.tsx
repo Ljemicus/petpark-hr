@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Pronađite profile uzgajivača pasa i mačaka u Hrvatskoj. Pregledajte dostupne informacije, legla i ocjene vlasnika.',
   keywords: ['uzgajivači pasa hrvatska', 'uzgajivač pasa', 'štenci na prodaju', 'uzgajivači mačaka', 'FCI uzgajivač', 'legla štenaca'],
   openGraph: {
-    title: 'Uzgajivači — profili uzgajivača | PetPark',
+    title: 'Uzgajivači — profili uzgajivača',
     description: 'Pronađite profile uzgajivača pasa i mačaka u Hrvatskoj.',
     type: 'website',
     ...buildLocaleOpenGraph('/uzgajivacnice'),

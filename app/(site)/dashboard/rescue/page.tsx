@@ -31,7 +31,7 @@ import { getAppealPublishReadiness, getRescueOrganizationCompletion, getRescueVe
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Rescue dashboard | PetPark',
+  title: 'Rescue dashboard',
 };
 
 async function requireRescueOwner() {

@@ -7,7 +7,7 @@ import { OwnerOnboardingWizard } from '../components/owner-onboarding-wizard';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Dobrodošli — Vlasnik | PetPark',
+  title: 'Dobrodošli — Vlasnik',
   description: 'Dobrodošli u PetPark! Upoznajte platformu i dodajte svog prvog ljubimca.',
 };
 

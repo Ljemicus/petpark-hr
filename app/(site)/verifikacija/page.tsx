@@ -10,10 +10,10 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { buildLocaleAlternates, buildLocaleOpenGraph } from '@/lib/seo/locale-metadata';
 
 export const metadata: Metadata = {
-  title: { absolute: 'Verifikacija sittera | PetPark' },
+  title: { absolute: 'Verifikacija sittera' },
   description: 'Saznajte više o statusima profila na PetParku — osnovni profil, provjera i dodatne oznake koje pomažu vlasnicima pri odabiru.',
   openGraph: {
-    title: 'Verifikacija sittera | PetPark',
+    title: 'Verifikacija sittera',
     description: 'Saznajte više o statusima profila na PetParku — osnovni profil, provjera i dodatne oznake.',
     type: 'website',
     ...buildLocaleOpenGraph('/verifikacija'),

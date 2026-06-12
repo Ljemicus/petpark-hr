@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { PetPassportPdfPage } from '@/components/shared/petpark/pet-passport-pdf-page';
 
 export const metadata: Metadata = {
-  title: 'Pet Passport PDF | PetPark',
+  title: 'Pet Passport PDF',
   description: 'Pregled PDF/print verzije Pet Passport kartona ljubimca za sigurno dijeljenje i ispis.',
 };
 

@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: TrainerPageProps): Promise<Me
   const trainer = await createTrainerShell(id);
   const publicTrainer = sanitizeTrainerProfile(trainer)!;
   return {
-    title: { absolute: `${publicTrainer.name} | PetPark` },
+    title: { absolute: `${publicTrainer.name}` },
     description: publicTrainer.safeBio || 'Profil trenera na PetParku.',
     alternates: { canonical: `/trener/${id}` },
     robots: robotsMeta(shouldIndexTrainer(trainer)),

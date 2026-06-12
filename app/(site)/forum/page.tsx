@@ -30,8 +30,8 @@ import {
 
 export function buildForumMetadata(lang: string = 'hr'): Metadata {
   const titles: Record<string, string> = {
-    hr: 'Forum za vlasnike ljubimaca | PetPark',
-    en: 'Pet Owner Forum | PetPark',
+    hr: 'Forum za vlasnike ljubimaca',
+    en: 'Pet Owner Forum',
   };
 
   const descriptions: Record<string, string> = {

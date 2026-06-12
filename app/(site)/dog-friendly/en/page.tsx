@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: 'Find dog-friendly cafés, restaurants, beaches, parks and hotels across Croatia. A practical guide for dog owners visiting Zagreb, Split, Rijeka and more.',
   keywords: ['dog friendly croatia', 'pet friendly croatia', 'dog friendly cafes croatia', 'dog friendly beaches croatia'],
   openGraph: {
-    title: 'Dog-friendly places in Croatia | PetPark',
+    title: 'Dog-friendly places in Croatia',
     description: 'Find dog-friendly cafés, restaurants, beaches, parks and hotels across Croatia.',
     siteName: 'PetPark',
     type: 'website',

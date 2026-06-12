@@ -4,7 +4,7 @@ import { getOwnedServiceListingSummaries } from '@/lib/petpark/service-listings/
 import { getOwnedBookingRequestSummaries } from '@/lib/petpark/booking-requests/db';
 
 export const metadata: Metadata = {
-  title: 'Moje usluge | PetPark',
+  title: 'Moje usluge',
   description: 'Provider dashboard za upravljanje PetPark uslugama, rezervacijama, recenzijama i prihodima.',
 };
 

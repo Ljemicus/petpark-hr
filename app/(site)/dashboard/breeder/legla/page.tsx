@@ -10,7 +10,7 @@ import { ArrowLeft, Plus, Dog } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Moja legla — Uzgajivač | PetPark',
+  title: 'Moja legla — Uzgajivač',
   description: 'Upravljajte svojim leglima i dostupnošću štenca.',
 };
 

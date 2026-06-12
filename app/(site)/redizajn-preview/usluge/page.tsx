@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { ServiceHubOverview } from '@/components/shared/petpark/service-hub-overview';
 
 export const metadata: Metadata = {
-  title: { absolute: 'PetPark usluge redizajn preview | PetPark' },
+  title: { absolute: 'PetPark usluge redizajn preview' },
   description: 'Interni preview redizajna PetPark pregleda usluga.',
   robots: {
     index: false,

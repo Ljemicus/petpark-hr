@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   description: 'Pronađite grooming salone za pse i mačke u Zagrebu. Šišanje, kupanje, trimanje, njega zubi i kandži. Usporedite usluge, cijene i recenzije na PetParku.',
   keywords: ['grooming zagreb', 'salon za pse zagreb', 'šišanje pasa zagreb', 'grooming salon zagreb', 'njega pasa zagreb', 'kupanje pasa zagreb', 'trimanje pasa zagreb'],
   openGraph: {
-    title: 'Grooming saloni u Zagrebu — pronađite salon za ljubimca | PetPark',
+    title: 'Grooming saloni u Zagrebu — pronađite salon za ljubimca',
     description: 'Pronađite grooming salone u Zagrebu. Usporedite cijene, usluge i recenzije.',
     siteName: 'PetPark',
     type: 'website',

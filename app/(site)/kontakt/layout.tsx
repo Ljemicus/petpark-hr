@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: 'Imate pitanje, prijedlog ili trebate pomoć? Javite nam se putem kontakt obrasca ili na info@petpark.hr.',
   keywords: ['kontakt', 'podrška', 'PetPark kontakt', 'pomoć'],
   openGraph: {
-    title: 'Kontakt — javite nam se | PetPark',
+    title: 'Kontakt — javite nam se',
     description: 'Imate pitanje ili trebate pomoć? Javite nam se putem kontakt obrasca.',
     url: 'https://petpark.hr/kontakt',
     type: 'website',

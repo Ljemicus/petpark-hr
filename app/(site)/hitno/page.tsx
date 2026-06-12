@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Hitna veterinarska pomoć u Hrvatskoj. Verificirani brojevi i kontakti hitnih veterinara te savjeti za prvu pomoć ljubimcima u hitnim situacijama.',
   keywords: ['hitna veterinarska pomoć hrvatska', 'hitni veterinar zagreb', 'hitni veterinar split', 'prva pomoć za pse', 'prva pomoć za mačke', 'trovanje psa', 'hitna veterinarska služba'],
   openGraph: {
-    title: 'Hitna veterinarska pomoć — brojevi i savjeti | PetPark',
+    title: 'Hitna veterinarska pomoć — brojevi i savjeti',
     description: 'Hitna veterinarska pomoć u Hrvatskoj. Verificirani brojevi i savjeti za prvu pomoć ljubimcima.',
     url: 'https://petpark.hr/hitno',
     type: 'website',

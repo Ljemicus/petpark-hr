@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Find professional pet groomers for haircuts, bathing, trimming and nail care for your pet in Croatia.',
   keywords: ['pet grooming croatia', 'dog grooming', 'cat grooming', 'pet salon', 'dog haircut', 'pet bathing'],
   openGraph: {
-    title: 'Pet Grooming — Professional Grooming Salons | PetPark',
+    title: 'Pet Grooming — Professional Grooming Salons',
     description: 'Find professional groomers for haircuts, bathing, trimming and nail care for your pet in Croatia.',
     type: 'website',
     ...buildLocaleOpenGraph('/njega/en'),

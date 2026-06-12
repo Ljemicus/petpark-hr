@@ -34,7 +34,7 @@ import { PetParkLogo } from '@/components/shared/brand';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: { absolute: 'Zajednica ljubitelja ljubimaca | PetPark' },
+  title: { absolute: 'Zajednica ljubitelja ljubimaca' },
   description: 'PetPark zajednica okuplja vlasnike, sittere, groomere, trenere i sve ljubitelje ljubimaca na jednom mjestu.',
   alternates: {
     canonical: 'https://petpark.hr/zajednica',

@@ -57,7 +57,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     title: `${topic.title} — Forum`,
     description: `Diskusija: ${topic.title}`,
     openGraph: {
-      title: `${topic.title} — Forum | PetPark`,
+      title: `${topic.title} — Forum`,
       description: `Diskusija: ${topic.title}`,
       url: `${BASE_URL}/forum/${id}`,
       type: 'article',
@@ -65,7 +65,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${topic.title} — Forum | PetPark`,
+      title: `${topic.title} — Forum`,
       description: `Diskusija: ${topic.title}`,
       images: [topic.cover_image_url || '/opengraph-image'],
     },

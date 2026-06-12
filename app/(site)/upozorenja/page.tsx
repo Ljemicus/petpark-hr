@@ -16,7 +16,7 @@ import { getNotificationsForProfile, type BookingRequestNotificationSummary } fr
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'Upozorenja | PetPark',
+  title: 'Upozorenja',
   description: 'PetPark centar za poruke, rezervacije, izgubljene ljubimce i podsjetnike.',
 };
 

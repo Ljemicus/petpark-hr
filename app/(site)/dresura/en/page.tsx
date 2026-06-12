@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Find dog trainers in Croatia for obedience, agility, behaviour work, and puppy training.',
   keywords: ['dog training croatia', 'dog trainer croatia', 'puppy training croatia', 'agility trainer croatia', 'behaviour training dog'],
   openGraph: {
-    title: 'Dog training — trainers and programmes | PetPark',
+    title: 'Dog training — trainers and programmes',
     description: 'Find dog trainers in Croatia for obedience, agility, and behaviour work.',
     type: 'website',
     ...buildLocaleOpenGraph('/dresura/en'),

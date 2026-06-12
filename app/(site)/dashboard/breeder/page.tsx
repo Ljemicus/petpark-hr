@@ -22,7 +22,7 @@ import {
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Nadzorna ploča — Uzgajivač | PetPark',
+  title: 'Nadzorna ploča — Uzgajivač',
   description: 'Upravljajte svojom uzgajivačnicom, leglima i upitima.',
 };
 

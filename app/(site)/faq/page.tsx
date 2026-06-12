@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   description: 'Pronađite odgovore na najčešća pitanja o PetPark platformi — rezervacije, plaćanje, sigurnost, čuvanje ljubimaca i više.',
   keywords: ['FAQ', 'pitanja', 'pomoć', 'PetPark pitanja', 'kako funkcionira PetPark'],
   openGraph: {
-    title: 'Često postavljena pitanja | PetPark',
+    title: 'Često postavljena pitanja',
     description: 'Odgovori na najčešća pitanja o PetPark platformi — rezervacije, plaćanje, sigurnost i više.',
     type: 'website',
     ...buildLocaleOpenGraph('/faq'),

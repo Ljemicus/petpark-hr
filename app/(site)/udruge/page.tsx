@@ -7,10 +7,10 @@ import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://petpark.hr';
 
 export const metadata: Metadata = {
-  title: { absolute: 'Rescue udruge i organizacije | PetPark' },
+  title: { absolute: 'Rescue udruge i organizacije' },
   description: 'Pregled aktivnih rescue organizacija na PetParku spojen na stvarne podatke iz baze. Pretražuj i filtriraj po gradu i pronađi udrugu za donaciju ili udomljavanje.',
   openGraph: {
-    title: 'Rescue udruge i organizacije | PetPark',
+    title: 'Rescue udruge i organizacije',
     description: 'Pregled aktivnih rescue organizacija na PetParku. Pretražuj i filtriraj po gradu.',
     type: 'website',
     url: '/udruge',
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Rescue udruge i organizacije | PetPark',
+    title: 'Rescue udruge i organizacije',
     description: 'Pregled aktivnih rescue organizacija na PetParku. Pretražuj i filtriraj po gradu.',
   },
   alternates: {

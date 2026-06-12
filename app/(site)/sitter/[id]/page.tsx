@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: SitterPageProps): Promise<Met
   const profile = await createSitterShell(id);
   const publicProfile = sanitizeSitterProfile(profile, id)!;
   return {
-    title: { absolute: `${publicProfile.name} | PetPark` },
+    title: { absolute: `${publicProfile.name}` },
     description: publicProfile.safeBio || 'Profil sittera na PetParku.',
     alternates: { canonical: `/sitter/${id}` },
     robots: robotsMeta(shouldIndexSitter(profile)),

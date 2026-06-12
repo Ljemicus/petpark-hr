@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
-  title: { absolute: 'About Us — Our Story | PetPark' },
+  title: { absolute: 'About Us — Our Story' },
   description: 'PetPark was born from a simple problem — pet owners in Croatia didn\'t have everything in one place. Pet sitting, grooming, training, vets, adoption — now they do.',
   alternates: { canonical: 'https://petpark.hr/o-nama/en' },
 };

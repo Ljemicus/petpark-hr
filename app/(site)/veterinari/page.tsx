@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description: 'Pregled veterinarskih stanica i ambulanti u Hrvatskoj s adresama i kontakt podacima.',
   keywords: ['veterinar', 'veterinarska stanica', 'veterinarska ambulanta', 'veterinari hrvatska', 'petpark veterinari'],
   openGraph: {
-    title: 'Veterinarske stanice i ambulante u Hrvatskoj | PetPark',
+    title: 'Veterinarske stanice i ambulante u Hrvatskoj',
     description: 'Pregled veterinarskih stanica i ambulanti u Hrvatskoj s adresama i kontakt podacima.',
     type: 'website',
     ...buildLocaleOpenGraph('/veterinari'),

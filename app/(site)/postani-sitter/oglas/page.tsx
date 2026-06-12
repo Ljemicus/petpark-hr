@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: 'Kreiraj profil za čuvanje pasa i mačaka u svom gradu. Ti biraš usluge, termine i tempo koji ti odgovara.',
   keywords: ['pet sitter posao', 'čuvanje pasa posao', 'rad sa psima', 'postani sitter hrvatska'],
   openGraph: {
-    title: 'Postani sitter — fleksibilan rad s ljubimcima | PetPark',
+    title: 'Postani sitter — fleksibilan rad s ljubimcima',
     description: 'Kreiraj profil za čuvanje pasa i mačaka u svom gradu. Ti biraš termine, usluge i tempo.',
     url: 'https://petpark.hr/postani-sitter/oglas',
     type: 'website',

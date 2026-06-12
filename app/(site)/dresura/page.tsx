@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Pronađite trenere pasa za školovanje, agility, korekciju ponašanja i rad sa štencima u Hrvatskoj.',
   keywords: ['školovanje pasa', 'trener pasa', 'dresura pasa', 'agility', 'korekcija ponašanja', 'obuka štenaca'],
   openGraph: {
-    title: 'Školovanje pasa — treneri i programi | PetPark',
+    title: 'Školovanje pasa — treneri i programi',
     description: 'Pronađite trenere pasa za školovanje, agility i korekciju ponašanja.',
     type: 'website',
     ...buildLocaleOpenGraph('/dresura'),

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Offline | PetPark',
+  title: 'Offline',
   description: 'Izgubili ste internet vezu. Neke stranice su još uvijek dostupne offline.',
 };
 

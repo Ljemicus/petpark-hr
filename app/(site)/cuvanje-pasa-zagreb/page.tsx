@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description: 'Pronađite pet sittere u Zagrebu i pošaljite upit za čuvanje. Čuvanje pasa u vašem kvartu — Maksimir, Trešnjevka, Novi Zagreb, Dubrava i drugi. Pošaljite upit online.',
   keywords: ['čuvanje pasa zagreb', 'pet sitter zagreb', 'čuvanje ljubimaca zagreb', 'dog sitter zagreb', 'šetanje pasa zagreb', 'dnevna njega pasa zagreb'],
   openGraph: {
-    title: 'Čuvanje pasa u Zagrebu — pronađite pouzdanog sittera | PetPark',
+    title: 'Čuvanje pasa u Zagrebu — pronađite pouzdanog sittera',
     description: 'Pronađite pet sittere u Zagrebu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     siteName: 'PetPark',
     type: 'website',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Čuvanje pasa u Zagrebu — pronađite pouzdanog sittera | PetPark',
+    title: 'Čuvanje pasa u Zagrebu — pronađite pouzdanog sittera',
     description: 'Pronađite pet sittere u Zagrebu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     images: [`${BASE_URL}/opengraph-image`],
   },

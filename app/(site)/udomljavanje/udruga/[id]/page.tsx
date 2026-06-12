@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   return {
-    title: `${publisher.display_name} — Udomljavanje | PetPark`,
+    title: `${publisher.display_name} — Udomljavanje`,
     description: publisher.bio || `Pogledajte životinje za udomljavanje o kojima brine ${publisher.display_name}.`,
     alternates: {
       canonical: `${BASE_URL}/udomljavanje/udruga/${publisher.id}`,

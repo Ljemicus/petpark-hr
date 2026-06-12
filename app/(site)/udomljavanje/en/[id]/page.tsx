@@ -19,11 +19,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const indexable = shouldIndexAdoption(listing);
 
   return {
-    title: `${listing.name} — Adoption | PetPark`,
+    title: `${listing.name} — Adoption`,
     description: listing.description.slice(0, 160),
     robots: robotsMeta(indexable),
     openGraph: {
-      title: `${listing.name} is looking for a home | PetPark`,
+      title: `${listing.name} is looking for a home`,
       description: listing.description.slice(0, 200),
       type: 'article',
       ...buildLocaleOpenGraph(`/udomljavanje/en/${id}`),

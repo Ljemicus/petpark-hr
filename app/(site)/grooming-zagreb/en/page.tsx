@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     'hand stripping zagreb',
   ],
   openGraph: {
-    title: 'Pet Grooming in Zagreb — Find a Grooming Salon for Your Pet | PetPark',
+    title: 'Pet Grooming in Zagreb — Find a Grooming Salon for Your Pet',
     description: 'Find grooming salons in Zagreb. Compare services, prices and reviews in one place.',
     url: `${BASE_URL}/grooming-zagreb/en`,
     siteName: 'PetPark',
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pet Grooming in Zagreb — Find a Grooming Salon for Your Pet | PetPark',
+    title: 'Pet Grooming in Zagreb — Find a Grooming Salon for Your Pet',
     description: 'Find grooming salons in Zagreb. Compare services, prices and reviews in one place.',
     images: [`${BASE_URL}/opengraph-image`],
   },

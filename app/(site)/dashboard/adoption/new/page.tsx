@@ -6,7 +6,7 @@ import AdoptionListingForm from '../adoption-listing-form';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata = { title: 'Novi oglas za udomljavanje | PetPark' };
+export const metadata = { title: 'Novi oglas za udomljavanje' };
 
 export default async function NewAdoptionListingPage() {
   noStore();

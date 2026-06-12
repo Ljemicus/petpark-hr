@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description: 'Pronađite pet sittere u Splitu i pošaljite upit za čuvanje. Čuvanje pasa u vašem kvartu — Bačvice, Firule, Marjan, Spinut, Solin i okolica. Pošaljite upit online.',
   keywords: ['čuvanje pasa split', 'pet sitter split', 'čuvanje ljubimaca split', 'dog sitter split', 'šetanje pasa split', 'dnevna njega pasa split'],
   openGraph: {
-    title: 'Čuvanje pasa u Splitu — pronađite pouzdanog sittera | PetPark',
+    title: 'Čuvanje pasa u Splitu — pronađite pouzdanog sittera',
     description: 'Pronađite pet sittere u Splitu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     siteName: 'PetPark',
     type: 'website',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Čuvanje pasa u Splitu — pronađite pouzdanog sittera | PetPark',
+    title: 'Čuvanje pasa u Splitu — pronađite pouzdanog sittera',
     description: 'Pronađite pet sittere u Splitu. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     images: [`${BASE_URL}/opengraph-image`],
   },

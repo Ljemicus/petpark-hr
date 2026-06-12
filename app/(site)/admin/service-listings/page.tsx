@@ -5,7 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { Badge, Card } from '@/components/shared/petpark/design-foundation';
 
 export const metadata: Metadata = {
-  title: 'Service Listings moderacija | PetPark Admin',
+  title: 'Service Listings moderacija Admin',
   robots: { index: false, follow: false },
 };
 

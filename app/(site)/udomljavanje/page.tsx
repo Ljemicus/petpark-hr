@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: 'Pregledajte pse, mačke i druge životinje za udomljavanje diljem Hrvatske. Prvo upoznajte ljubimca, a zatim udrugu koja o njemu brine.',
   keywords: ['udomljavanje pasa hrvatska', 'udomljavanje mačaka', 'udomljavanje životinja', 'azil za pse', 'udomljavanje zagreb', 'udomljavanje split'],
   openGraph: {
-    title: 'Udomljavanje — psi i mačke traže dom | PetPark',
+    title: 'Udomljavanje — psi i mačke traže dom',
     description: 'Dajte dom onima koji to najviše zaslužuju. Pregledajte pse, mačke i druge životinje za udomljavanje diljem Hrvatske.',
     type: 'website',
     ...buildLocaleOpenGraph('/udomljavanje'),

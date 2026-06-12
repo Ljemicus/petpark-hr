@@ -13,7 +13,7 @@ import { ArrowLeft, Save } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Novo leglo — Uzgajivač | PetPark',
+  title: 'Novo leglo — Uzgajivač',
   description: 'Dodajte novo leglo štenca.',
 };
 

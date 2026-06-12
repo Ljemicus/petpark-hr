@@ -14,12 +14,12 @@ export async function generateMetadata({ params }: VetProfilePageProps): Promise
   
   if (!vet) {
     return {
-      title: 'Veterinar nije pronađen | PetPark',
+      title: 'Veterinar nije pronađen',
     };
   }
 
   return {
-    title: `${vet.name} | Recenzije i kontakt | PetPark`,
+    title: `${vet.name} | Recenzije i kontakt`,
     description: `Pogledajte recenzije za ${vet.name} u ${vet.city}. Adresa: ${vet.address}. Telefon: ${vet.phone || 'nema'}.`,
   };
 }

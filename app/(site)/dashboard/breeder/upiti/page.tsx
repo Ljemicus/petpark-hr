@@ -12,7 +12,7 @@ import { ArrowLeft, MessageCircle, Search, Mail, Phone } from 'lucide-react';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-  title: 'Upiti — Uzgajivač | PetPark',
+  title: 'Upiti — Uzgajivač',
   description: 'Pregledajte i upravljajte upitima od potencijalnih kupaca.',
 };
 

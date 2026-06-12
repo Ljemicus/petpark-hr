@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: ArticlePageProps): Promise<Me
   const article = await getCachedArticle(slug);
   if (!article) notFound();
   return {
-    title: `${article.title} | PetPark`,
+    title: `${article.title}`,
     description: article.excerpt,
     openGraph: {
       title: article.title,

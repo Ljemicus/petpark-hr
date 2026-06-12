@@ -14,7 +14,7 @@ import {
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
-  title: 'PetPark mapa | PetPark',
+  title: 'PetPark mapa',
   description: 'Pronađi usluge, izgubljene ljubimce i korisne lokacije u blizini kroz PetPark mapu.',
 };
 

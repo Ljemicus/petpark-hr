@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { AuthPage } from '@/components/shared/petpark/auth-page';
 
 export const metadata: Metadata = {
-  title: 'Prijava | PetPark',
+  title: 'Prijava',
   description: 'Prijavite se na svoj PetPark račun',
   alternates: { canonical: 'https://petpark.hr/prijava' },
   robots: { index: false, follow: false },

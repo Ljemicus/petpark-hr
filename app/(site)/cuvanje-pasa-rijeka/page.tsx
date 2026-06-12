@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description: 'Pronađite pet sittere u Rijeci i pošaljite upit za čuvanje. Čuvanje pasa u vašem kvartu — Trsat, Kantrida, Sušak, Kozala, Turnić i okolica. Pošaljite upit online.',
   keywords: ['čuvanje pasa rijeka', 'pet sitter rijeka', 'čuvanje ljubimaca rijeka', 'dog sitter rijeka', 'šetanje pasa rijeka', 'dnevna njega pasa rijeka'],
   openGraph: {
-    title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera | PetPark',
+    title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera',
     description: 'Pronađite pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     siteName: 'PetPark',
     type: 'website',
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera | PetPark',
+    title: 'Čuvanje pasa u Rijeci — pronađite pouzdanog sittera',
     description: 'Pronađite pet sittere u Rijeci. Čuvanje, šetnje i dnevna njega pasa u vašem kvartu.',
     images: [`${BASE_URL}/opengraph-image`],
   },

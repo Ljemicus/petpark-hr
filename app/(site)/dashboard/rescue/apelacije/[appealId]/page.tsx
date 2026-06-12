@@ -21,7 +21,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { appealId } = await params;
   return {
-    title: appealId === 'novo' ? 'Nova rescue apelacija | PetPark' : 'Uredi rescue apelaciju | PetPark',
+    title: appealId === 'novo' ? 'Nova rescue apelacija' : 'Uredi rescue apelaciju',
   };
 }
 

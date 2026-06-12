@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description: 'Find dog and cat breeder profiles in Croatia. Browse available information, litters, and owner ratings.',
   keywords: ['dog breeders croatia', 'cat breeders croatia', 'puppies for sale croatia', 'fci breeder croatia', 'kittens for sale croatia'],
   openGraph: {
-    title: 'Breeders — breeder profiles | PetPark',
+    title: 'Breeders — breeder profiles',
     description: 'Find dog and cat breeder profiles in Croatia.',
     type: 'website',
     ...buildLocaleOpenGraph('/uzgajivacnice/en'),

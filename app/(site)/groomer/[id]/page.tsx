@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: GroomerPageProps): Promise<Me
   const groomer = await createGroomerShell(id);
   const publicGroomer = sanitizeGroomerProfile(groomer)!;
   return {
-    title: { absolute: `${publicGroomer.name} | PetPark` },
+    title: { absolute: `${publicGroomer.name}` },
     description: publicGroomer.safeBio || 'Profil groomera na PetParku.',
     alternates: { canonical: `/groomer/${id}` },
     robots: robotsMeta(shouldIndexGroomer(groomer)),

@@ -6,7 +6,7 @@ import { PageHero } from '@/components/shared/petpark/page-hero';
 import { PetParkBadge } from '@/components/shared/petpark/pp-badge';
 
 export const metadata: Metadata = {
-  title: { absolute: 'PetPark listinzi redizajn preview | PetPark' },
+  title: { absolute: 'PetPark listinzi redizajn preview' },
   description: 'Interni preview redizajna PetPark listing stranica.',
   robots: {
     index: false,
