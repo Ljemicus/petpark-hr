@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import type { Metadata } from 'next';
-import { FileText, Mail, AlertTriangle, Users, ShieldCheck, BookOpen, Ban, CreditCard, Camera, Scale, HeartHandshake } from 'lucide-react';
+import { FileText, Mail, AlertTriangle, Users, ShieldCheck, BookOpen, Ban, CreditCard, Camera, Scale, HeartHandshake, Building2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default function UvjetiPage() {
           <p className="text-white/80 max-w-2xl mx-auto">
             Korištenjem platforme PetPark prihvaćate ove uvjete. Molimo vas da ih pažljivo pročitate.
           </p>
-          <p className="text-sm text-white/60 mt-4">Posljednje ažuriranje: 24. ožujka 2026.</p>
+          <p className="text-sm text-white/60 mt-4">Posljednje ažuriranje: 12. lipnja 2026.</p>
         </div>
       </section>
 
@@ -185,22 +185,20 @@ export default function UvjetiPage() {
             </div>
             <div className="space-y-3 text-muted-foreground leading-relaxed">
               <p>
-                Registracija i osnovno korištenje platforme je besplatno. Plaćanje usluga vrši se sigurno
-                putem Stripe platnog sustava.
+                Registracija i osnovno korištenje platforme su besplatni. PetPark trenutno ne obrađuje online plaćanja
+                i ne naplaćuje usluge u ime pružatelja.
               </p>
               <p>
-                PetPark naplaćuje <strong>proviziju od 10%</strong> na svaku uspješno obavljenu rezervaciju.
-                Provizija se automatski odbija od ukupnog iznosa prije isplate sitteru/pružatelju usluge.
+                Cijenu, način plaćanja i sve povezane uvjete vlasnik ljubimca i pružatelj usluge dogovaraju izravno,
+                prije potvrde termina ili početka suradnje.
               </p>
               <p>
-                <strong>Otkazivanje i povrat:</strong> Pravila otkazivanja ovise o vrsti usluge, dogovorenom terminu
-                i statusu rezervacije. Ako pružatelj usluge otkaže potvrđenu rezervaciju, korisnik se može javiti
-                podršci radi pomoći oko sljedećeg koraka i povrata prema važećim pravilima.
+                PetPark ne naplaćuje proviziju dok se ne uvede online plaćanje na platformi. Ako se model naplate
+                promijeni, korisnici će biti pravovremeno obaviješteni izmjenom ovih uvjeta.
               </p>
               <p>
-                <strong>Naknada nakon obavljene usluge:</strong> Nakon što je usluga uspješno obavljena,
-                <strong>ne postoji mogućnost povrata novca</strong>. U slučaju nesuglasica ili pritužbi,
-                molimo vas da kontaktirate korisničku podršku na info@petpark.hr.
+                Otkazivanje dogovora trebalo bi se obaviti što ranije uz jasnu obavijest drugoj strani. Za sporove
+                oko dogovorene cijene, plaćanja ili otkazivanja korisnici se mogu obratiti podršci na info@petpark.hr.
               </p>
             </div>
           </section>
@@ -308,8 +306,36 @@ export default function UvjetiPage() {
             <p className="text-muted-foreground leading-relaxed">
               Na ove uvjete korištenja primjenjuje se pravo Republike Hrvatske.
               Za sve sporove koji proizlaze iz korištenja platforme nadležan je sud u Zagrebu.
+              {/* TODO(human): potvrditi Zagreb vs. Rijeka prema sjedištu */}
               Prije pokretanja sudskog postupka, obvezujemo se pokušati riješiti spor mirnim putem.
             </p>
+          </section>
+
+
+          {/* 12a. Izvansudsko rješavanje sporova */}
+          <section>
+            <h2 className="text-2xl font-bold text-foreground mb-4">12a. Izvansudsko rješavanje potrošačkih sporova</h2>
+            <p className="text-muted-foreground leading-relaxed">
+              Potrošači imaju pravo podnijeti pisani prigovor na rad platforme putem e-maila na{' '}
+              <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline">info@petpark.hr</a>.
+              Na prigovor ćemo odgovoriti u zakonskom roku. Sporove je moguće pokušati riješiti i izvansudskim putem,
+              uključujući nadležna tijela za alternativno rješavanje potrošačkih sporova. Informacije o EU ODR platformi
+              dostupne su na{' '}
+              <a href="https://ec.europa.eu/consumers/odr" className="text-orange-600 hover:underline" target="_blank" rel="noopener noreferrer">ec.europa.eu/consumers/odr</a>.
+            </p>
+          </section>
+
+          {/* Impressum */}
+          <section className="rounded-2xl border border-orange-100 bg-orange-50/60 p-6">
+            <div className="flex items-start gap-3">
+              <Building2 className="mt-1 h-5 w-5 text-orange-600" />
+              <div className="text-sm leading-7 text-muted-foreground">
+                <p className="font-semibold text-foreground">Impressum</p>
+                <p>PetPark d.o.o. · {'{{PUNA_ADRESA}}'}, Rijeka</p>
+                <p>OIB: {'{{OIB}}'} · MBS: {'{{MBS}}'} · Trgovački sud u Rijeci</p>
+                <p>Temeljni kapital: {'{{KAPITAL}}'} EUR, uplaćen u cijelosti</p>
+              </div>
+            </div>
           </section>
 
           {/* Kontakt */}
