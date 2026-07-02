@@ -75,6 +75,15 @@ function applyBaseSecurityHeaders(res: NextResponse) {
   );
 }
 
+function decorateProxyResponse(res: NextResponse, requestId: string, locale: string, cspValue: string, nonce?: string) {
+  res.headers.set(REQUEST_ID_HEADER, requestId);
+  res.headers.set(LOCALE_HEADER, locale);
+  applyBaseSecurityHeaders(res);
+  res.headers.set('Content-Security-Policy', cspValue);
+  if (nonce) res.headers.set(CSP_NONCE_HEADER, nonce);
+  return res;
+}
+
 export async function proxy(request: NextRequest) {
   // Assign a request ID for end-to-end correlation across logs.
   const requestId = request.headers.get(REQUEST_ID_HEADER) || generateRequestId();
@@ -109,11 +118,7 @@ export async function proxy(request: NextRequest) {
   // nonce that its frozen HTML cannot carry.
   if (pathname === '/') {
     const response = NextResponse.next({ request: { headers: request.headers } });
-    response.headers.set(REQUEST_ID_HEADER, requestId);
-    response.headers.set(LOCALE_HEADER, locale);
-    applyBaseSecurityHeaders(response);
-    response.headers.set('Content-Security-Policy', buildCSPHeader({ staticBuild: true }));
-    return response;
+    return decorateProxyResponse(response, requestId, locale, buildCSPHeader({ staticBuild: true }));
   }
 
   // For all dynamic responses below we use this single nonce-backed value.
@@ -143,11 +148,7 @@ export async function proxy(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = '/hard-404';
       const admin404 = NextResponse.rewrite(url, { status: 404 });
-      admin404.headers.set(REQUEST_ID_HEADER, requestId);
-      admin404.headers.set(LOCALE_HEADER, locale);
-      admin404.headers.set('Content-Security-Policy', cspValue);
-      admin404.headers.set(CSP_NONCE_HEADER, nonce);
-      return admin404;
+      return decorateProxyResponse(admin404, requestId, locale, cspValue, nonce);
     }
   }
 
@@ -155,21 +156,13 @@ export async function proxy(request: NextRequest) {
   if (!isCsrfExcludedRoute(request.nextUrl.pathname)) {
     const csrfResponse = await csrfMiddleware(request);
     if (csrfResponse) {
-      csrfResponse.headers.set(REQUEST_ID_HEADER, requestId);
-      csrfResponse.headers.set(LOCALE_HEADER, locale);
-      csrfResponse.headers.set('Content-Security-Policy', cspValue);
-      csrfResponse.headers.set(CSP_NONCE_HEADER, nonce);
-      return csrfResponse;
+      return decorateProxyResponse(csrfResponse, requestId, locale, cspValue, nonce);
     }
   }
 
   const forced404 = maybeHard404DynamicProfile(request);
   if (forced404) {
-    forced404.headers.set(REQUEST_ID_HEADER, requestId);
-    forced404.headers.set(LOCALE_HEADER, locale);
-    forced404.headers.set('Content-Security-Policy', cspValue);
-    forced404.headers.set(CSP_NONCE_HEADER, nonce);
-    return forced404;
+    return decorateProxyResponse(forced404, requestId, locale, cspValue, nonce);
   }
 
   const response = await updateSession(request);
@@ -197,7 +190,7 @@ export async function proxy(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = '/prijava';
       url.searchParams.set('redirect', '/moji-upiti');
-      return NextResponse.redirect(url);
+      return decorateProxyResponse(NextResponse.redirect(url), requestId, locale, cspValue, nonce);
     }
 
     if (user) {
@@ -216,13 +209,13 @@ export async function proxy(request: NextRequest) {
           if (!publisher) {
             const url = request.nextUrl.clone();
             url.pathname = '/onboarding/publisher-type';
-            return NextResponse.redirect(url);
+            return decorateProxyResponse(NextResponse.redirect(url), requestId, locale, cspValue, nonce);
           }
 
           if (publisher.type !== 'udomljavanje') {
             const url = request.nextUrl.clone();
             url.pathname = '/dashboard/profile';
-            return NextResponse.redirect(url);
+            return decorateProxyResponse(NextResponse.redirect(url), requestId, locale, cspValue, nonce);
           }
         }
 
@@ -236,7 +229,7 @@ export async function proxy(request: NextRequest) {
           if (!groomer) {
             const url = request.nextUrl.clone();
             url.pathname = '/onboarding/publisher-type';
-            return NextResponse.redirect(url);
+            return decorateProxyResponse(NextResponse.redirect(url), requestId, locale, cspValue, nonce);
           }
         }
 
@@ -250,23 +243,15 @@ export async function proxy(request: NextRequest) {
           if (!trainer) {
             const url = request.nextUrl.clone();
             url.pathname = '/onboarding/provider';
-            return NextResponse.redirect(url);
+            return decorateProxyResponse(NextResponse.redirect(url), requestId, locale, cspValue, nonce);
           }
         }
       }
     }
   }
 
-  response.headers.set(REQUEST_ID_HEADER, requestId);
-  response.headers.set(LOCALE_HEADER, locale);
-
-  applyBaseSecurityHeaders(response);
-
-  // Add CSP header with the SAME nonce that was placed on the request headers.
-  response.headers.set('Content-Security-Policy', cspValue);
-  response.headers.set(CSP_NONCE_HEADER, nonce);
-
-  return response;
+  // Add security, locale, request-id, and CSP header with the SAME nonce that was placed on the request headers.
+  return decorateProxyResponse(response, requestId, locale, cspValue, nonce);
 }
 
 export const config = {
