@@ -34,7 +34,6 @@ function isSupabaseReady(): boolean {
 
 /**
  * Upload avatar u Supabase Storage bucket 'avatars'.
- * Fallback na mock kad nema Supabase.
  */
 export async function uploadAvatar(userId: string, file: File): Promise<UploadResult> {
   return uploadViaAPI(file, 'avatars', userId);
@@ -42,7 +41,6 @@ export async function uploadAvatar(userId: string, file: File): Promise<UploadRe
 
 /**
  * Upload fotografije ljubimca u Supabase Storage bucket 'pet-photos'.
- * Fallback na mock kad nema Supabase.
  */
 export async function uploadPetPhoto(petId: string, file: File): Promise<UploadResult> {
   return uploadViaAPI(file, 'pet-photos', petId);
@@ -80,30 +78,6 @@ export async function uploadMessageAttachment(userId: string, file: File): Promi
  */
 export async function uploadSightingPhoto(file: File): Promise<UploadResult> {
   return uploadViaAPI(file, 'lost-pet-images', 'sightings');
-}
-
-/**
- * Mock upload — simulira Supabase Storage upload.
- * Generira fake URL i čeka 1-2 sekunde za realističnost.
- */
-export async function mockUpload(
-  file: File,
-  bucket: string = 'uploads'
-): Promise<UploadResult> {
-  await new Promise((resolve) =>
-    setTimeout(resolve, 1000 + Math.random() * 1000)
-  );
-
-  const ext = file.name.split('.').pop() || 'jpg';
-  const id = Math.random().toString(36).substring(2, 10);
-  const fakePath = `${bucket}/${id}.${ext}`;
-  const fakeUrl = `https://petpark-storage.supabase.co/storage/v1/object/public/${fakePath}`;
-
-  return {
-    url: fakeUrl,
-    fileName: file.name,
-    size: file.size,
-  };
 }
 
 /**
