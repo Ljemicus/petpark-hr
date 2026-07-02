@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { apiError } from '@/lib/api-errors';
-import { sendPushToMultiple, type NotificationPayload } from '@/lib/push-notifications';
+import { dispatchPushToMultiple } from '@/lib/notifications/dispatch';
+import type { NotificationPayload } from '@/lib/push-notifications';
 import { appLogger } from '@/lib/logger';
 import { canSendNotification } from '@/lib/db/notifications';
 import { pushSendSchema } from '@/lib/validation';
@@ -66,16 +67,17 @@ export async function POST(request: NextRequest) {
     }
 
     // Send notifications
-    const results = await sendPushToMultiple(
-      filteredSubscriptions.map(sub => ({
+    const dispatchResult = await dispatchPushToMultiple({
+      subscriptions: filteredSubscriptions.map(sub => ({
         endpoint: sub.endpoint,
         keys: {
           p256dh: sub.p256dh,
           auth: sub.auth,
         },
       })),
-      payload
-    );
+      payload,
+    });
+    const results = dispatchResult.result ?? { success: [], expired: [], failed: [] };
 
     // Clean up expired subscriptions
     if (results.expired.length > 0) {

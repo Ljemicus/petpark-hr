@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { sendSMS, smsTemplates } from '@/lib/sms';
+import { dispatchSms } from '@/lib/notifications/dispatch';
+import { smsTemplates } from '@/lib/sms';
 import { smsSendSchema } from '@/lib/validation';
 import { apiError } from '@/lib/api-errors';
 import { requireAdmin } from '@/lib/admin-guard';
@@ -70,11 +71,16 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // Send SMS
-    const result = await sendSMS({
+    // Send SMS through dispatcher kill-switch.
+    const dispatchResult = await dispatchSms({
       to,
       body: messageBody,
     });
+    const result = dispatchResult.result;
+
+    if (dispatchResult.status === 'skipped') {
+      return NextResponse.json({ success: true, skipped: true, reason: dispatchResult.reason });
+    }
     
     // Log to database
     await supabase.from('sms_logs').insert({
@@ -82,16 +88,16 @@ export async function POST(request: NextRequest) {
       phone: to,
       body: messageBody,
       template: template || 'custom',
-      status: result.success ? 'sent' : 'failed',
-      provider_message_id: result.messageId,
-      error: result.error,
+      status: result?.success ? 'sent' : 'failed',
+      provider_message_id: result?.messageId,
+      error: result?.error,
     });
     
-    if (result.success) {
+    if (result?.success) {
       return NextResponse.json({ success: true, messageId: result.messageId });
     } else {
       return NextResponse.json(
-        { success: false, error: result.error },
+        { success: false, error: result?.error },
         { status: 500 }
       );
     }

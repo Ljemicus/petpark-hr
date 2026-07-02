@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { sendEmail } from '@/lib/email';
+import { dispatchEmail } from '@/lib/notifications/dispatch';
 import { rateLimitAsync } from '@/lib/rate-limit';
 import {
   newBookingRequestEmail,
@@ -72,8 +72,12 @@ export async function POST(request: NextRequest) {
         break;
     }
 
-    const result = await sendEmail({ to, subject, html });
-    if (!result.success) {
+    const dispatchResult = await dispatchEmail({ to, subject, html });
+    if (dispatchResult.status === 'skipped') {
+      return NextResponse.json({ success: true, skipped: true, reason: dispatchResult.reason });
+    }
+
+    if (!dispatchResult.result?.success) {
       return NextResponse.json({ error: 'Failed to send email' }, { status: 500 });
     }
 

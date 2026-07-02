@@ -1,48 +1,55 @@
-# KIT-F7 NOTIFICATION DISPATCH — safe hardening
+# KIT-F7 NOTIFICATION DISPATCH — safe slice
 
 Datum: 2026-07-02
-Scope: bez vanjskog slanja i bez remote promjena.
+Scope: lokalni kod, bez slanja vanjskih poruka u verifikaciji.
 
-## Što je provjereno
+## Promjena
 
-Kanali postoje u kodu:
+Dodan je centralni dispatcher:
 
-- email: `lib/email.ts`, Resend preko `RESEND_API_KEY`
-- push: `lib/push-notifications.ts`, VAPID env
-- SMS: `lib/sms.ts`, Twilio/Infobip env
-- in-app: `notifications` / booking-request activity helpers
+- `lib/notifications/dispatch.ts`
 
-## Safe hardening primijenjen
+Podržani kanali:
 
-`app/(site)/api/sms/send/route.ts`
+- email → `dispatchEmail()`
+- SMS → `dispatchSms()`
+- push → `dispatchPushToMultiple()`
 
-Prije:
+Kill-switch env varijable:
 
-- internal poziv se računao kao `internalKey === process.env.SMS_INTERNAL_KEY`
-- ako `SMS_INTERNAL_KEY` nije postavljen i client ne pošalje key, usporedba može biti `undefined === undefined`
-- običan auth user nije imao jasan admin check unatoč komentaru “Verify admin or system role”
+- `NOTIFY_EMAIL_ENABLED`
+- `NOTIFY_SMS_ENABLED`
+- `NOTIFY_PUSH_ENABLED`
 
-Sada:
+Default ponašanje ostaje isto kao prije. Kanal se gasi samo eksplicitno s:
 
-- internal poziv je dopušten samo ako je `SMS_INTERNAL_KEY` konfiguriran i payload key se poklapa
-- unauthenticated poziv bez validnog internal keya vraća 401
-- authenticated non-internal poziv mora biti admin, inače 403
-- validacijske greške koriste isti `apiError` pattern kao ostali P0 endpointi
+- `false`
+- `0`
+- `off`
+
+Ako je kanal ugašen, dispatcher vraća `status: "skipped"` i ne poziva vanjski provider.
+
+## Preusmjerene rute u ovom safe sliceu
+
+- `/api/push/send` → `dispatchPushToMultiple()`
+- `/api/sms/send` → `dispatchSms()`
+- `/api/notifications` → `dispatchEmail()`
 
 ## Nije rađeno
 
-- nije poslan nijedan email/SMS/push
-- nisu rotirani ni čitani secret-i
-- nije mijenjana notification schema
-- nije uključen centralni dispatcher bez product odluke
+- nije masovno mijenjan svaki postojeći helper u jednom velikom refaktoru
+- nije slan testni email/SMS/push prema van
+- nije mijenjan default behavior dok env kill-switch nije eksplicitno postavljen
 
-## Launch-grade preporuka
+## Testovi
 
-Prije produkcijskog uključivanja dispatchera dodati centralni kill-switch model:
+- `tests/notification-dispatch.test.ts`
+  - default email ostaje enabled
+  - `NOTIFY_EMAIL_ENABLED=false` preskače slanje
+  - `NOTIFY_SMS_ENABLED=0` preskače slanje
+  - `NOTIFY_PUSH_ENABLED=off` preskače slanje
+  - push failure iz underlying sendera mapira se u `failed`
 
-- `NOTIFY_EMAIL_ENABLED`
-- `NOTIFY_PUSH_ENABLED`
-- `NOTIFY_SMS_ENABLED`
-- `NOTIFY_IN_APP_ENABLED`
+## Launch napomena
 
-I testirati svaku granu s dummy recipientima ili staging providerima.
+Prije launch-a odlučiti hoće li se `NOTIFY_SMS_ENABLED` držati `false` dok se SMS provider i real trošak ne potvrde.
