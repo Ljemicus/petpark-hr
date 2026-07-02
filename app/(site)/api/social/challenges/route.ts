@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
+import { requireAdmin } from '@/lib/admin-guard';
 import { NextResponse } from 'next/server';
-import type { SocialChallenge, ChallengeEntryWithDetails } from '@/lib/types';
+import type { SocialChallenge } from '@/lib/types';
 
 // GET /api/social/challenges - Get all challenges
 export async function GET(request: Request) {
@@ -43,22 +44,8 @@ export async function POST(request: Request) {
   try {
     const supabase = await createClient();
     
-    // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Check if user is admin
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    if (userError || userData?.role !== 'admin') {
-      return NextResponse.json({ error: 'Forbidden - Admin only' }, { status: 403 });
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     const body = await request.json();
     const { title, description, imageUrl, startDate, endDate, prizeDescription, isFeatured } = body;
@@ -77,7 +64,7 @@ export async function POST(request: Request) {
         end_date: endDate,
         prize_description: prizeDescription,
         is_featured: isFeatured || false,
-        created_by: user.id,
+        created_by: admin.user.id,
       })
       .select()
       .single();

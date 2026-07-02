@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { apiError } from '@/lib/api-errors';
 import { scheduleWelcomeSequence } from '@/lib/email-sequences';
+import { requireAdmin } from '@/lib/admin-guard';
 import type { User } from '@/lib/types';
 
 type EmailRole = 'owner' | 'sitter' | 'groomer' | 'trainer' | 'breeder' | 'rescue';
@@ -30,17 +31,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // Only allow users to trigger their own welcome sequence, or admins
+    // Only allow users to trigger their own welcome sequence, or DB-backed admins.
     if (userId !== authUser.id) {
-      const { data: currentUser } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', authUser.id)
-        .single();
-      
-      if (currentUser?.role !== 'admin') {
-        return apiError({ status: 403, code: 'FORBIDDEN', message: 'Insufficient permissions' });
-      }
+      const admin = await requireAdmin();
+      if (!admin.ok) return admin.response;
     }
 
     // Get user details

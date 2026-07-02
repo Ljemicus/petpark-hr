@@ -62,7 +62,7 @@ export function buildUserFromAuth(authUser: AuthIdentityUser): User {
   };
 }
 
-async function hasDbAdminRole(supabase: { from: (table: string) => any }, profileId: string): Promise<boolean> {
+export async function hasDbAdminRole(supabase: { from: (table: string) => any }, profileId: string): Promise<boolean> {
   const { data, error } = await supabase
     .from('profile_roles')
     .select('role')
@@ -81,7 +81,7 @@ async function hasDbAdminRole(supabase: { from: (table: string) => any }, profil
   return data?.role === 'admin';
 }
 
-async function applyDbBackedRole(supabase: { from: (table: string) => any }, user: User): Promise<User> {
+export async function applyDbBackedRole(supabase: { from: (table: string) => any }, user: User): Promise<User> {
   if (await hasDbAdminRole(supabase, user.id)) return { ...user, role: 'admin' };
   if (user.role === 'admin') return { ...user, role: 'owner' };
   return user;

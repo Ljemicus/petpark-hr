@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import type { LoginSuccessResponse } from '@/lib/auth-responses';
-import { parseAuthRole } from '@/lib/auth';
+import { hasDbAdminRole, parseAuthRole } from '@/lib/auth';
 import { getDefaultDashboardForEffectiveKind, getEffectiveUserKind } from '@/lib/effective-user-kind';
 import { isSupabaseConfigured } from '@/lib/db/helpers';
 import { dispatchAlert } from '@/lib/alerting';
@@ -65,7 +65,12 @@ export async function POST(request: Request) {
     .eq('user_id', data.user.id)
     .maybeSingle();
 
-  const role = parseAuthRole(profile?.role || data.user.user_metadata?.role);
+  const profileRole = parseAuthRole(profile?.role);
+  const role = (await hasDbAdminRole(supabase, data.user.id))
+    ? 'admin'
+    : profileRole === 'admin'
+      ? 'owner'
+      : profileRole;
   const effectiveKind = getEffectiveUserKind({ authRole: role, publisherType: publisherProfile?.type ?? null });
   const defaultRedirect = getDefaultDashboardForEffectiveKind(effectiveKind);
 

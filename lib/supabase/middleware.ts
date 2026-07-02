@@ -47,13 +47,14 @@ export async function updateSession(request: NextRequest) {
 
   // Admin route protection
   if (request.nextUrl.pathname.startsWith('/admin') && user) {
-    const { data: profile } = await supabase
-      .from('users')
+    const { data: adminRole } = await supabase
+      .from('profile_roles')
       .select('role')
-      .eq('id', user.id)
-      .single();
+      .eq('profile_id', user.id)
+      .eq('role', 'admin')
+      .maybeSingle();
 
-    if (profile?.role !== 'admin') {
+    if (adminRole?.role !== 'admin') {
       const url = request.nextUrl.clone();
       url.pathname = '/';
       return NextResponse.redirect(url);
