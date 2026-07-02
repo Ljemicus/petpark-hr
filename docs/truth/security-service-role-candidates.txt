@@ -1,0 +1,26 @@
+(svaka linija = kandidat za pregled)
+app/(site)/api/payments/webhook/route.ts:49:  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+app/(site)/api/auth/register/route.ts:115:    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+app/(site)/api/auth/register/route.ts:119:        const adminClient = createSupabaseClient(supabaseUrl, serviceRoleKey);
+app/(site)/api/auth/register/route.ts:120:        const { error: confirmError } = await adminClient.auth.admin.updateUserById(data.user.id, {
+app/(site)/api/health/route.ts:24:    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+app/(site)/api/admin/verifications/documents/route.ts:20:    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+app/(site)/api/rescue-verification-documents/[documentId]/signed-url/route.ts:38:    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+app/(site)/api/rescue-verification-documents/upload/route.ts:81:    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+app/(site)/api/rescue-verification-documents/upload/route.ts:97:    const adminClient = createAdminClient(supabaseUrl, serviceRoleKey);
+app/(site)/api/rescue-verification-documents/upload/route.ts:101:    const { error: uploadError } = await adminClient.storage.from(BUCKET).upload(storagePath, buffer, {
+app/(site)/api/rescue-verification-documents/upload/route.ts:137:      await adminClient.storage.from(BUCKET).remove([storagePath]).catch(() => undefined);
+app/(site)/api/upload/verification/route.ts:72:    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+app/(site)/api/upload/route.ts:56:    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+app/(site)/api/analytics/funnel/route.ts:18:    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+lib/ops-audit.ts:55:  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+lib/kpi-digest.ts:37:  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+lib/supabase/admin.ts:5:  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+lib/env-check.ts:22:  { name: 'SUPABASE_SERVICE_ROLE_KEY', prodOnly: true },
+lib/db/provider-directory-linking.ts:69:  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+lib/db/breeders.ts:94:      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+lib/api/env-check.ts:153:    key: 'SUPABASE_SERVICE_ROLE_KEY',
+lib/api/env.ts:22:    serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+lib/api/env.ts:81:      throw new Error('SUPABASE_SERVICE_ROLE_KEY can only be accessed on the server');
+lib/api/env.ts:83:    return process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+lib/api/env.ts:150:- \`SUPABASE_SERVICE_ROLE_KEY\`: Supabase service role key (server only)

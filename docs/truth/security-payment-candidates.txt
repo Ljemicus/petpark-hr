@@ -1,0 +1,8 @@
+flag=False	stripe=True	app/(site)/api/payments/account-link/route.ts
+flag=False	stripe=True	app/(site)/api/payments/account-status/route.ts
+flag=False	stripe=True	app/(site)/api/payments/connect/route.ts
+flag=False	stripe=True	app/(site)/api/payments/create-checkout/route.ts
+flag=False	stripe=True	app/(site)/api/payments/dashboard-link/route.ts
+flag=False	stripe=True	app/(site)/api/payments/refund/route.ts
+flag=False	stripe=True	app/(site)/api/payments/webhook/route.ts
+flag=False	stripe=True	app/(site)/api/provider-connect/route.ts
