@@ -38,20 +38,7 @@ export async function createPetUpdate(input: CreatePetUpdateInput): Promise<PetU
 
 export async function getRecentUpdatesBySitter(sitterId: string, limit = 5): Promise<PetUpdate[]> {
   if (!isSupabaseConfigured()) {
-    const { mockUpdates } = await import('@/lib/mock-data');
-    return mockUpdates
-      .filter(u => u.sitter_id === sitterId)
-      .slice(0, limit)
-      .map((update) => ({
-        id: update.id,
-        booking_id: update.booking_id,
-        sitter_id: update.sitter_id,
-        type: update.type,
-        emoji: update.emoji,
-        caption: update.caption,
-        photo_url: update.photo_url,
-        created_at: update.created_at,
-      }));
+    return [];
   }
 
   try {
