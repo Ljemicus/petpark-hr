@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Bell, CheckCircle2, Crosshair, Dog, Home, MapPin, Search, ShieldCheck, Sparkles } from 'lucide-react';
+import { Bell, CheckCircle2, Crosshair, Home, MapPin, Search, ShieldCheck, Sparkles } from 'lucide-react';
 import {
   AppHeader,
   Badge,
@@ -28,11 +28,11 @@ const navItems = [
 const filters = ['Usluge', 'Sitteri', 'Groomeri', 'Treneri', 'Izgubljeni', 'Pronađeni', 'Udomljavanje'];
 
 const places = [
-  { title: 'Maja Pet Sitting', type: 'Sitter', location: 'Rijeka · Trsat', href: '/usluge', tone: 'orange' as const, x: 28, y: 36, icon: Home },
-  { title: 'Grooming Luna', type: 'Groomer', location: 'Zagreb · Maksimir', href: '/usluge', tone: 'orange' as const, x: 62, y: 31, icon: Sparkles },
-  { title: 'Pronađena maca', type: 'Pronađeni', location: 'Rijeka · Mlaka', href: '/izgubljeni', tone: 'success' as const, x: 42, y: 62, icon: CheckCircle2 },
-  { title: 'Nestao pas Roko', type: 'Izgubljeni', location: 'Split · Spinut', href: '/izgubljeni', tone: 'error' as const, x: 74, y: 68, icon: Bell },
-  { title: 'Udruga Šapice', type: 'Udomljavanje', location: 'Osijek', href: '/udomljavanje', tone: 'teal' as const, x: 52, y: 48, icon: Dog },
+  { title: 'Usluge', type: 'Sitteri / groomeri / treneri', location: 'Stvarni rezultati kroz pretragu', href: '/usluge', tone: 'orange' as const, x: 28, y: 36, icon: Home },
+  { title: 'Grooming i njega', type: 'Kategorija usluga', location: 'Pregled dostupnih usluga', href: '/grooming', tone: 'orange' as const, x: 62, y: 31, icon: Sparkles },
+  { title: 'Pronađeni ljubimci', type: 'Pronađeni', location: 'Stvarne prijave kad postoje', href: '/izgubljeni', tone: 'success' as const, x: 42, y: 62, icon: CheckCircle2 },
+  { title: 'Izgubljeni ljubimci', type: 'Izgubljeni', location: 'Stvarne prijave kad postoje', href: '/izgubljeni', tone: 'error' as const, x: 74, y: 68, icon: Bell },
+  { title: 'Udomljavanje', type: 'Udomljavanje', location: 'Stvarni oglasi kad postoje', href: '/udomljavanje', tone: 'teal' as const, x: 52, y: 48, icon: Home },
 ];
 
 function Pin({ place, selected = false }: { place: (typeof places)[number]; selected?: boolean }) {
@@ -73,7 +73,7 @@ export default function MapPage() {
             <div className="mt-5 grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
               <div>
                 <h1 className="text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[color:var(--pp-color-forest-text)] sm:text-7xl">PetPark mapa</h1>
-                <p className="mt-5 max-w-3xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">Pronađi usluge, izgubljene ljubimce i korisne lokacije u blizini.</p>
+                <p className="mt-5 max-w-3xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">Pregled modula koji će se spojiti na stvarne lokacijske podatke kad mapa bude aktivirana.</p>
               </div>
               <Button variant="secondary" disabled><Crosshair className="size-4" /> Koristi moju lokaciju</Button>
             </div>
@@ -92,7 +92,7 @@ export default function MapPage() {
               </Card>
 
               <Card radius="28" tone="sage" className="p-5">
-                <h2 className="text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">U blizini</h2>
+                <h2 className="text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">Moduli na mapi</h2>
                 <div className="mt-4 space-y-3">
                   {places.map((place) => {
                     const Icon = place.icon;

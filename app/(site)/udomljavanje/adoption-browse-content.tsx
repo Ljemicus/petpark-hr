@@ -41,28 +41,6 @@ function formatAge(months: number | null): string {
   return rem > 0 ? `${years} g. ${rem} mj.` : `${years} g.`;
 }
 
-const fallbackListings: AdoptionListingCard[] = [
-  {
-    id: 'mila', status: 'active', name: 'Mila', species: 'dog', breed: 'Mješanac', age_months: 24, gender: 'female', size: 'medium', city: 'Rijeka', images: [], is_urgent: true, published_at: '2026-05-12', publisher_display_name: 'Udruga Šapice',
-  },
-  {
-    id: 'toto', status: 'active', name: 'Toto', species: 'cat', breed: 'Europska kratkodlaka', age_months: 8, gender: 'male', size: 'small', city: 'Zagreb', images: [], is_urgent: false, published_at: '2026-05-11', publisher_display_name: 'Privremeni dom Maksimir',
-  },
-  {
-    id: 'nala', status: 'active', name: 'Nala', species: 'dog', breed: 'Labrador mix', age_months: 36, gender: 'female', size: 'large', city: 'Split', images: [], is_urgent: false, published_at: '2026-05-10', publisher_display_name: 'Azil Split',
-  },
-  {
-    id: 'zeko', status: 'active', name: 'Zeko', species: 'rabbit', breed: 'Patuljasti kunić', age_months: 14, gender: 'male', size: 'small', city: 'Osijek', images: [], is_urgent: false, published_at: '2026-05-09', publisher_display_name: 'Mali spas',
-  },
-];
-
-const personalityTags: Record<string, string[]> = {
-  mila: ['nježna', 'mirna', 'voli šetnje'],
-  toto: ['mazan', 'znatiželjan', 'stan'],
-  nala: ['aktivna', 'djeca ok', 'uči brzo'],
-  zeko: ['tih', 'čist', 'mirni dom'],
-};
-
 function FilterPill({ active, children, onClick }: { active?: boolean; children: React.ReactNode; onClick: () => void }) {
   return (
     <button
@@ -82,8 +60,6 @@ function FilterPill({ active, children, onClick }: { active?: boolean; children:
 
 function AdoptionCard({ listing }: { listing: AdoptionListingCard }) {
   const primaryImage = listing.images?.find((img) => img.is_primary) ?? listing.images?.[0];
-  const tags = personalityTags[listing.id] || ['društven', 'spreman za dom', 'provjeren kontakt'];
-
   return (
     <Link href={`/udomljavanje/${listing.id}`} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
       <Card radius="28" interactive className="h-full overflow-hidden">
@@ -117,10 +93,6 @@ function AdoptionCard({ listing }: { listing: AdoptionListingCard }) {
             {listing.size ? <Badge variant="sage">{ADOPTION_SIZE_LABELS[listing.size]}</Badge> : null}
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            {tags.map((tag) => <Badge key={tag} variant="cream">{tag}</Badge>)}
-          </div>
-
           <div className="mt-5 space-y-2 text-sm font-bold text-[color:var(--pp-color-muted-text)]">
             <p className="flex items-center gap-2"><MapPin className="size-4 text-[color:var(--pp-color-orange-primary)]" /> {listing.city}</p>
             <p className="flex items-center gap-2"><HeartHandshake className="size-4 text-[color:var(--pp-color-teal-accent)]" /> {listing.publisher_display_name || 'Provjeren kontakt'}</p>
@@ -144,7 +116,8 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
   const [ageFilter, setAgeFilter] = useState('all');
   const [urgentOnly, setUrgentOnly] = useState(false);
 
-  const sourceListings = listings.length ? listings : fallbackListings;
+  const sourceListings = listings;
+  const hasListings = sourceListings.length > 0;
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
     return sourceListings.filter((listing) => {
@@ -257,8 +230,9 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
               ) : (
                 <Card radius="28" tone="sage" className="p-10 text-center">
                   <HeartHandshake className="mx-auto size-12 text-[color:var(--pp-color-orange-primary)]" />
-                  <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">Trenutno nema ljubimaca koji odgovaraju filterima.</h2>
-                  <Button className="mt-6" variant="secondary" onClick={() => { setSearch(''); setSpeciesFilter('all'); setCityFilter('all'); setSizeFilter('all'); setAgeFilter('all'); setUrgentOnly(false); }}>Očisti filtere</Button>
+                  <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">{hasListings ? 'Trenutno nema ljubimaca koji odgovaraju filterima.' : 'Trenutno nema objavljenih ljubimaca za udomljavanje.'}</h2>
+                  <p className="mx-auto mt-3 max-w-xl text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{hasListings ? 'Promijenite filtere za širi pregled.' : 'Kad se pojavi stvarni oglas iz baze, prikazat će se ovdje bez demo/fallback profila.'}</p>
+                  {hasListings ? <Button className="mt-6" variant="secondary" onClick={() => { setSearch(''); setSpeciesFilter('all'); setCityFilter('all'); setSizeFilter('all'); setAgeFilter('all'); setUrgentOnly(false); }}>Očisti filtere</Button> : null}
                 </Card>
               )}
             </section>

@@ -19,7 +19,6 @@ import {
 } from 'lucide-react';
 import {
   AppHeader,
-  Avatar,
   Badge,
   ButtonLink,
   Card,
@@ -58,20 +57,15 @@ const navItems = [
 ];
 
 const categories = [
-  { title: 'Savjeti za njegu', icon: PawPrint, href: '/forum?category=njega', topics: 42, replies: 180, latest: 'Kako održavati šape nakon kišnih šetnji?', tone: 'sage' as const },
-  { title: 'Obuka i trening', icon: Sparkles, href: '/forum?category=trening', topics: 37, replies: 154, latest: 'Štene grize povodac — što pomaže?', tone: 'orange' as const },
-  { title: 'Zdravlje i prehrana', icon: HeartPulse, href: '/forum?category=zdravlje', topics: 58, replies: 221, latest: 'Osjetljiv želudac i prelazak na novu hranu', tone: 'teal' as const },
-  { title: 'Putovanja s ljubimcima', icon: Plane, href: '/forum?category=putovanja', topics: 21, replies: 75, latest: 'Trajekt i pas — što pripremiti?', tone: 'cream' as const },
-  { title: 'Preporuke usluga', icon: Star, href: '/forum?category=preporuke', topics: 33, replies: 119, latest: 'Grooming za male pasmine u Rijeci', tone: 'sage' as const },
-  { title: 'Izgubljeni i pronađeni', icon: MapPin, href: '/izgubljeni', topics: 16, replies: 64, latest: 'Pronađena maca kod parka Mlaka', tone: 'orange' as const },
+  { title: 'Savjeti za njegu', icon: PawPrint, href: '/zajednica/feed', description: 'Mjesto za stvarne korisničke objave o njezi kad feed dobije sadržaj.', tone: 'sage' as const },
+  { title: 'Obuka i trening', icon: Sparkles, href: '/zajednica/feed', description: 'Rasprave o treningu i ponašanju bez izmišljenih statistika.', tone: 'orange' as const },
+  { title: 'Zdravlje i prehrana', icon: HeartPulse, href: '/zajednica/feed', description: 'Iskustva korisnika uz jasnu napomenu da veterinar ostaje izvor za medicinske odluke.', tone: 'teal' as const },
+  { title: 'Putovanja s ljubimcima', icon: Plane, href: '/zajednica/feed', description: 'Praktične teme za putovanja kad ih stvarni korisnici otvore.', tone: 'cream' as const },
+  { title: 'Preporuke usluga', icon: Star, href: '/pretraga', description: 'Za stvarne usluge koristi pretragu i javne profile, ne statične forum preporuke.', tone: 'sage' as const },
+  { title: 'Izgubljeni i pronađeni', icon: MapPin, href: '/izgubljeni', description: 'Hitne prijave vode na stvarni modul za izgubljene i pronađene ljubimce.', tone: 'orange' as const },
 ];
 
-const popularTopics = ['anksioznost psa', 'prehrana mačke', 'prvi sitter', 'grooming cijene', 'putovanje autom'];
-const activeMembers = [
-  { name: 'Maja', initials: 'M', meta: 'psi · trening' },
-  { name: 'Petra', initials: 'P', meta: 'mačke · prehrana' },
-  { name: 'Dario', initials: 'D', meta: 'sitter · Rijeka' },
-];
+const popularTopics = ['prvo čuvanje', 'sigurnost u šetnji', 'grooming priprema', 'izgubljeni ljubimci', 'putovanje s ljubimcem'];
 
 export default function ForumPage() {
   return (
@@ -124,15 +118,11 @@ export default function ForumPage() {
                           <span className="flex size-14 items-center justify-center rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] text-[color:var(--pp-color-orange-primary)] shadow-[var(--pp-shadow-small-card)]">
                             <Icon className="size-6" />
                           </span>
-                          <Badge variant="teal">{category.topics} tema</Badge>
+                          <Badge variant="teal">Stvarni sadržaj</Badge>
                         </div>
                         <h3 className="mt-5 text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)] group-hover:text-[color:var(--pp-color-orange-primary)]">{category.title}</h3>
-                        <div className="mt-4 flex flex-wrap gap-2">
-                          <Badge variant="sage">{category.replies} odgovora</Badge>
-                          <Badge variant="cream">Aktivno danas</Badge>
-                        </div>
-                        <p className="mt-4 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Zadnje: {category.latest}</p>
-                        <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-[color:var(--pp-color-orange-primary)]">Otvori temu <ArrowRight className="size-4 transition group-hover:translate-x-1" /></span>
+                        <p className="mt-4 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{category.description}</p>
+                        <span className="mt-5 inline-flex items-center gap-2 text-sm font-black text-[color:var(--pp-color-orange-primary)]">Otvori modul <ArrowRight className="size-4 transition group-hover:translate-x-1" /></span>
                       </Card>
                     </Link>
                   );
@@ -158,17 +148,10 @@ export default function ForumPage() {
               </Card>
 
               <Card radius="28" tone="teal" className="p-5">
-                <h2 className="flex items-center gap-2 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]"><UsersRound className="size-5 text-[color:var(--pp-color-teal-accent)]" /> Aktivni članovi</h2>
-                <div className="mt-4 space-y-3">
-                  {activeMembers.map((member) => (
-                    <div key={member.name} className="flex items-center gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] p-3 shadow-[var(--pp-shadow-small-card)]">
-                      <Avatar initials={member.initials} alt={member.name} size="sm" />
-                      <div>
-                        <p className="text-sm font-black text-[color:var(--pp-color-forest-text)]">{member.name}</p>
-                        <p className="text-xs font-bold text-[color:var(--pp-color-muted-text)]">{member.meta}</p>
-                      </div>
-                    </div>
-                  ))}
+                <h2 className="flex items-center gap-2 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]"><UsersRound className="size-5 text-[color:var(--pp-color-teal-accent)]" /> Status foruma</h2>
+                <div className="mt-4 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] p-4 shadow-[var(--pp-shadow-small-card)]">
+                  <p className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Bez lažnih aktivnih članova</p>
+                  <p className="mt-2 text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Stvarna aktivnost foruma treba dolaziti iz baze, ne iz statičnih demo imena.</p>
                 </div>
               </Card>
 
