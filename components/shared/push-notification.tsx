@@ -1,92 +1,38 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Bell, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/auth-context';
+import { usePushNotifications } from '@/lib/push-client';
 import { toast } from 'sonner';
-
-function urlBase64ToUint8Array(base64String: string) {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
-}
 
 export function PushNotificationPrompt() {
   const { user } = useAuth();
+  const { isSupported, isSubscribed, permission, isLoading, subscribe } = usePushNotifications();
   const [show, setShow] = useState(false);
-  const [subscribing, setSubscribing] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
-    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    if (!user || !isSupported || isSubscribed || permission !== 'default') return;
 
-    // Check if already subscribed or dismissed
     const dismissed = localStorage.getItem('push-notification-dismissed');
     if (dismissed) return;
 
-    // Check current permission
-    if (Notification.permission === 'granted' || Notification.permission === 'denied') return;
-
-    // Show prompt after a short delay
-    const timer = setTimeout(() => setShow(true), 3000);
-    return () => clearTimeout(timer);
-  }, [user]);
+    const timer = window.setTimeout(() => setShow(true), 3000);
+    return () => window.clearTimeout(timer);
+  }, [user, isSupported, isSubscribed, permission]);
 
   const handleSubscribe = async () => {
-    setSubscribing(true);
-
-    try {
-      const registration = await navigator.serviceWorker.register('/sw.js');
-      await navigator.serviceWorker.ready;
-
-      const permission = await Notification.requestPermission();
-      if (permission !== 'granted') {
-        toast.info('Obavijesti su onemogućene. Možete ih uključiti u postavkama preglednika.');
-        setShow(false);
-        return;
-      }
-
-      // Get VAPID public key from environment (optional - for demo we skip actual subscription)
-      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-      if (!vapidKey) {
-        // No VAPID key configured - just register SW and enable notifications
-        toast.success('Obavijesti su uključene!');
-        setShow(false);
-        return;
-      }
-
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidKey),
-      });
-
-      const subJson = subscription.toJSON();
-
-      const response = await fetch('/api/notifications/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          endpoint: subJson.endpoint,
-          p256dh: subJson.keys?.p256dh,
-          auth: subJson.keys?.auth,
-        }),
-      });
-
-      if (!response.ok) throw new Error('Failed to save subscription');
-
+    const subscribed = await subscribe();
+    if (subscribed) {
+      localStorage.setItem('push-notification-dismissed', 'true');
       toast.success('Obavijesti su uključene!');
-    } catch {
-      toast.error('Greška pri uključivanju obavijesti.');
-    } finally {
-      setSubscribing(false);
       setShow(false);
+      return;
     }
+
+    toast.info('Obavijesti nisu uključene. Provjerite dozvolu preglednika ili VAPID konfiguraciju.');
+    setShow(false);
   };
 
   const handleDismiss = () => {
@@ -98,36 +44,36 @@ export function PushNotificationPrompt() {
 
   return (
     <div className="fixed bottom-6 left-6 z-50 max-w-sm animate-fade-in-up">
-      <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-4">
+      <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-lg">
         <div className="flex items-start gap-3">
-          <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-orange-100">
             <Bell className="h-5 w-5 text-orange-600" />
           </div>
           <div className="flex-1">
-            <p className="font-medium text-sm text-gray-900">Uključite obavijesti</p>
-            <p className="text-xs text-gray-500 mt-0.5">
+            <p className="text-sm font-medium text-gray-900">Uključite obavijesti</p>
+            <p className="mt-0.5 text-xs text-gray-500">
               Primajte obavijesti o novim porukama, rezervacijama i ažuriranjima o vašem ljubimcu.
             </p>
-            <div className="flex items-center gap-2 mt-3">
+            <div className="mt-3 flex items-center gap-2">
               <Button
                 size="sm"
                 onClick={handleSubscribe}
-                disabled={subscribing}
-                className="bg-orange-500 hover:bg-orange-600 text-white text-xs h-8"
+                disabled={isLoading}
+                className="h-8 bg-orange-500 text-xs text-white hover:bg-orange-600"
               >
-                {subscribing ? 'Uključujem...' : 'Uključi'}
+                {isLoading ? 'Uključujem...' : 'Uključi'}
               </Button>
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={handleDismiss}
-                className="text-xs h-8 text-gray-500"
+                className="h-8 text-xs text-gray-500"
               >
                 Ne sada
               </Button>
             </div>
           </div>
-          <button onClick={handleDismiss} className="text-gray-400 hover:text-gray-600">
+          <button onClick={handleDismiss} className="text-gray-400 hover:text-gray-600" aria-label="Zatvori obavijesti">
             <X className="h-4 w-4" />
           </button>
         </div>
