@@ -105,17 +105,20 @@ describe('checkRateLimit', () => {
     await checkRateLimit('fallback-test', config);
     
     expect(consoleSpy).toHaveBeenCalledWith(
-      '[rate-limit] Redis not configured, falling back to in-memory rate limiting'
+      '[rate-limit] Redis not configured',
+      { identifier: 'test', failClosed: false }
     );
   });
 });
 
 describe('RateLimits constants', () => {
-  it('should have correct auth rate limits (5 req / 15 min)', () => {
-    expect(RateLimits.auth.limit).toBe(5);
+  it('should have correct auth rate limits from KIT-B3', () => {
+    expect(RateLimits.auth.limit).toBe(10);
     expect(RateLimits.auth.windowSeconds).toBe(15 * 60);
-    expect(RateLimits.login.limit).toBe(5);
+    expect(RateLimits.login.limit).toBe(10);
     expect(RateLimits.login.windowSeconds).toBe(15 * 60);
+    expect(RateLimits.register.limit).toBe(5);
+    expect(RateLimits.register.windowSeconds).toBe(60 * 60);
   });
 
   it('should have correct API rate limits (100 req / min)', () => {
@@ -130,7 +133,7 @@ describe('RateLimits constants', () => {
     expect(RateLimits.social.windowSeconds).toBe(60);
     expect(RateLimits.socialPosts.limit).toBe(10);
     expect(RateLimits.socialPosts.windowSeconds).toBe(60);
-    expect(RateLimits.socialComments.limit).toBe(10);
+    expect(RateLimits.socialComments.limit).toBe(20);
     expect(RateLimits.socialComments.windowSeconds).toBe(60);
   });
 });
@@ -223,7 +226,7 @@ describe('createRateLimitResponse', () => {
     const response = createRateLimitResponse(result);
     const body = await response.json();
     
-    expect(body.error).toBe('Rate limit exceeded');
+    expect(body.error).toBe('Previše zahtjeva. Pokušaj ponovno kasnije.');
     expect(body.code).toBe('RATE_LIMITED');
     expect(body.retryAfter).toBe(60);
   });

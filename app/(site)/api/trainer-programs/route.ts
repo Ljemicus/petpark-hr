@@ -3,7 +3,7 @@ import { getAuthUser } from '@/lib/auth';
 import { createClient } from '@/lib/supabase/server';
 import { createProgram, updateProgram, deleteProgram } from '@/lib/db';
 import { appLogger } from '@/lib/logger';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 import type { TrainingType } from '@/lib/types';
 
 const VALID_TYPES = new Set<string>(['osnovna', 'napredna', 'agility', 'ponasanje', 'stenci']);
@@ -46,7 +46,7 @@ function validateProgramBody(body: Record<string, unknown>) {
 
 export async function POST(request: Request) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
-  if (!rateLimit(`trainer:programs:write:${ip}`, 20, 60_000)) {
+  if (!(await rateLimitAsync(`trainer:programs:write:${ip}`, 20, 60_000, { route: 'trainer-programs-write', failClosed: false }))) {
     return NextResponse.json({ error: 'Previše zahtjeva. Pokušajte kasnije.' }, { status: 429 });
   }
 
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
-  if (!rateLimit(`trainer:programs:write:${ip}`, 20, 60_000)) {
+  if (!(await rateLimitAsync(`trainer:programs:write:${ip}`, 20, 60_000, { route: 'trainer-programs-write', failClosed: false }))) {
     return NextResponse.json({ error: 'Previše zahtjeva. Pokušajte kasnije.' }, { status: 429 });
   }
 
@@ -146,7 +146,7 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
-  if (!rateLimit(`trainer:programs:write:${ip}`, 20, 60_000)) {
+  if (!(await rateLimitAsync(`trainer:programs:write:${ip}`, 20, 60_000, { route: 'trainer-programs-write', failClosed: false }))) {
     return NextResponse.json({ error: 'Previše zahtjeva. Pokušajte kasnije.' }, { status: 429 });
   }
 

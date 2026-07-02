@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { getAvailability, setAvailability } from '@/lib/db';
 import { appLogger } from '@/lib/logger';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 import type { Availability } from '@/lib/types';
 
 type AvailabilityGetResponse = Availability[];
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
-  if (!rateLimit(`availability:${ip}`, 120, 60_000)) {
+  if (!(await rateLimitAsync(`availability:${ip}`, 120, 60_000, { route: 'availability', failClosed: false }))) {
     return NextResponse.json({ error: 'Previše zahtjeva. Pokušajte kasnije.' }, { status: 429 });
   }
 

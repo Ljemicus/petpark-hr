@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
 import { sendEmail } from '@/lib/email';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 import {
   newBookingRequestEmail,
   bookingAcceptedEmail,
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     }
 
     const ip = request.headers.get('x-forwarded-for') || 'unknown';
-    if (!rateLimit(`notifications:${user.id}:${ip}`, 5, 60_000)) {
+    if (!(await rateLimitAsync(`notifications:${user.id}:${ip}`, 5, 60_000, { route: 'notifications', failClosed: false }))) {
       return NextResponse.json({ error: 'Previše zahtjeva. Pokušajte kasnije.' }, { status: 429 });
     }
 

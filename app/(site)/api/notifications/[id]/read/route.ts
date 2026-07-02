@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
-import { createRateLimitResponse, rateLimitRequest, RateLimits } from '@/lib/rate-limiter';
+import { createRateLimitResponse, rateLimitRequest, RateLimits } from '@/lib/upstash-rate-limit';
 import { markNotificationRead } from '@/lib/petpark/booking-requests/activity';
 
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {

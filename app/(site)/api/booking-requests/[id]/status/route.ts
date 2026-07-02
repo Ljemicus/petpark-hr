@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
-import { createRateLimitResponse, rateLimitRequest, RateLimits } from '@/lib/rate-limiter';
+import { createRateLimitResponse, rateLimitRequest, RateLimits } from '@/lib/upstash-rate-limit';
 import { updateOwnedBookingRequestStatus } from '@/lib/petpark/booking-requests/db';
 import { bookingRequestStatusActionSchema } from '@/lib/petpark/booking-requests/schema';
 

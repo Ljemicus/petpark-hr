@@ -5,7 +5,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { lostPetContactRelaySchema } from '@/lib/validations';
 import { sendEmail } from '@/lib/email';
 import { appLogger } from '@/lib/logger';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 function escapeHtml(value: string) {
   return value
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     const supabase = await createClient();
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
 
-    if (!rateLimit(`lost-pet-relay:${id}:${ip}`, 3, 10 * 60_000)) {
+    if (!(await rateLimitAsync(`lost-pet-relay:${id}:${ip}`, 3, 10 * 60_000, { route: 'lost-pet-relay', failClosed: true }))) {
       return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše poruka u kratkom roku. Pokušajte ponovno kasnije.' });
     }
 

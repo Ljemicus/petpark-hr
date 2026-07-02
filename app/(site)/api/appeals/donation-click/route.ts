@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { sendEmail } from '@/lib/email';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 import { appealDonationClickEmail } from '@/lib/email-templates';
 import { appLogger } from '@/lib/logger';
 
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     const rateLimitKey = `donation-click:${ip}:${appealId}`;
-    if (!rateLimit(rateLimitKey, 3, 10 * 60 * 1000)) {
+    if (!(await rateLimitAsync(rateLimitKey, 3, 10 * 60 * 1000, { route: 'donation-click', failClosed: false }))) {
       return NextResponse.json(
         { error: 'Previše pokušaja. Pokušajte kasnije.' },
         { status: 429 }

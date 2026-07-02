@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getGroomers } from '@/lib/db';
 import type { GroomingServiceType } from '@/lib/types';
 import { appLogger } from '@/lib/logger';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   const service = (searchParams.get('service') || undefined) as GroomingServiceType | undefined;
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
 
-  if (!rateLimit(`groomers:list:${ip}`, 60, 60_000)) {
+  if (!(await rateLimitAsync(`groomers:list:${ip}`, 60, 60_000, { route: 'groomers-list', failClosed: false }))) {
     return NextResponse.json({ error: 'Previše zahtjeva. Pokušajte kasnije.' }, { status: 429 });
   }
 

@@ -6,7 +6,7 @@ import { lostPetSightingSchema } from '@/lib/validations';
 import { sendEmail } from '@/lib/email';
 import { lostPetSightingEmail } from '@/lib/email-templates';
 import { appLogger } from '@/lib/logger';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 import { sendPushToMultiple } from '@/lib/push-notifications';
 import { getUserPushSubscriptions, canSendNotification } from '@/lib/db/notifications';
 
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ id
     const supabase = await createClient();
     const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
 
-    if (!rateLimit(`lost-pet-sighting:${id}:${ip}`, 5, 10 * 60_000)) {
+    if (!(await rateLimitAsync(`lost-pet-sighting:${id}:${ip}`, 5, 10 * 60_000, { route: 'lost-pet-sighting', failClosed: true }))) {
       return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše dojava u kratkom roku. Pokušajte ponovno kasnije.' });
     }
     const { data: pet, error: fetchError } = await supabase

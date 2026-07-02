@@ -4,7 +4,7 @@ import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { dispatchAlert } from '@/lib/alerting';
 import { getRequestId, createScopedLogger } from '@/lib/request-context';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 const ALLOWED_TYPES = new Set([
   'image/jpeg',
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     const ip = request.headers.get('x-forwarded-for') || 'unknown';
-    if (!rateLimit(`verification-upload:${user.id}:${ip}`, 6, 60_000)) {
+    if (!(await rateLimitAsync(`verification-upload:${user.id}:${ip}`, 6, 60_000, { route: 'verification-upload', failClosed: true }))) {
       log.warn( 'Rate limit hit', { userId: user.id, ip }, 'P3');
       return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše uploadova. Pokušajte kasnije.' });
     }

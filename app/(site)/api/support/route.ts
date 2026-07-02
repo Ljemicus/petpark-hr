@@ -3,7 +3,7 @@ import { appLogger } from '@/lib/logger';
 import { dispatchAlert } from '@/lib/alerting';
 import { createClient } from '@/lib/supabase/server';
 import { getAuthUser } from '@/lib/auth';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 import { z } from 'zod';
 
 const supportSchema = z.object({
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
     const ip = request.headers.get('x-forwarded-for') || 'unknown';
     const key = `support:${user?.id || 'anon'}:${ip}`;
 
-    if (!rateLimit(key, 3, 10 * 60_000)) {
+    if (!(await rateLimitAsync(key, 3, 10 * 60_000, { route: 'support', failClosed: true }))) {
       return NextResponse.json({ error: 'Previše poruka. Pokušajte kasnije.' }, { status: 429 });
     }
 

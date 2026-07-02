@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSitters } from '@/lib/db';
 import type { ServiceType } from '@/lib/types';
 import { appLogger } from '@/lib/logger';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -14,7 +14,7 @@ export async function GET(request: Request) {
   const sort = searchParams.get('sort') || undefined;
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
 
-  if (!rateLimit(`sitters:list:${ip}`, 60, 60_000)) {
+  if (!(await rateLimitAsync(`sitters:list:${ip}`, 60, 60_000, { route: 'sitters-list', failClosed: false }))) {
     return NextResponse.json({ error: 'Previše zahtjeva. Pokušajte kasnije.' }, { status: 429 });
   }
 

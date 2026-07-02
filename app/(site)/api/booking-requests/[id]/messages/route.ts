@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
-import { createRateLimitResponse, rateLimitRequest, RateLimits } from '@/lib/rate-limiter';
+import { createRateLimitResponse, rateLimitRequest, RateLimits } from '@/lib/upstash-rate-limit';
 import { createBookingRequestMessage, getBookingRequestMessages } from '@/lib/petpark/booking-requests/conversation';
 
 const messageSchema = z.object({

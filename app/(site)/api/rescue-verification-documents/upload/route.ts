@@ -9,7 +9,7 @@ import {
   updateRescueOrganization,
 } from '@/lib/db';
 import { getRequestId, createScopedLogger } from '@/lib/request-context';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 import type { RescueVerificationDocumentType } from '@/lib/types';
 
 const BUCKET = 'rescue-verification-docs';
@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     }
 
     const ip = request.headers.get('x-forwarded-for') || 'unknown';
-    if (!rateLimit(`rescue-verification-upload:${user.id}:${ip}`, 6, 60_000)) {
+    if (!(await rateLimitAsync(`rescue-verification-upload:${user.id}:${ip}`, 6, 60_000, { route: 'rescue-verification-upload', failClosed: true }))) {
       return apiError({ status: 429, code: 'RATE_LIMITED', message: 'Previše uploadova. Pokušaj opet za minutu.' });
     }
 

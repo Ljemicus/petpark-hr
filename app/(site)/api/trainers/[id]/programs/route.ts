@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 import { getPrograms } from '@/lib/db';
-import { rateLimit } from '@/lib/rate-limit';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
-  if (!rateLimit(`trainer:programs:${ip}`, 60, 60_000)) {
+  if (!(await rateLimitAsync(`trainer:programs:${ip}`, 60, 60_000, { route: 'trainer-programs-list', failClosed: false }))) {
     return NextResponse.json({ error: 'Previše zahtjeva. Pokušajte kasnije.' }, { status: 429 });
   }
 

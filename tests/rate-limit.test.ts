@@ -114,22 +114,22 @@ describe('createRateLimitResponse', () => {
     };
     const response = createRateLimitResponse(result);
     const body = await response.json();
-    expect(body.error).toBe('Rate limit exceeded');
+    expect(body.error).toBe('Previše zahtjeva. Pokušaj ponovno kasnije.');
     expect(body.code).toBe('RATE_LIMITED');
   });
 });
 
 describe('RateLimits constants', () => {
   it('should have correct auth rate limits', () => {
-    expect(RateLimits.login.limit).toBe(5);
-    expect(RateLimits.login.windowSeconds).toBe(60);
+    expect(RateLimits.login.limit).toBe(10);
+    expect(RateLimits.login.windowSeconds).toBe(15 * 60);
     expect(RateLimits.login.identifier).toBe('auth:login');
 
-    expect(RateLimits.register.limit).toBe(3);
-    expect(RateLimits.register.windowSeconds).toBe(60);
+    expect(RateLimits.register.limit).toBe(5);
+    expect(RateLimits.register.windowSeconds).toBe(60 * 60);
 
-    expect(RateLimits.forgotPassword.limit).toBe(3);
-    expect(RateLimits.forgotPassword.windowSeconds).toBe(60);
+    expect(RateLimits.forgotPassword.limit).toBe(5);
+    expect(RateLimits.forgotPassword.windowSeconds).toBe(60 * 60);
   });
 
   it('should have correct social rate limits', () => {
@@ -189,6 +189,21 @@ describe('checkRateLimit (in-memory fallback)', () => {
     expect(result.remaining).toBe(0);
   });
 
+
+
+  it('should fail closed for sensitive limits when Redis is missing', async () => {
+    const result = await checkRateLimit('sensitive-key', {
+      limit: 5,
+      windowSeconds: 60,
+      identifier: 'sensitive:test',
+      failClosed: true,
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.remaining).toBe(0);
+    expect(result.reason).toBe('redis_unavailable');
+    expect(result.retryAfter).toBe(60);
+  });
   it('should track different keys independently', async () => {
     const config = {
       limit: 1,

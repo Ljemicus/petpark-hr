@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import { getPublicServiceListingBySlug } from '@/lib/db/service-listings';
-import { createRateLimitResponse, rateLimitRequest, RateLimits } from '@/lib/rate-limiter';
+import { createRateLimitResponse, rateLimitRequest, RateLimits } from '@/lib/upstash-rate-limit';
 import { createBookingRequest } from '@/lib/petpark/booking-requests/db';
 import { bookingRequestInputSchema } from '@/lib/petpark/booking-requests/schema';
 
 export async function POST(request: Request) {
-  const rateLimit = await rateLimitRequest(request, { ...RateLimits.apiWrite, identifier: 'booking-requests:create' });
+  const rateLimit = await rateLimitRequest(request, RateLimits.bookingRequestCreate);
   if (!rateLimit.success) {
     return createRateLimitResponse(rateLimit);
   }
