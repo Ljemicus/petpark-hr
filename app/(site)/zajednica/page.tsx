@@ -6,12 +6,9 @@ import {
   AlertTriangle,
   Bell,
   BookOpen,
-  Bookmark,
   Camera,
   CheckCircle2,
-  Heart,
   HeartHandshake,
-  MapPin,
   MessageCircle,
   PawPrint,
   PlusCircle,
@@ -23,14 +20,12 @@ import {
 } from 'lucide-react';
 import {
   AppHeader,
-  Avatar,
   Badge,
   ButtonLink,
   Card,
   LeafDecoration,
   PawDecoration,
 } from '@/components/shared/petpark/design-foundation';
-import { PetParkLogo } from '@/components/shared/brand';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
@@ -57,64 +52,42 @@ const tabs = [
   { label: 'Savjeti', href: '/blog', icon: BookOpen },
 ];
 
-const posts = [
+const communityModules = [
   {
-    author: 'Maja i Roko',
-    initials: 'MR',
-    category: 'Forum',
-    title: 'Kako ste riješili anksioznost kod psa nakon preseljenja?',
-    excerpt: 'Roko se nakon preseljenja u novi stan teže opušta kad ostane sam. Tražim praktične savjete i iskustva prije nego krenemo s trenerom.',
-    location: 'Zagreb · Trešnjevka',
+    title: 'Forum',
+    category: 'Rasprave',
+    excerpt: 'Pitanja, iskustva i savjeti vlasnika ljubimaca. Objave se prikazuju iz stvarnog forum modula.',
     href: '/forum',
     tone: 'teal' as const,
-    likes: 24,
-    comments: 11,
+    icon: MessageCircle,
   },
   {
-    author: 'Petra',
-    initials: 'P',
-    category: 'Izgubljeni / pronađeni',
-    title: 'Pronađena mlada maca kod parka Mlaka',
-    excerpt: 'Maca je pitoma, ima sivu ogrlicu bez privjeska. Trenutno je na sigurnom, molim dijeljenje ako netko zna vlasnika.',
-    location: 'Rijeka · Mlaka',
+    title: 'Izgubljeni / pronađeni',
+    category: 'Sigurnost',
+    excerpt: 'Prijave nestalih i pronađenih ljubimaca. Ovdje ne glumimo hitne slučajeve — vodi na stvarni modul.',
     href: '/izgubljeni',
     tone: 'orange' as const,
-    likes: 58,
-    comments: 19,
-    urgent: true,
+    icon: Bell,
   },
   {
-    author: 'Udruga Šapice',
-    initials: 'UŠ',
-    category: 'Udomljavanje',
-    title: 'Mila traži miran dom i strpljive ljude',
-    excerpt: 'Mila je nježna kujica od dvije godine, cijepljena i socijalizirana. Odlično reagira na mirne šetnje i rutinu.',
-    location: 'Osijek',
+    title: 'Udomljavanje',
+    category: 'Dom za ljubimce',
+    excerpt: 'Pregled stvarnih oglasa za udomljavanje kad su dostupni, bez izmišljenih profila i lažnih upita.',
     href: '/udomljavanje',
     tone: 'sage' as const,
-    likes: 41,
-    comments: 8,
+    icon: HeartHandshake,
   },
   {
-    author: 'PetPark tim',
-    initials: 'PP',
-    category: 'Savjeti',
-    title: 'Mini vodič: što pripremiti za prvo čuvanje',
-    excerpt: 'Hrana, rutina, kontakt veterinara, navike u šetnji i napomena za alergije — mali checklist prije predaje ljubimca sitteru.',
-    location: 'Blog',
+    title: 'Savjeti',
+    category: 'PetPark vodiči',
+    excerpt: 'Članci i checklistovi iz PetPark bloga, od prvog čuvanja do pripreme za šetnju ili grooming.',
     href: '/blog',
     tone: 'cream' as const,
-    likes: 36,
-    comments: 5,
+    icon: BookOpen,
   },
 ];
 
 const popularTopics = ['prvo čuvanje', 'socijalizacija šteneta', 'grooming preporuke', 'izgubljeni ljubimci', 'udomljavanje mačke'];
-const activeMembers = [
-  { name: 'Maja', detail: 'savjeti za pse', initials: 'M' },
-  { name: 'Dario', detail: 'trener · Rijeka', initials: 'D' },
-  { name: 'Ana', detail: 'udomljavanje', initials: 'A' },
-];
 
 function StatCard({ value, label, icon: Icon }: { value: string; label: string; icon: typeof PawPrint }) {
   return (
@@ -126,32 +99,21 @@ function StatCard({ value, label, icon: Icon }: { value: string; label: string; 
   );
 }
 
-function PostCard({ post }: { post: (typeof posts)[number] }) {
+function ModuleCard({ module }: { module: (typeof communityModules)[number] }) {
   return (
-    <Link href={post.href} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
-      <Card radius="28" tone={post.tone} interactive className="p-5 sm:p-6">
+    <Link href={module.href} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
+      <Card radius="28" tone={module.tone} interactive className="p-5 sm:p-6">
         <div className="flex items-start gap-4">
-          {post.author === 'PetPark tim' ? (
-            <span className="flex h-16 min-w-28 items-center justify-center rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] px-3 shadow-[var(--pp-shadow-small-card)]">
-              <PetParkLogo width={104} height={25} priority className="h-6 w-auto" />
-            </span>
-          ) : (
-            <Avatar initials={post.initials} alt={post.author} size="lg" />
-          )}
+          <div className="flex size-14 shrink-0 items-center justify-center rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] shadow-[var(--pp-shadow-small-card)]">
+            <module.icon className="size-6 text-[color:var(--pp-color-orange-primary)]" aria-hidden />
+          </div>
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <p className="font-black text-[color:var(--pp-color-forest-text)]">{post.author}</p>
-              <Badge variant={post.urgent ? 'warning' : 'teal'}>{post.category}</Badge>
-              {post.urgent ? <Badge variant="error"><AlertTriangle className="size-3" /> Hitno</Badge> : null}
+              <p className="font-black text-[color:var(--pp-color-forest-text)]">{module.title}</p>
+              <Badge variant="teal">{module.category}</Badge>
             </div>
-            <h2 className="mt-4 text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)] group-hover:text-[color:var(--pp-color-orange-primary)]">{post.title}</h2>
-            <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{post.excerpt}</p>
-            <div className="mt-4 flex flex-wrap items-center gap-3 text-xs font-black text-[color:var(--pp-color-muted-text)]">
-              <span className="inline-flex items-center gap-1"><MapPin className="size-4" /> {post.location}</span>
-              <span className="inline-flex items-center gap-1"><Heart className="size-4" /> {post.likes}</span>
-              <span className="inline-flex items-center gap-1"><MessageCircle className="size-4" /> {post.comments}</span>
-              <span className="inline-flex items-center gap-1"><Bookmark className="size-4" /> Spremi</span>
-            </div>
+            <p className="mt-4 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{module.excerpt}</p>
+            <p className="mt-4 text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-orange-primary)] group-hover:text-[color:var(--pp-color-forest-text)]">Otvori modul →</p>
           </div>
         </div>
       </Card>
@@ -236,13 +198,13 @@ export default function ZajednicaPage() {
                 <ButtonLink href="/pretraga?category=zajednica" variant="secondary" size="sm"><Search className="size-4" /> Pretraži</ButtonLink>
               </div>
 
-              {posts.map((post) => <PostCard key={post.title} post={post} />)}
+              {communityModules.map((module) => <ModuleCard key={module.title} module={module} />)}
 
               <Card radius="28" tone="sage" className="p-8 text-center">
                 <Camera className="mx-auto size-12 text-[color:var(--pp-color-orange-primary)]" aria-hidden />
                 <h2 className="mt-5 text-3xl font-black tracking-[-0.04em] text-[color:var(--pp-color-forest-text)]">Feed zajednice se puni postupno.</h2>
                 <p className="mx-auto mt-3 max-w-2xl text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">
-                  Objavljivanje je trenutno UI-first placeholder. Kad odobrimo backend, ovdje ide stvarni feed, komentari i spremanje objava.
+                  Ovaj pregled sada vodi na module koji postoje. Stvarne objave, komentari i spremanja žive u feedu kad ih korisnici kreiraju.
                 </p>
                 <ButtonLink href="/zajednica/feed" className="mt-6" variant="secondary">Pogledaj feed</ButtonLink>
               </Card>
@@ -255,17 +217,10 @@ export default function ZajednicaPage() {
                 </div>
               </SidebarCard>
 
-              <SidebarCard title="Aktivni članovi" icon={UsersRound} tone="sage">
-                <div className="space-y-3">
-                  {activeMembers.map((member) => (
-                    <div key={member.name} className="flex items-center gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] p-3">
-                      <Avatar initials={member.initials} alt={member.name} size="sm" />
-                      <div>
-                        <p className="text-sm font-black text-[color:var(--pp-color-forest-text)]">{member.name}</p>
-                        <p className="text-xs font-bold text-[color:var(--pp-color-muted-text)]">{member.detail}</p>
-                      </div>
-                    </div>
-                  ))}
+              <SidebarCard title="Status zajednice" icon={UsersRound} tone="sage">
+                <div className="rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] p-4">
+                  <p className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Bez lažnih aktivnih članova</p>
+                  <p className="mt-2 text-xs font-bold leading-5 text-[color:var(--pp-color-muted-text)]">Kad stvarni feed dobije korisničke objave, ovdje možemo prikazati stvarnu aktivnost iz baze.</p>
                 </div>
               </SidebarCard>
 
