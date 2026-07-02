@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { arePaymentsEnabled, paymentsDisabledResponse } from '@/lib/payments-gate';
 import { appLogger } from '@/lib/logger';
 import { dispatchAlert } from '@/lib/alerting';
 import { getAuthUser } from '@/lib/auth';
@@ -7,6 +8,10 @@ import { createClient } from '@/lib/supabase/server';
 import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
 
 export async function POST(request: Request) {
+  if (!arePaymentsEnabled()) {
+    return paymentsDisabledResponse();
+  }
+
   const user = await getAuthUser();
   if (!user) {
     return NextResponse.json({ error: 'Nemate pristup.' }, { status: 401 });

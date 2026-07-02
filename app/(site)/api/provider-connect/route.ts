@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { arePaymentsEnabled, paymentsDisabledResponse } from '@/lib/payments-gate';
 import { getAuthUser } from '@/lib/auth';
 import { getProviderApplication, updateProviderStripeState } from '@/lib/db/provider-applications';
 import {
@@ -8,6 +9,10 @@ import {
 } from '@/lib/provider-connect';
 
 export async function POST() {
+  if (!arePaymentsEnabled()) {
+    return paymentsDisabledResponse();
+  }
+
   const user = await getAuthUser();
   if (!user) {
     return NextResponse.json({ error: 'Neautorizirano' }, { status: 401 });
@@ -48,6 +53,10 @@ export async function POST() {
 }
 
 export async function GET() {
+  if (!arePaymentsEnabled()) {
+    return paymentsDisabledResponse();
+  }
+
   const user = await getAuthUser();
   if (!user) {
     return NextResponse.json({ error: 'Neautorizirano' }, { status: 401 });

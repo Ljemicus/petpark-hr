@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { arePaymentsEnabled, paymentsDisabledResponse } from '@/lib/payments-gate';
 import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { apiError } from '@/lib/api-errors';
 import { getStripe } from '@/lib/stripe';
@@ -14,6 +15,10 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  if (!arePaymentsEnabled()) {
+    return paymentsDisabledResponse();
+  }
+
   const reqId = getRequestId(request);
   const log = createScopedLogger('payments.webhook', reqId);
   const stripe = getStripe();

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { arePaymentsEnabled, paymentsDisabledResponse } from '@/lib/payments-gate';
 import { appLogger } from '@/lib/logger';
 import { dispatchAlert } from '@/lib/alerting';
 import { getAuthUser } from '@/lib/auth';
@@ -7,6 +8,10 @@ import { createClient } from '@/lib/supabase/server';
 
 // GET — return sitter's Stripe account status
 export async function GET() {
+  if (!arePaymentsEnabled()) {
+    return paymentsDisabledResponse();
+  }
+
   const user = await getAuthUser();
   if (!user) {
     return NextResponse.json({ error: 'Nemate pristup.' }, { status: 401 });
@@ -47,6 +52,10 @@ export async function GET() {
 
 // POST — create new Stripe Express account or generate new onboarding link
 export async function POST() {
+  if (!arePaymentsEnabled()) {
+    return paymentsDisabledResponse();
+  }
+
   const user = await getAuthUser();
   if (!user) {
     return NextResponse.json({ error: 'Nemate pristup.' }, { status: 401 });
