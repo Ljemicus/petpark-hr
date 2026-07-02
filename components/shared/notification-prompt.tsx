@@ -4,31 +4,31 @@ import { useState, useEffect } from 'react';
 import { Bell, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/auth-context';
-import { mockRequestPermission, mockSubscribe } from '@/lib/notifications';
+import { usePushNotifications } from '@/lib/push-client';
 import { toast } from 'sonner';
 
 export function NotificationPrompt() {
   const { user } = useAuth();
+  const { isSupported, isSubscribed, isLoading, subscribe } = usePushNotifications();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !isSupported || isSubscribed) return;
     const dismissed = localStorage.getItem('petpark-notif-dismissed');
     if (dismissed) return;
 
     const timer = setTimeout(() => setShow(true), 5000);
     return () => clearTimeout(timer);
-  }, [user]);
+  }, [user, isSupported, isSubscribed]);
 
   const handleEnable = async () => {
     try {
-      const permission = await mockRequestPermission();
-      if (permission === 'granted') {
-        await mockSubscribe();
+      const subscribed = await subscribe();
+      if (subscribed) {
         toast.success('Obavijesti su uključene! Primit ćete obavijesti o novim porukama.');
         localStorage.setItem('petpark-notif-dismissed', 'true');
       } else {
-        toast.info('Obavijesti su onemogućene u pregledniku.');
+        toast.info('Obavijesti nisu uključene. Provjerite dozvolu preglednika ili VAPID konfiguraciju.');
       }
     } catch {
       toast.error('Greška pri uključivanju obavijesti.');
@@ -59,9 +59,10 @@ export function NotificationPrompt() {
               <Button
                 size="sm"
                 onClick={handleEnable}
+                disabled={isLoading}
                 className="bg-orange-500 hover:bg-orange-600 text-white text-xs h-8"
               >
-                Uključi
+                {isLoading ? 'Uključujem...' : 'Uključi'}
               </Button>
               <Button
                 size="sm"

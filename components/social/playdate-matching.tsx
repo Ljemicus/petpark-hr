@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { MapPin, PawPrint, Heart, MessageCircle } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { PawPrint, Heart, MessageCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -11,12 +11,6 @@ import { toast } from 'sonner';
 import type { Pet } from '@/lib/types';
 import type { PlaydateRequestWithDetails } from '@/lib/types/social';
 
-interface PlaydateMatch {
-  pet: Pet;
-  distance: number; // in km
-  compatibility: number; // 0-100
-}
-
 interface PlaydateMatchingProps {
   userPets: Pet[];
 }
@@ -24,8 +18,6 @@ interface PlaydateMatchingProps {
 export function PlaydateMatching({ userPets }: PlaydateMatchingProps) {
   const { user } = useAuth();
   const [selectedPet, setSelectedPet] = useState<Pet | null>(userPets[0] || null);
-  const [matches, setMatches] = useState<PlaydateMatch[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [sentRequests, setSentRequests] = useState<PlaydateRequestWithDetails[]>([]);
   const [receivedRequests, setReceivedRequests] = useState<PlaydateRequestWithDetails[]>([]);
 
@@ -49,81 +41,15 @@ export function PlaydateMatching({ userPets }: PlaydateMatchingProps) {
     }
   }, []);
 
-  // Simulate finding nearby pets
-  const findMatches = useCallback(async () => {
-    if (!selectedPet) return;
-    
-    setIsLoading(true);
-    // In production, this would call an API to find nearby pets
-    // For now, simulate with mock data
-    setTimeout(() => {
-      const mockMatches: PlaydateMatch[] = [
-        {
-          pet: {
-            id: 'mock-1',
-            owner_id: 'other-user',
-            name: 'Bella',
-            species: selectedPet.species,
-            breed: 'Labrador',
-            age: 3,
-            photo_url: null,
-            weight: null,
-            special_needs: null,
-            created_at: new Date().toISOString(),
-          },
-          distance: 1.2,
-          compatibility: 85,
-        },
-        {
-          pet: {
-            id: 'mock-2',
-            owner_id: 'other-user-2',
-            name: 'Max',
-            species: selectedPet.species,
-            breed: 'Miješanac',
-            age: 2,
-            photo_url: null,
-            weight: null,
-            special_needs: null,
-            created_at: new Date().toISOString(),
-          },
-          distance: 2.5,
-          compatibility: 72,
-        },
-      ];
-      setMatches(mockMatches);
-      setIsLoading(false);
-    }, 1000);
-  }, [selectedPet]);
+  useEffect(() => {
+    if (!user) return;
+    const timer = window.setTimeout(() => void loadRequests(), 0);
+    return () => window.clearTimeout(timer);
+  }, [user, loadRequests]);
 
-  const handleRequestPlaydate = useCallback(async (targetPet: Pet) => {
-    if (!user || !selectedPet) {
-      toast.error('Morate biti prijavljeni');
-      return;
-    }
-
-    try {
-      const response = await fetch('/api/social/playdates', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          targetPetId: targetPet.id,
-          requesterPetId: selectedPet.id,
-          message: `Bok! ${selectedPet.name} bi volio/la igrati se s ${targetPet.name}.`,
-        }),
-      });
-
-      if (response.ok) {
-        toast.success('Zahtjev za druženje poslan!');
-        await loadRequests();
-      } else {
-        const error = await response.json();
-        toast.error(error.error || 'Greška prilikom slanja zahtjeva');
-      }
-    } catch {
-      toast.error('Greška prilikom slanja zahtjeva');
-    }
-  }, [user, selectedPet, loadRequests]);
+  const findMatches = useCallback(() => {
+    toast.info('Automatsko pronalaženje ljubimaca je u pripremi. Za sada prikazujemo samo stvarne zahtjeve.');
+  }, []);
 
   const handleRespondToRequest = useCallback(async (requestId: string, status: 'accepted' | 'rejected') => {
     try {
@@ -183,53 +109,16 @@ export function PlaydateMatching({ userPets }: PlaydateMatchingProps) {
 
       {/* Find Matches Button */}
       {selectedPet && (
-        <Button onClick={findMatches} disabled={isLoading} className="w-full">
-          {isLoading ? 'Tražim...' : 'Pronađi ljubimce u blizini'}
-        </Button>
-      )}
-
-      {/* Matches */}
-      {matches.length > 0 && (
-        <div>
-          <h4 className="text-sm font-medium mb-3">Pronađeni ljubimci:</h4>
-          <div className="space-y-3">
-            {matches.map((match) => (
-              <Card key={match.pet.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-12 w-12">
-                      <AvatarImage src={match.pet.photo_url || undefined} />
-                      <AvatarFallback>{match.pet.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <p className="font-semibold">{match.pet.name}</p>
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span>{match.pet.breed}</span>
-                        <span>•</span>
-                        <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3" />
-                          {match.distance} km
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <Badge className="bg-green-100 text-green-700">
-                        {match.compatibility}% match
-                      </Badge>
-                      <Button
-                        size="sm"
-                        className="mt-2"
-                        onClick={() => handleRequestPlaydate(match.pet)}
-                      >
-                        Pozovi na druženje
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
+        <Card className="border-dashed">
+          <CardContent className="space-y-3 p-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              Automatsko pronalaženje ljubimaca u blizini još nije spojeno na stvarni backend. Ne prikazujemo lažne match rezultate.
+            </p>
+            <Button onClick={findMatches} variant="outline" className="w-full">
+              Matching uskoro
+            </Button>
+          </CardContent>
+        </Card>
       )}
 
       {/* Received Requests */}
