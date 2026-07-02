@@ -10,11 +10,16 @@ import {
 } from '@/lib/db';
 import { getRequestId, createScopedLogger } from '@/lib/request-context';
 import { rateLimitAsync } from '@/lib/rate-limit';
+import {
+  DOCUMENT_MIME_TYPES,
+  MAX_DOCUMENT_BYTES,
+  isSupportedUploadMime,
+  validateUploadSignature,
+} from '@/lib/security/file-signature';
 import type { RescueVerificationDocumentType } from '@/lib/types';
 
 const BUCKET = 'rescue-verification-docs';
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
+const ALLOWED_TYPES = DOCUMENT_MIME_TYPES;
 const ALLOWED_DOC_TYPES = new Set<RescueVerificationDocumentType>([
   'registration_certificate',
   'charity_proof',
@@ -69,12 +74,12 @@ export async function POST(request: NextRequest) {
       return apiError({ status: 400, code: 'INVALID_DOCUMENT_TYPE', message: 'Nepodržan tip dokumenta.' });
     }
 
-    if (!ALLOWED_TYPES.has(file.type)) {
+    if (!isSupportedUploadMime(file.type) || !ALLOWED_TYPES.has(file.type)) {
       return apiError({ status: 400, code: 'INVALID_FILE_TYPE', message: 'Dozvoljeni su PDF, JPG, PNG i WebP dokumenti.' });
     }
 
-    if (file.size <= 0 || file.size > MAX_FILE_SIZE) {
-      return apiError({ status: 400, code: 'FILE_TOO_LARGE', message: 'Datoteka mora biti između 1 B i 10 MB.' });
+    if (file.size <= 0 || file.size > MAX_DOCUMENT_BYTES) {
+      return apiError({ status: 400, code: 'FILE_TOO_LARGE', message: 'Datoteka mora biti između 1 B i 15 MB.' });
     }
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -97,11 +102,15 @@ export async function POST(request: NextRequest) {
     const adminClient = createAdminClient(supabaseUrl, serviceRoleKey);
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    const signature = validateUploadSignature(buffer, file.type, ALLOWED_TYPES);
+    if (!signature.ok) {
+      return apiError({ status: 400, code: signature.code, message: signature.message });
+    }
 
     const { error: uploadError } = await adminClient.storage.from(BUCKET).upload(storagePath, buffer, {
       cacheControl: '3600',
       upsert: false,
-      contentType: file.type,
+      contentType: signature.mime,
     });
 
     if (uploadError) {
@@ -128,7 +137,7 @@ export async function POST(request: NextRequest) {
       storage_path: storagePath,
       uploaded_by: user.id,
       original_filename: file.name || null,
-      mime_type: file.type || null,
+      mime_type: signature.mime,
       file_size_bytes: file.size,
       document_notes: documentNotes || null,
     });
@@ -151,7 +160,7 @@ export async function POST(request: NextRequest) {
       documentId: created.id,
       storagePath,
       fileSize: file.size,
-      mimeType: file.type,
+      mimeType: signature.mime,
     });
 
     return NextResponse.json({ document: created });

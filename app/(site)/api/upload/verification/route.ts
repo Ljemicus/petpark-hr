@@ -5,13 +5,14 @@ import { getAuthUser } from '@/lib/auth';
 import { dispatchAlert } from '@/lib/alerting';
 import { getRequestId, createScopedLogger } from '@/lib/request-context';
 import { rateLimitAsync } from '@/lib/rate-limit';
+import {
+  DOCUMENT_MIME_TYPES,
+  MAX_DOCUMENT_BYTES,
+  isSupportedUploadMime,
+  validateUploadSignature,
+} from '@/lib/security/file-signature';
 
-const ALLOWED_TYPES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'application/pdf',
-]);
+const ALLOWED_TYPES = DOCUMENT_MIME_TYPES;
 
 const ALLOWED_DOC_TYPES = new Set([
   'id_document',
@@ -21,8 +22,6 @@ const ALLOWED_DOC_TYPES = new Set([
 ]);
 
 const BUCKET = 'verification-docs';
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB for identity docs
-
 function sanitizeSegment(value: string) {
   return value.replace(/[^a-zA-Z0-9/_-]/g, '').replace(/\/+/g, '/').replace(/^\/+|\/+$/g, '');
 }
@@ -51,7 +50,7 @@ export async function POST(request: NextRequest) {
       log.warn( 'Upload rejected — file missing', { userId: user.id });
       return apiError({ status: 400, code: 'FILE_MISSING', message: 'No file provided' });
     }
-    if (!ALLOWED_TYPES.has(file.type)) {
+    if (!isSupportedUploadMime(file.type) || !ALLOWED_TYPES.has(file.type)) {
       log.warn( 'Upload rejected — invalid file type', { userId: user.id, fileType: file.type });
       return apiError({
         status: 400,
@@ -59,9 +58,9 @@ export async function POST(request: NextRequest) {
         message: 'Dozvoljene su samo JPG, PNG, WebP slike i PDF dokumenti.',
       });
     }
-    if (file.size <= 0 || file.size > MAX_FILE_SIZE) {
+    if (file.size <= 0 || file.size > MAX_DOCUMENT_BYTES) {
       log.warn( 'Upload rejected — file too large', { userId: user.id, fileSize: file.size });
-      return apiError({ status: 400, code: 'FILE_TOO_LARGE', message: 'Datoteka je prevelika. Max 10MB.' });
+      return apiError({ status: 400, code: 'FILE_TOO_LARGE', message: 'Datoteka je prevelika. Max 15MB.' });
     }
     if (!ALLOWED_DOC_TYPES.has(documentType)) {
       log.warn( 'Upload rejected — invalid doc type', { userId: user.id, documentType });
@@ -88,11 +87,16 @@ export async function POST(request: NextRequest) {
     const supabase = createClient(supabaseUrl, serviceRoleKey);
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    const signature = validateUploadSignature(buffer, file.type, ALLOWED_TYPES);
+    if (!signature.ok) {
+      log.warn('Upload rejected — invalid file signature', { userId: user.id, fileType: file.type });
+      return apiError({ status: 400, code: signature.code, message: signature.message });
+    }
 
     const { error } = await supabase.storage.from(BUCKET).upload(path, buffer, {
       cacheControl: '3600',
       upsert: false,
-      contentType: file.type,
+      contentType: signature.mime,
     });
 
     if (error) {

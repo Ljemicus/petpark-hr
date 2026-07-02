@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
       documents.map(async (doc) => {
         const { data } = await supabase.storage
           .from(doc.storage_bucket)
-          .createSignedUrl(doc.storage_path, 60 * 10);
+          .createSignedUrl(doc.storage_path, 300);
 
         return {
           id: doc.id,

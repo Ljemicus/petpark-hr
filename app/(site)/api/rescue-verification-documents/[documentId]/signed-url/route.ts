@@ -43,7 +43,7 @@ export async function GET(
     const supabase = createAdminClient(supabaseUrl, serviceRoleKey);
     const { data, error } = await supabase.storage
       .from(document.storage_bucket)
-      .createSignedUrl(document.storage_path, 60 * 10, {
+      .createSignedUrl(document.storage_path, 300, {
         download: document.original_filename ?? undefined,
       });
 
@@ -54,7 +54,7 @@ export async function GET(
     return NextResponse.json({
       documentId: document.id,
       signedUrl: data.signedUrl,
-      expiresInSeconds: 600,
+      expiresInSeconds: 300,
     });
   } catch (error) {
     return apiError({ status: 500, code: 'INTERNAL_ERROR', message: error instanceof Error ? error.message : 'Internal error' });

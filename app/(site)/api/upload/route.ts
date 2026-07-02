@@ -5,13 +5,18 @@ import { getAuthUser } from '@/lib/auth';
 import { dispatchAlert } from '@/lib/alerting';
 import { getRequestId, createScopedLogger } from '@/lib/request-context';
 import { rateLimitAsync } from '@/lib/rate-limit';
+import {
+  DOCUMENT_MIME_TYPES,
+  IMAGE_MIME_TYPES,
+  getUploadSizeLimit,
+  isSupportedUploadMime,
+  validateUploadSignature,
+} from '@/lib/security/file-signature';
 
-const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
-const VERIFICATION_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'application/pdf']);
+const ALLOWED_TYPES = IMAGE_MIME_TYPES;
+const VERIFICATION_TYPES = DOCUMENT_MIME_TYPES;
 const ALLOWED_BUCKETS = new Set(['avatars', 'pet-photos', 'pet-updates', 'verification-docs', 'lost-pet-images']);
 const PRIVATE_BUCKETS = new Set(['verification-docs']);
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-
 function sanitizeSegment(value: string) {
   return value.replace(/[^a-zA-Z0-9/_-]/g, '').replace(/\/+/g, '/').replace(/^\/+|\/+$/g, '');
 }
@@ -42,11 +47,12 @@ export async function POST(request: NextRequest) {
     }
     const isPrivateBucket = PRIVATE_BUCKETS.has(requestedBucket);
     const allowedTypes = isPrivateBucket ? VERIFICATION_TYPES : ALLOWED_TYPES;
-    if (!allowedTypes.has(file.type)) {
+    if (!isSupportedUploadMime(file.type) || !allowedTypes.has(file.type)) {
       return apiError({ status: 400, code: 'INVALID_FILE_TYPE', message: isPrivateBucket ? 'Dozvoljeni su samo JPG, PNG, WebP i PDF dokumenti.' : 'Dozvoljene su samo JPG, PNG i WebP slike.' });
     }
-    if (file.size <= 0 || file.size > MAX_FILE_SIZE) {
-      return apiError({ status: 400, code: 'FILE_TOO_LARGE', message: 'Datoteka je prevelika. Max 5MB.' });
+    const maxFileSize = getUploadSizeLimit(allowedTypes);
+    if (file.size <= 0 || file.size > maxFileSize) {
+      return apiError({ status: 400, code: 'FILE_TOO_LARGE', message: isPrivateBucket ? 'Datoteka je prevelika. Max 15MB.' : 'Datoteka je prevelika. Max 8MB.' });
     }
     if (!ALLOWED_BUCKETS.has(requestedBucket)) {
       return apiError({ status: 400, code: 'INVALID_BUCKET', message: 'Invalid bucket' });
@@ -74,11 +80,15 @@ export async function POST(request: NextRequest) {
     const supabase = createClient(supabaseUrl, serviceRoleKey);
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    const signature = validateUploadSignature(buffer, file.type, allowedTypes);
+    if (!signature.ok) {
+      return apiError({ status: 400, code: signature.code, message: signature.message });
+    }
 
     const { error } = await supabase.storage.from(bucket).upload(path, buffer, {
       cacheControl: '3600',
       upsert: false,
-      contentType: file.type,
+      contentType: signature.mime,
     });
 
     if (error) {
