@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 import { sendSMS, smsTemplates } from '@/lib/sms';
+import { smsSendSchema } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,8 +11,15 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser();
     
     // Allow system/internal calls without auth for cron jobs
-    const body = await request.json();
-    const { to, template, data, body: customBody, internalKey } = body;
+    const body = await request.json().catch(() => null);
+    const parsed = smsSendSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: 'Neispravni podaci.', details: parsed.error.flatten().fieldErrors },
+        { status: 400 }
+      );
+    }
+    const { to, template, data, body: customBody, internalKey, userId } = parsed.data;
     
     // Check internal key for system calls
     const isSystemCall = internalKey === process.env.SMS_INTERNAL_KEY;
@@ -23,25 +31,18 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    if (!to) {
-      return NextResponse.json(
-        { error: 'Phone number is required' },
-        { status: 400 }
-      );
-    }
-    
     // Build message body from template or use custom
     let messageBody = customBody;
     if (template && data) {
       const templateFn = smsTemplates[template as keyof typeof smsTemplates];
       if (templateFn) {
-        messageBody = templateFn(data);
+        messageBody = templateFn(data as never);
       }
     }
     
     if (!messageBody) {
       return NextResponse.json(
-        { error: 'Message body is required' },
+        { error: 'Neispravni podaci.', details: { body: ['SMS poruka je obavezna'] } },
         { status: 400 }
       );
     }
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
     const { data: userPrefs } = await supabase
       .from('user_notifications')
       .select('sms_enabled, phone_verified')
-      .eq('user_id', body.userId)
+      .eq('user_id', userId)
       .single();
     
     if (userPrefs && !userPrefs.sms_enabled) {
@@ -68,7 +69,7 @@ export async function POST(request: NextRequest) {
     
     // Log to database
     await supabase.from('sms_logs').insert({
-      user_id: body.userId || user?.id,
+      user_id: userId || user?.id,
       phone: to,
       body: messageBody,
       template: template || 'custom',

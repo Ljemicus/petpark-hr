@@ -11,6 +11,7 @@ import {
   isSupportedUploadMime,
   validateUploadSignature,
 } from '@/lib/security/file-signature';
+import { verificationUploadMetadataSchema } from '@/lib/validation';
 
 const ALLOWED_TYPES = DOCUMENT_MIME_TYPES;
 
@@ -43,8 +44,15 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
-    const documentType = ((formData.get('document_type') as string) || '').trim();
-    const folder = ((formData.get('folder') as string) || 'verification').trim();
+    const metadata = verificationUploadMetadataSchema.safeParse({
+      document_type: ((formData.get('document_type') as string) || '').trim(),
+      folder: ((formData.get('folder') as string) || 'verification').trim(),
+    });
+    if (!metadata.success) {
+      return apiError({ status: 400, code: 'INVALID_INPUT', message: 'Neispravni podaci.', details: metadata.error.flatten().fieldErrors });
+    }
+    const documentType = metadata.data.document_type;
+    const folder = metadata.data.folder;
 
     if (!file) {
       log.warn( 'Upload rejected — file missing', { userId: user.id });

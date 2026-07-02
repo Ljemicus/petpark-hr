@@ -12,6 +12,7 @@ import {
   isSupportedUploadMime,
   validateUploadSignature,
 } from '@/lib/security/file-signature';
+import { uploadMetadataSchema } from '@/lib/validation';
 
 const ALLOWED_TYPES = IMAGE_MIME_TYPES;
 const VERIFICATION_TYPES = DOCUMENT_MIME_TYPES;
@@ -38,8 +39,15 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
-    const requestedBucket = ((formData.get('bucket') as string) || 'pet-photos').trim();
-    const requestedFolder = ((formData.get('folder') as string) || 'uploads').trim();
+    const metadata = uploadMetadataSchema.safeParse({
+      bucket: ((formData.get('bucket') as string) || 'pet-photos').trim(),
+      folder: ((formData.get('folder') as string) || 'uploads').trim(),
+    });
+    if (!metadata.success) {
+      return apiError({ status: 400, code: 'INVALID_INPUT', message: 'Neispravni podaci.', details: metadata.error.flatten().fieldErrors });
+    }
+    const requestedBucket = metadata.data.bucket;
+    const requestedFolder = metadata.data.folder;
 
     if (!file) {
       log.warn( 'Upload rejected because file is missing');

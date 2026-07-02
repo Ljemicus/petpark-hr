@@ -4,11 +4,7 @@ import { apiError } from '@/lib/api-errors';
 import { sendPushToMultiple, type NotificationPayload } from '@/lib/push-notifications';
 import { appLogger } from '@/lib/logger';
 import { canSendNotification } from '@/lib/db/notifications';
-
-interface SendPushRequest {
-  userIds: string[];
-  payload: NotificationPayload;
-}
+import { pushSendSchema } from '@/lib/validation';
 
 /**
  * POST /api/push/send
@@ -34,16 +30,17 @@ export async function POST(request: NextRequest) {
       return apiError({ status: 403, code: 'FORBIDDEN', message: 'Insufficient permissions' });
     }
 
-    const body: SendPushRequest = await request.json();
-    const { userIds, payload } = body;
-
-    if (!userIds?.length || !payload) {
-      return apiError({ 
-        status: 400, 
-        code: 'INVALID_REQUEST', 
-        message: 'Missing userIds or payload' 
+    const body = await request.json().catch(() => null);
+    const parsed = pushSendSchema.safeParse(body);
+    if (!parsed.success) {
+      return apiError({
+        status: 400,
+        code: 'INVALID_INPUT',
+        message: 'Neispravni podaci.',
+        details: parsed.error.flatten().fieldErrors,
       });
     }
+    const { userIds, payload } = parsed.data as { userIds: string[]; payload: NotificationPayload };
 
     // Get all push subscriptions for the specified users
     const { data: subscriptions, error } = await supabase

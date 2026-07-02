@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { apiError } from '@/lib/api-errors';
 import { sendReviewRequestEmail } from '@/lib/email-sequences';
+import { reviewRequestEmailSchema } from '@/lib/validation';
 import type { User } from '@/lib/types';
 
 /**
@@ -17,28 +18,17 @@ export async function POST(request: NextRequest) {
       return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
     }
 
-    const body = await request.json();
-    const { 
-      userId, 
-      petName, 
-      providerName, 
-      serviceName,
-      bookingId 
-    }: {
-      userId: string;
-      petName: string;
-      providerName: string;
-      serviceName: string;
-      bookingId: string;
-    } = body;
-
-    if (!userId || !petName || !bookingId) {
-      return apiError({ 
-        status: 400, 
-        code: 'INVALID_REQUEST', 
-        message: 'Missing required fields' 
+    const body = await request.json().catch(() => null);
+    const parsed = reviewRequestEmailSchema.safeParse(body);
+    if (!parsed.success) {
+      return apiError({
+        status: 400,
+        code: 'INVALID_INPUT',
+        message: 'Neispravni podaci.',
+        details: parsed.error.flatten().fieldErrors,
       });
     }
+    const { userId, petName, providerName, serviceName, bookingId } = parsed.data;
 
     // Get user details
     const { data: userData, error: userError } = await supabase

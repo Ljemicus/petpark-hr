@@ -230,6 +230,70 @@ export const lostPetContactRelaySchema = z.object({
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Security P0 API Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
+const uuidSchema = z.string().uuid('Neispravan identifikator');
+
+export const smsSendSchema = z.object({
+  to: z.string().trim().min(6, 'Broj telefona je obavezan').max(40, 'Broj telefona je predug'),
+  template: z.string().trim().max(80).optional(),
+  data: z.record(z.string(), z.unknown()).optional(),
+  body: z.string().trim().min(1, 'SMS poruka je obavezna').max(1000, 'SMS poruka je preduga').optional(),
+  internalKey: z.string().optional(),
+  userId: uuidSchema.optional(),
+}).refine((data) => Boolean(data.body || data.template), {
+  message: 'SMS mora imati predložak ili tekst poruke',
+  path: ['body'],
+});
+
+export const bookingConfirmationEmailSchema = z.object({
+  userId: uuidSchema,
+  petName: z.string().trim().min(1).max(120),
+  serviceName: z.string().trim().min(1).max(160),
+  providerName: z.string().trim().max(160).optional().or(z.literal('')),
+  dates: z.string().trim().min(1).max(200),
+  totalPrice: z.string().trim().max(80).optional().or(z.literal('')),
+});
+
+export const reviewRequestEmailSchema = z.object({
+  userId: uuidSchema,
+  petName: z.string().trim().min(1).max(120),
+  providerName: z.string().trim().max(160).optional().or(z.literal('')),
+  serviceName: z.string().trim().max(160).optional().or(z.literal('')),
+  bookingId: uuidSchema,
+});
+
+export const pushSendSchema = z.object({
+  userIds: z.array(uuidSchema).min(1, 'Odaberi barem jednog korisnika').max(500, 'Previše primatelja'),
+  payload: z.object({
+    title: z.string().trim().min(1).max(120),
+    body: z.string().trim().min(1).max(500),
+    icon: z.string().url().optional(),
+    badge: z.string().url().optional(),
+    image: z.string().url().optional(),
+    tag: z.string().trim().max(120).optional(),
+    requireInteraction: z.boolean().optional(),
+    actions: z.array(z.object({
+      action: z.string().trim().min(1).max(80),
+      title: z.string().trim().min(1).max(80),
+      icon: z.string().url().optional(),
+    })).max(3).optional(),
+    data: z.record(z.string(), z.unknown()).optional(),
+  }),
+});
+
+export const uploadMetadataSchema = z.object({
+  bucket: z.enum(['avatars', 'pet-photos', 'pet-updates', 'verification-docs', 'lost-pet-images']).default('pet-photos'),
+  folder: z.string().trim().min(1).max(120).regex(/^[a-zA-Z0-9/_-]+$/, 'Neispravna putanja').default('uploads'),
+});
+
+export const verificationUploadMetadataSchema = z.object({
+  document_type: z.enum(['id_document', 'selfie_with_document', 'business_doc', 'qualification_doc']),
+  folder: z.string().trim().min(1).max(120).regex(/^[a-zA-Z0-9/_-]+$/, 'Neispravna putanja').default('verification'),
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Adoption Schemas
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -371,6 +435,12 @@ export type LostPetOwnerUpdateInput = z.infer<typeof lostPetOwnerUpdateSchema>;
 export type MarkLostPetFoundInput = z.infer<typeof markLostPetFoundSchema>;
 export type LostPetAlertInput = z.infer<typeof lostPetAlertSchema>;
 export type LostPetContactRelayInput = z.infer<typeof lostPetContactRelaySchema>;
+export type SmsSendInput = z.infer<typeof smsSendSchema>;
+export type BookingConfirmationEmailInput = z.infer<typeof bookingConfirmationEmailSchema>;
+export type ReviewRequestEmailInput = z.infer<typeof reviewRequestEmailSchema>;
+export type PushSendInput = z.infer<typeof pushSendSchema>;
+export type UploadMetadataInput = z.infer<typeof uploadMetadataSchema>;
+export type VerificationUploadMetadataInput = z.infer<typeof verificationUploadMetadataSchema>;
 export type AdoptionListingInput = z.infer<typeof adoptionListingSchema>;
 export type AdoptionPublishInput = z.infer<typeof adoptionPublishRules>;
 export type ProviderBasicProfileInput = z.input<typeof providerBasicProfileSchema>;
