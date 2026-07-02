@@ -5,6 +5,7 @@ import { sendPushToMultiple, type NotificationPayload } from '@/lib/push-notific
 import { appLogger } from '@/lib/logger';
 import { canSendNotification } from '@/lib/db/notifications';
 import { pushSendSchema } from '@/lib/validation';
+import { requireAdmin } from '@/lib/admin-guard';
 
 /**
  * POST /api/push/send
@@ -13,22 +14,8 @@ import { pushSendSchema } from '@/lib/validation';
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      return apiError({ status: 401, code: 'UNAUTHORIZED', message: 'Unauthorized' });
-    }
-
-    // Check if user is admin or has service role
-    const { data: userData } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-
-    if (userData?.role !== 'admin') {
-      return apiError({ status: 403, code: 'FORBIDDEN', message: 'Insufficient permissions' });
-    }
+    const admin = await requireAdmin();
+    if (!admin.ok) return admin.response;
 
     const body = await request.json().catch(() => null);
     const parsed = pushSendSchema.safeParse(body);

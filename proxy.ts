@@ -4,7 +4,7 @@ import { createServerClient } from '@supabase/ssr';
 import { updateSession } from '@/lib/supabase/middleware';
 import { generateRequestId, REQUEST_ID_HEADER } from '@/lib/request-context';
 import { detectLocaleFromPathname, LOCALE_HEADER } from '@/lib/i18n/routing';
-import { csrfMiddleware } from './middleware/csrf';
+import { appendCsrfCookie, csrfMiddleware, isStateChangingMethod } from './middleware/csrf';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const TRAINER_DEMO_RE = /^trainer[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}$/i;
@@ -40,22 +40,62 @@ function maybeHard404DynamicProfile(request: NextRequest) {
   return null;
 }
 
-// Routes that should be excluded from CSRF protection
+// Routes that authenticate with an external/shared secret instead of browser cookies.
 const CSRF_EXCLUDED_ROUTES = [
-  '/api/webhooks/',
-  '/api/auth/callback',
-  '/api/auth/login',
-  '/api/auth/register',
-  '/api/auth/forgot-password',
-  '/api/auth/logout',
-  '/api/admin/service-listings',
-  '/api/booking-requests',
-  '/api/notifications',
-  '/api/service-listings/draft-disabled',
+  '/api/payments/webhook', // Stripe signature is the authenticator.
+  '/api/cron/', // Cron routes must enforce CRON_SECRET at handler level.
 ];
 
 function isCsrfExcludedRoute(pathname: string): boolean {
   return CSRF_EXCLUDED_ROUTES.some(route => pathname.startsWith(route));
+}
+
+
+async function hasDbAdminRoleForRequest(request: NextRequest): Promise<boolean> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseAnonKey) return false;
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() { return request.cookies.getAll(); },
+      setAll() { /* proxy guard is read-only */ },
+    },
+  });
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const { data, error } = await supabase
+    .from('profile_roles')
+    .select('role')
+    .eq('profile_id', user.id)
+    .eq('role', 'admin')
+    .maybeSingle();
+
+  return !error && data?.role === 'admin';
+}
+
+async function hasValidBearerAuth(request: NextRequest): Promise<boolean> {
+  const authorization = request.headers.get('authorization');
+  if (!authorization?.startsWith('Bearer ')) return false;
+
+  const token = authorization.slice('Bearer '.length).trim();
+  if (!token) return false;
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !supabaseAnonKey) return false;
+
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      getAll() { return []; },
+      setAll() { /* bearer-only check; no cookies to set */ },
+    },
+  });
+
+  const { data, error } = await supabase.auth.getUser(token);
+  return !error && Boolean(data.user);
 }
 
 /**
@@ -75,13 +115,13 @@ function applyBaseSecurityHeaders(res: NextResponse) {
   );
 }
 
-function decorateProxyResponse(res: NextResponse, requestId: string, locale: string, cspValue: string, nonce?: string) {
+async function decorateProxyResponse(res: NextResponse, request: NextRequest, requestId: string, locale: string, cspValue: string, nonce?: string) {
   res.headers.set(REQUEST_ID_HEADER, requestId);
   res.headers.set(LOCALE_HEADER, locale);
   applyBaseSecurityHeaders(res);
   res.headers.set('Content-Security-Policy', cspValue);
   if (nonce) res.headers.set(CSP_NONCE_HEADER, nonce);
-  return res;
+  return appendCsrfCookie(res, request);
 }
 
 export async function proxy(request: NextRequest) {
@@ -118,51 +158,37 @@ export async function proxy(request: NextRequest) {
   // nonce that its frozen HTML cannot carry.
   if (pathname === '/') {
     const response = NextResponse.next({ request: { headers: request.headers } });
-    return decorateProxyResponse(response, requestId, locale, buildCSPHeader({ staticBuild: true }));
+    return decorateProxyResponse(response, request, requestId, locale, buildCSPHeader({ staticBuild: true }));
   }
 
   // For all dynamic responses below we use this single nonce-backed value.
   const cspValue = buildCSPHeader({ nonce, strict: true });
 
   if (pathname.startsWith('/admin/service-listings')) {
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    let isAdmin = false;
-
-    if (supabaseUrl && supabaseAnonKey) {
-      const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-        cookies: {
-          getAll() {
-            return request.cookies.getAll();
-          },
-          setAll() {
-            // handled below by updateSession for normal requests
-          },
-        },
-      });
-      const { data: { user } } = await supabase.auth.getUser();
-      isAdmin = user?.user_metadata?.role === 'admin';
-    }
-
-    if (!isAdmin) {
+    if (!(await hasDbAdminRoleForRequest(request))) {
       const url = request.nextUrl.clone();
       url.pathname = '/hard-404';
       const admin404 = NextResponse.rewrite(url, { status: 404 });
-      return decorateProxyResponse(admin404, requestId, locale, cspValue, nonce);
+      return decorateProxyResponse(admin404, request, requestId, locale, cspValue, nonce);
     }
   }
 
-  // Apply CSRF protection (skip for excluded routes)
-  if (!isCsrfExcludedRoute(request.nextUrl.pathname)) {
-    const csrfResponse = await csrfMiddleware(request);
-    if (csrfResponse) {
-      return decorateProxyResponse(csrfResponse, requestId, locale, cspValue, nonce);
+  // Apply CSRF protection to browser-cookie mutating requests. External-secret routes
+  // are explicitly excluded; token-based mobile/API calls bypass only after Supabase
+  // validates the bearer token.
+  if (!isCsrfExcludedRoute(request.nextUrl.pathname) && isStateChangingMethod(request.method)) {
+    const bearerAuthenticated = await hasValidBearerAuth(request);
+    if (!bearerAuthenticated) {
+      const csrfResponse = await csrfMiddleware(request);
+      if (csrfResponse) {
+        return decorateProxyResponse(csrfResponse, request, requestId, locale, cspValue, nonce);
+      }
     }
   }
 
   const forced404 = maybeHard404DynamicProfile(request);
   if (forced404) {
-    return decorateProxyResponse(forced404, requestId, locale, cspValue, nonce);
+    return decorateProxyResponse(forced404, request, requestId, locale, cspValue, nonce);
   }
 
   const response = await updateSession(request);
@@ -190,7 +216,7 @@ export async function proxy(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = '/prijava';
       url.searchParams.set('redirect', '/moji-upiti');
-      return decorateProxyResponse(NextResponse.redirect(url), requestId, locale, cspValue, nonce);
+      return decorateProxyResponse(NextResponse.redirect(url), request, requestId, locale, cspValue, nonce);
     }
 
     if (user) {
@@ -209,13 +235,13 @@ export async function proxy(request: NextRequest) {
           if (!publisher) {
             const url = request.nextUrl.clone();
             url.pathname = '/onboarding/publisher-type';
-            return decorateProxyResponse(NextResponse.redirect(url), requestId, locale, cspValue, nonce);
+            return decorateProxyResponse(NextResponse.redirect(url), request, requestId, locale, cspValue, nonce);
           }
 
           if (publisher.type !== 'udomljavanje') {
             const url = request.nextUrl.clone();
             url.pathname = '/dashboard/profile';
-            return decorateProxyResponse(NextResponse.redirect(url), requestId, locale, cspValue, nonce);
+            return decorateProxyResponse(NextResponse.redirect(url), request, requestId, locale, cspValue, nonce);
           }
         }
 
@@ -229,7 +255,7 @@ export async function proxy(request: NextRequest) {
           if (!groomer) {
             const url = request.nextUrl.clone();
             url.pathname = '/onboarding/publisher-type';
-            return decorateProxyResponse(NextResponse.redirect(url), requestId, locale, cspValue, nonce);
+            return decorateProxyResponse(NextResponse.redirect(url), request, requestId, locale, cspValue, nonce);
           }
         }
 
@@ -243,7 +269,7 @@ export async function proxy(request: NextRequest) {
           if (!trainer) {
             const url = request.nextUrl.clone();
             url.pathname = '/onboarding/provider';
-            return decorateProxyResponse(NextResponse.redirect(url), requestId, locale, cspValue, nonce);
+            return decorateProxyResponse(NextResponse.redirect(url), request, requestId, locale, cspValue, nonce);
           }
         }
       }
@@ -251,7 +277,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Add security, locale, request-id, and CSP header with the SAME nonce that was placed on the request headers.
-  return decorateProxyResponse(response, requestId, locale, cspValue, nonce);
+  return decorateProxyResponse(response, request, requestId, locale, cspValue, nonce);
 }
 
 export const config = {

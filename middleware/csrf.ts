@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
 import { createHash, randomBytes } from 'crypto';
 
-const CSRF_COOKIE_NAME = 'csrf_token';
-const CSRF_HEADER_NAME = 'x-csrf-token';
+export const CSRF_COOKIE_NAME = 'csrf_token';
+export const CSRF_HEADER_NAME = 'x-csrf-token';
 const CSRF_TOKEN_LENGTH = 32;
-
-// Token expiration (24 hours)
 const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000;
+
+const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+const STATE_CHANGING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
 export interface CsrfConfig {
   cookieName?: string;
@@ -27,31 +27,22 @@ const defaultConfig: Required<CsrfConfig> = {
   maxAge: TOKEN_EXPIRY_MS / 1000,
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'strict',
-  httpOnly: true,
+  // Double-submit CSRF needs a JS-readable cookie so browser fetches can copy
+  // the token into x-csrf-token. It is not an auth/session secret.
+  httpOnly: false,
   path: '/',
 };
 
-/**
- * Generates a cryptographically secure CSRF token
- */
 export function generateCsrfToken(length: number = CSRF_TOKEN_LENGTH): string {
   return randomBytes(length).toString('hex');
 }
 
-/**
- * Hashes a token for comparison (prevents timing attacks)
- */
 export function hashToken(token: string): string {
   return createHash('sha256').update(token).digest('hex');
 }
 
-/**
- * Securely compares two tokens (constant-time comparison)
- */
 export function compareTokens(a: string, b: string): boolean {
-  if (a.length !== b.length) {
-    return false;
-  }
+  if (a.length !== b.length) return false;
   let result = 0;
   for (let i = 0; i < a.length; i++) {
     result |= a.charCodeAt(i) ^ b.charCodeAt(i);
@@ -59,122 +50,120 @@ export function compareTokens(a: string, b: string): boolean {
   return result === 0;
 }
 
-/**
- * Creates or refreshes the CSRF token cookie
- * Call this in middleware or page handlers
- */
 export async function createCsrfToken(config: CsrfConfig = {}): Promise<{ token: string; cookie: string }> {
   const cfg = { ...defaultConfig, ...config };
   const token = generateCsrfToken(cfg.tokenLength);
-  
-  const cookieValue = `${cfg.cookieName}=${token}; Path=${cfg.path}; Max-Age=${cfg.maxAge}; SameSite=${cfg.sameSite}`;
-  const secureCookie = cfg.secure ? `${cookieValue}; Secure` : cookieValue;
-  const finalCookie = cfg.httpOnly ? `${secureCookie}; HttpOnly` : secureCookie;
-  
-  return { token, cookie: finalCookie };
+
+  const parts = [
+    `${cfg.cookieName}=${token}`,
+    `Path=${cfg.path}`,
+    `Max-Age=${cfg.maxAge}`,
+    `SameSite=${cfg.sameSite}`,
+  ];
+  if (cfg.secure) parts.push('Secure');
+  if (cfg.httpOnly) parts.push('HttpOnly');
+
+  return { token, cookie: parts.join('; ') };
 }
 
-/**
- * Validates CSRF token from request
- * Checks both header and body for token
- */
 export function validateCsrfToken(
-  request: NextRequest,
+  request: Pick<NextRequest, 'headers'>,
   cookieToken: string | undefined,
   config: CsrfConfig = {}
 ): boolean {
   const cfg = { ...defaultConfig, ...config };
-  
-  if (!cookieToken) {
-    return false;
-  }
+  if (!cookieToken) return false;
 
-  // Get token from header
   const headerToken = request.headers.get(cfg.headerName);
-  
-  if (!headerToken) {
-    return false;
-  }
+  if (!headerToken) return false;
 
-  // Use constant-time comparison
   return compareTokens(cookieToken, headerToken);
 }
 
-/**
- * Next.js middleware handler for CSRF protection
- * Sets CSRF cookie on GET requests, validates on state-changing methods
- */
+function getConfiguredOrigins(request: NextRequest): Set<string> {
+  const origins = new Set<string>([request.nextUrl.origin, 'https://petpark.hr', 'https://www.petpark.hr']);
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL;
+  if (siteUrl) {
+    try { origins.add(new URL(siteUrl).origin); } catch { /* ignore malformed env */ }
+  }
+
+  if (process.env.VERCEL_URL) origins.add(`https://${process.env.VERCEL_URL}`);
+
+  for (const raw of (process.env.CSRF_ALLOWED_ORIGINS || '').split(',')) {
+    const trimmed = raw.trim();
+    if (!trimmed) continue;
+    try { origins.add(new URL(trimmed).origin); } catch { /* ignore malformed env */ }
+  }
+
+  return origins;
+}
+
+export function hasTrustedOrigin(request: NextRequest): boolean {
+  const origin = request.headers.get('origin');
+  const secFetchSite = request.headers.get('sec-fetch-site');
+  const allowedOrigins = getConfiguredOrigins(request);
+
+  if (origin) {
+    try {
+      if (!allowedOrigins.has(new URL(origin).origin)) return false;
+    } catch {
+      return false;
+    }
+  } else if (secFetchSite && !['same-origin', 'same-site', 'none'].includes(secFetchSite)) {
+    return false;
+  } else {
+    return false;
+  }
+
+  if (secFetchSite && !['same-origin', 'same-site', 'none'].includes(secFetchSite)) return false;
+  return true;
+}
+
+export function isStateChangingMethod(method: string): boolean {
+  return STATE_CHANGING_METHODS.has(method.toUpperCase());
+}
+
+export async function appendCsrfCookie(response: NextResponse, request: NextRequest, config: CsrfConfig = {}) {
+  const cfg = { ...defaultConfig, ...config };
+  if (request.cookies.get(cfg.cookieName)?.value) return response;
+  const { cookie } = await createCsrfToken(cfg);
+  response.headers.append('Set-Cookie', cookie);
+  return response;
+}
+
 export async function csrfMiddleware(
   request: NextRequest,
   config: CsrfConfig = {}
 ): Promise<NextResponse | null> {
   const cfg = { ...defaultConfig, ...config };
-  const cookieStore = await cookies();
-  const existingToken = cookieStore.get(cfg.cookieName)?.value;
+  const method = request.method.toUpperCase();
 
-  // For GET/HEAD/OPTIONS requests, set/refresh the CSRF token
-  if (['GET', 'HEAD', 'OPTIONS'].includes(request.method)) {
-    const { cookie } = await createCsrfToken(cfg);
-    const response = NextResponse.next();
-    response.headers.set('Set-Cookie', cookie);
-    return response;
-  }
+  if (SAFE_METHODS.has(method)) return null;
+  if (!STATE_CHANGING_METHODS.has(method)) return null;
 
-  // For state-changing methods, validate the token
-  const isStateChanging = ['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method);
-  
-  if (isStateChanging) {
-    // Skip validation for webhook endpoints
-    if (request.nextUrl.pathname.startsWith('/api/webhooks/')) {
-      return null;
-    }
-
-    // Skip validation for auth callback (OAuth flows)
-    if (request.nextUrl.pathname === '/api/auth/callback') {
-      return null;
-    }
-
-    if (!validateCsrfToken(request, existingToken, cfg)) {
-      return new NextResponse(
-        JSON.stringify({ 
-          error: 'Invalid CSRF token',
-          code: 'CSRF_INVALID'
-        }),
-        {
-          status: 403,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-    }
+  if (!hasTrustedOrigin(request) || !validateCsrfToken(request, request.cookies.get(cfg.cookieName)?.value, cfg)) {
+    return NextResponse.json(
+      { error: 'Nevažeći sigurnosni token. Osvježite stranicu i pokušajte ponovno.', code: 'CSRF_INVALID' },
+      { status: 403 }
+    );
   }
 
   return null;
 }
 
-/**
- * Gets the current CSRF token from cookies
- * Use this in server components or API routes
- */
-export async function getCsrfToken(config: CsrfConfig = {}): Promise<string | null> {
+export async function getCsrfToken(request: NextRequest, config: CsrfConfig = {}): Promise<string | null> {
   const cfg = { ...defaultConfig, ...config };
-  const cookieStore = await cookies();
-  return cookieStore.get(cfg.cookieName)?.value || null;
+  return request.cookies.get(cfg.cookieName)?.value || null;
 }
 
-/**
- * Creates a middleware wrapper that adds CSRF protection
- */
 export function withCsrfProtection(
   handler: (request: NextRequest) => Promise<NextResponse>,
   config: CsrfConfig = {}
 ) {
   return async (request: NextRequest): Promise<NextResponse> => {
     const csrfResponse = await csrfMiddleware(request, config);
-    if (csrfResponse) {
-      return csrfResponse;
-    }
+    if (csrfResponse) return csrfResponse;
     return handler(request);
   };
 }

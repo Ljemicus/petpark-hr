@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sendSMS, smsTemplates } from '@/lib/sms';
 import { smsSendSchema } from '@/lib/validation';
 import { apiError } from '@/lib/api-errors';
+import { requireAdmin } from '@/lib/admin-guard';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,15 +34,8 @@ export async function POST(request: NextRequest) {
     }
 
     if (user && !isSystemCall) {
-      const { data: userData } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-
-      if (userData?.role !== 'admin') {
-        return apiError({ status: 403, code: 'FORBIDDEN', message: 'Insufficient permissions' });
-      }
+      const admin = await requireAdmin();
+      if (!admin.ok) return admin.response;
     }
     
     // Build message body from template or use custom

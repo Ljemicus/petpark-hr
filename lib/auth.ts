@@ -53,12 +53,38 @@ export function buildUserFromAuth(authUser: AuthIdentityUser): User {
     id: authUser.id,
     email: authUser.email || '',
     name: meta?.name || meta?.full_name || authUser.email?.split('@')[0] || '',
-    role: parseAuthRole(meta?.role),
+    // Never grant admin from auth metadata. Admin is DB-backed via profile_roles.
+    role: parseAuthRole(meta?.role) === 'admin' ? 'owner' : parseAuthRole(meta?.role),
     avatar_url: meta?.avatar_url || null,
     phone: null,
     city: meta?.city || null,
     created_at: authUser.created_at,
   };
+}
+
+async function hasDbAdminRole(supabase: { from: (table: string) => any }, profileId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('profile_roles')
+    .select('role')
+    .eq('profile_id', profileId)
+    .eq('role', 'admin')
+    .maybeSingle();
+
+  if (error) {
+    appLogger.warn('auth', 'Failed to resolve profile_roles admin role', {
+      userId: profileId,
+      message: error.message || 'unknown',
+    });
+    return false;
+  }
+
+  return data?.role === 'admin';
+}
+
+async function applyDbBackedRole(supabase: { from: (table: string) => any }, user: User): Promise<User> {
+  if (await hasDbAdminRole(supabase, user.id)) return { ...user, role: 'admin' };
+  if (user.role === 'admin') return { ...user, role: 'owner' };
+  return user;
 }
 
 /**
@@ -98,12 +124,12 @@ export async function getAuthUser(): Promise<User | null> {
       .eq('id', authUser.id)
       .single();
 
-    if (isUserRecord(profileData)) return profileData;
+    if (isUserRecord(profileData)) return applyDbBackedRole(supabase, profileData);
 
     appLogger.warn('auth', 'Falling back to auth metadata because public.users profile is missing', {
       userId: authUser.id,
     });
-    return buildUserFromAuth(authUser);
+    return applyDbBackedRole(supabase, buildUserFromAuth(authUser));
   } catch (error) {
     if (!isExpectedDynamicUsageError(error)) {
       appLogger.warn('auth', 'Failed to resolve authenticated user', {

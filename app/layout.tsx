@@ -6,6 +6,7 @@ import { Inter, Nunito } from 'next/font/google';
 import './globals.css';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DEFAULT_LOCALE } from '@/lib/i18n';
+import { CsrfFetchGuard } from '@/components/security/csrf-fetch-guard';
 
 const inter = Inter({
   subsets: ['latin', 'latin-ext'],
@@ -130,6 +131,7 @@ export default async function RootLayout({
         <SiteNavigationJsonLd />
       </head>
       <body className="min-h-full flex flex-col font-sans">
+        <CsrfFetchGuard />
         {children}
       </body>
     </html>
