@@ -1,0 +1,124 @@
+{
+  "generatedAt": "2026-07-02",
+  "scope": "local-auth-policy-baseline",
+  "personas": [
+    "anon",
+    "owner",
+    "provider_owner",
+    "other_provider",
+    "admin",
+    "suspended"
+  ],
+  "routes": [
+    {
+      "group": "admin",
+      "samples": [
+        "/admin",
+        "/admin/service-listings",
+        "/api/admin/verifications"
+      ],
+      "expected": {
+        "anon": "deny:redirect-or-401",
+        "owner": "deny:403-or-redirect",
+        "provider_owner": "deny:403-or-redirect",
+        "other_provider": "deny:403-or-redirect",
+        "admin": "allow:db-profile_roles-admin",
+        "suspended": "deny"
+      },
+      "guard": "requireAdmin / DB-backed profile_roles"
+    },
+    {
+      "group": "payments",
+      "samples": [
+        "/api/payments/connect",
+        "/api/payments/account-link",
+        "/api/payments/account-status",
+        "/api/payments/create-checkout",
+        "/api/payments/dashboard-link",
+        "/api/payments/refund"
+      ],
+      "expected": {
+        "anon": "deny:503-payments-disabled-first",
+        "owner": "deny:503-payments-disabled-first",
+        "provider_owner": "deny:503-payments-disabled-first",
+        "other_provider": "deny:503-payments-disabled-first",
+        "admin": "deny:503-payments-disabled-first",
+        "suspended": "deny:503-payments-disabled-first"
+      },
+      "guard": "payments fail-closed flag before Stripe"
+    },
+    {
+      "group": "booking_requests",
+      "samples": [
+        "/api/booking-requests",
+        "/api/booking-requests/owner",
+        "/api/booking-requests/provider",
+        "/api/booking-requests/[id]/status"
+      ],
+      "expected": {
+        "anon": "deny:401",
+        "owner": "allow:own-records-only",
+        "provider_owner": "allow:own-provider-records-only",
+        "other_provider": "deny:403-or-empty",
+        "admin": "allow:admin-paths-only-where-coded",
+        "suspended": "deny:policy-required-before-launch"
+      },
+      "guard": "session/Bearer auth + ownership checks"
+    },
+    {
+      "group": "uploads",
+      "samples": [
+        "/api/upload",
+        "/api/upload/verification",
+        "/api/rescue-verification-documents/upload",
+        "/api/rescue-verification-documents/[documentId]/signed-url"
+      ],
+      "expected": {
+        "anon": "deny:401",
+        "owner": "allow:own-path-or-own-document-only",
+        "provider_owner": "allow:own-path-or-own-document-only",
+        "other_provider": "deny:403",
+        "admin": "allow:db-profile_roles-admin-for-review-docs",
+        "suspended": "deny:policy-required-before-launch"
+      },
+      "guard": "auth + path ownership + magic-byte validation + signed URL ownership/admin"
+    },
+    {
+      "group": "notifications",
+      "samples": [
+        "/api/push/send",
+        "/api/sms/send",
+        "/api/email/booking-confirmation",
+        "/api/email/review-request",
+        "/api/email/sequences/welcome"
+      ],
+      "expected": {
+        "anon": "deny:401-or-internal-secret-required",
+        "owner": "allow:own-welcome-only",
+        "provider_owner": "allow:own-welcome-only",
+        "other_provider": "deny:403-for-cross-user-or-admin-send",
+        "admin": "allow:db-profile_roles-admin",
+        "suspended": "deny:policy-required-before-launch"
+      },
+      "guard": "requireAdmin for bulk push/sms/cross-user welcome; internal key fail-closed for sms"
+    },
+    {
+      "group": "lost_pets_relay",
+      "samples": [
+        "/api/lost-pets/[id]/contact",
+        "/api/lost-pets/[id]/relay",
+        "/api/lost-pets/[id]/renew",
+        "/api/lost-pets/[id]/status"
+      ],
+      "expected": {
+        "anon": "deny:401-or-rate-limited-public-contact-only",
+        "owner": "allow:own-lost-pet-only",
+        "provider_owner": "deny:unless-owner",
+        "other_provider": "deny:unless-owner",
+        "admin": "allow:db-profile_roles-admin-where-coded",
+        "suspended": "deny:policy-required-before-launch"
+      },
+      "guard": "auth + ownership/admin + rate limit"
+    }
+  ]
+}
