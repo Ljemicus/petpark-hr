@@ -1,5 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function POST(_request: NextRequest) {
-  return NextResponse.json({ success: true, message: 'Chat worker placeholder' });
+export async function POST() {
+  return NextResponse.json(
+    { success: false, error: 'Chat worker is not enabled.' },
+    { status: 501 }
+  );
 }
