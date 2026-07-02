@@ -1,4 +1,4 @@
-import { Edit, User, Zap, Image } from 'lucide-react';
+import { Edit, User, Zap, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -54,18 +54,13 @@ export function SitterProfileTab({ profile, onEdit }: Props) {
             <Separator />
             <div>
               <h4 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-                <Image className="h-4 w-4" />
+                <ImageIcon className="h-4 w-4" />
                 Galerija fotografija
               </h4>
-              <GalleryUpload 
+              <GalleryUpload
                 sitterId={profile.user_id}
                 currentImages={profile.photos || []}
                 maxImages={20}
-                onImagesUpdated={(newImages) => {
-                  // In a real app, this would update the profile in the database
-                  console.log('Gallery updated:', newImages);
-                  // You would typically call an API here to update the profile
-                }}
               />
             </div>
             <Separator />
