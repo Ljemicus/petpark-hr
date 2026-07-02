@@ -155,18 +155,7 @@ export const PETPARK_ENV_RULES: EnvValidationRule[] = [
     type: 'string',
   },
   
-  // Authentication
-  {
-    key: 'NEXTAUTH_URL',
-    required: true,
-    type: 'string',
-    default: 'http://localhost:3000',
-  },
-  {
-    key: 'NEXTAUTH_SECRET',
-    required: true,
-    type: 'string',
-  },
+  // Authentication is Supabase Auth. NEXTAUTH_* is intentionally not required.
   
   // Payments
   {

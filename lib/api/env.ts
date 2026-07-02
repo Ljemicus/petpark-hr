@@ -22,11 +22,7 @@ export const env = {
     serviceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
   },
   
-  // Authentication
-  auth: {
-    url: process.env.NEXTAUTH_URL || 'http://localhost:3000',
-    secret: process.env.NEXTAUTH_SECRET || '',
-  },
+  // Authentication uses Supabase Auth; no NextAuth runtime secrets are required.
   
   // Payments
   stripe: {
@@ -111,12 +107,6 @@ export const serverEnv = {
     return process.env.CLOUDINARY_API_SECRET || '';
   },
   
-  get nextauthSecret() {
-    if (typeof window !== 'undefined') {
-      throw new Error('NEXTAUTH_SECRET can only be accessed on the server');
-    }
-    return process.env.NEXTAUTH_SECRET || '';
-  },
 };
 
 // Runtime environment validation
@@ -124,8 +114,6 @@ export function assertEnv(): void {
   const required = [
     'NEXT_PUBLIC_SUPABASE_URL',
     'NEXT_PUBLIC_SUPABASE_ANON_KEY',
-    'NEXTAUTH_URL',
-    'NEXTAUTH_SECRET',
   ];
   
   const missing = required.filter(key => !process.env[key]);
@@ -142,15 +130,13 @@ export const ENV_DOCS = `
 ## Required Variables
 - \`NEXT_PUBLIC_SUPABASE_URL\`: Supabase project URL
 - \`NEXT_PUBLIC_SUPABASE_ANON_KEY\`: Supabase anonymous key
-- \`NEXTAUTH_URL\`: NextAuth.js base URL
-- \`NEXTAUTH_SECRET\`: NextAuth.js secret for encryption
 
 ## Optional Variables
 ### Database
 - \`SUPABASE_SERVICE_ROLE_KEY\`: Supabase service role key (server only)
 
 ### Authentication
-- \`NEXTAUTH_SECRET\`: NextAuth.js secret (server only)
+- PetPark uses Supabase Auth; no NextAuth runtime secret is required.
 
 ### Payments
 - \`STRIPE_SECRET_KEY\`: Stripe secret key (server only)

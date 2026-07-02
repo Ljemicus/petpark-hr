@@ -28,7 +28,7 @@ No values printed; env var names only.
 | `NEXT_PUBLIC_GSC_TOKEN`              |         2 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
 | `NEXT_PUBLIC_ENABLE_ALL_FEATURES`    |         2 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
 | `NEXT_PUBLIC_ANALYTICS_ENDPOINT`     |         2 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXTAUTH_SECRET`                    |         2 | set as needed | set as needed | set as needed | NE/feature | Legacy candidate: no active next-auth import found; references are in env helper/tests only.       |
+| `NEXTAUTH_SECRET`                    |         0 | n/a           | n/a           | n/a           | NE         | Resolved cleanup: no runtime dependency; only legacy audit/test scaffolding may mention it.        |
 | `CRON_SECRET`                        |         2 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
 | `CLOUDINARY_CLOUD_NAME`              |         2 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
 | `APP_VERSION`                        |         2 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
@@ -56,7 +56,7 @@ No values printed; env var names only.
 | `NEXT_PUBLIC_APP_VERSION`            |         1 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
 | `NEXT_PUBLIC_APP_ENV`                |         1 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
 | `NEXT_PUBLIC_ANALYTICS_ENABLED`      |         1 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXTAUTH_URL`                       |         1 | set as needed | set as needed | set as needed | NE/feature | Legacy candidate: no active next-auth import found; references are in env helper/tests only.       |
+| `NEXTAUTH_URL`                       |         0 | n/a           | n/a           | n/a           | NE         | Resolved cleanup: no runtime dependency; only legacy audit/test scaffolding may mention it.        |
 | `INFOBIP_SENDER`                     |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
 | `INFOBIP_BASE_URL`                   |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
 | `INFOBIP_API_KEY`                    |         1 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
@@ -77,4 +77,4 @@ No values printed; env var names only.
 
 ## NextAuth presuda
 
-No active `next-auth`/`NextAuth` implementation found under app/lib/components. `NEXTAUTH_*` remains a legacy cleanup candidate, not removed in KIT-0.
+No active `next-auth`/`NextAuth` implementation found under app/lib/components. `NEXTAUTH_*` runtime dependency was removed from env helpers/validators in the safe cleanup slice after KIT-0.
