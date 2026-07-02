@@ -76,64 +76,58 @@ const tabs: Array<{ key: SearchTab; label: string; icon: typeof Search }> = [
 
 const articles = [
   {
-    title: 'Kako pripremiti psa za prvo čuvanje',
-    href: '/blog/prvo-cuvanje-psa',
+    title: 'Blog i savjeti',
+    href: '/blog',
     category: 'Blog',
-    description: 'Kratka lista stvari koje olakšavaju prvi susret sa sitterom.',
-    meta: '5 min čitanja',
+    description: 'Otvori stvarne PetPark članke i vodiče kad su dostupni.',
+    meta: 'Modul',
   },
   {
-    title: 'Pet Passport: što treba biti upisano',
-    href: '/blog/pet-passport-vodic',
+    title: 'Pet Passport vodiči',
+    href: '/pet-passport',
     category: 'Vodič',
-    description: 'Cijepljenja, kontakti, alergije i dokumenti na jednom mjestu.',
-    meta: 'Ažurirano danas',
+    description: 'Pregled funkcionalnosti Pet Passporta bez izmišljenih profila ljubimaca.',
+    meta: 'Modul',
   },
 ];
 
 const communityPosts = [
   {
-    title: 'Preporuka za grooming u Rijeci?',
-    href: '/zajednica',
-    description: 'Vlasnici dijele iskustva i cijene za manje pasmine.',
-    meta: '12 odgovora',
+    title: 'Feed zajednice',
+    href: '/zajednica/feed',
+    description: 'Stvarne objave korisnika prikazuju se u feedu kad postoje.',
+    meta: 'Modul',
   },
   {
-    title: 'Socijalizacija šteneta nakon cijepljenja',
+    title: 'Forum',
     href: '/forum',
-    description: 'Rasprava o parkovima, grupnim treninzima i sigurnim susretima.',
-    meta: 'Aktivno danas',
+    description: 'Forum vodi na stvarne kategorije i buduće korisničke teme, bez fake aktivnosti.',
+    meta: 'Modul',
   },
 ];
 
 const petResults = [
   {
-    title: 'Luna · Lagotto romagnolo',
+    title: 'Pet Passport',
     href: '/pet-passport',
-    description: 'Pet Passport profil s cijepljenjem i napomenama za čuvanje.',
-    meta: 'Passport spreman',
-  },
-  {
-    title: 'Milo · Europska kratkodlaka',
-    href: '/pet-passport',
-    description: 'Osnovni karton, kontakt vlasnika i veterinarske napomene.',
-    meta: 'Treba dopunu',
+    description: 'Digitalni profil ljubimca i karton dostupni su kroz stvarne korisničke podatke.',
+    meta: 'Modul',
   },
 ];
 
 const lostAndAdoption = [
   {
-    title: 'Nestao pas u Trsatu',
+    title: 'Izgubljeni i pronađeni',
     href: '/izgubljeni',
-    description: 'Smeđi pas srednje veličine, zadnji put viđen blizu parka.',
-    meta: 'Hitno · Rijeka',
+    description: 'Otvori stvarne prijave izgubljenih i pronađenih ljubimaca kad postoje.',
+    meta: 'Modul',
     tone: 'orange' as const,
   },
   {
-    title: 'Mlada mačka traži dom',
+    title: 'Udomljavanje',
     href: '/udomljavanje',
-    description: 'Socijalizirana, cijepljena i spremna za udomljavanje.',
-    meta: 'Udomljavanje · Zagreb',
+    description: 'Pregled stvarnih oglasa za udomljavanje bez fallback/demo profila.',
+    meta: 'Modul',
     tone: 'teal' as const,
   },
 ];
@@ -340,7 +334,7 @@ function ResultGroup({ title, description, count, children }: { title: string; d
           <h2 className="text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{title}</h2>
           <p className="mt-1 text-sm font-semibold text-[color:var(--pp-color-muted-text)]">{description}</p>
         </div>
-        <Badge variant="teal">{count} rezultata</Badge>
+        <Badge variant="teal">{count} stavki</Badge>
       </div>
       {children}
     </section>
@@ -513,7 +507,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
               <div className="flex flex-col gap-3 rounded-[var(--pp-radius-card-24)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] p-5 shadow-[var(--pp-shadow-small-card)] sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="text-sm font-black uppercase tracking-[0.14em] text-[color:var(--pp-color-muted-text)]">Rezultati</p>
-                  <p className="mt-1 text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{counts[activeTab]} pronađenih rezultata</p>
+                  <p className="mt-1 text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{counts[activeTab]} stavki u pregledu</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {city ? <Badge variant="orange"><MapPin className="size-3" /> {city}</Badge> : null}
@@ -560,7 +554,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
               ) : null}
 
               {showPets ? (
-                <ResultGroup title="Ljubimci i udomljavanje" description="Pet Passport profili, kartoni i aktivni oglasi za udomljavanje." count={petResults.length + 1}>
+                <ResultGroup title="Ljubimci i udomljavanje" description="Pet Passport i udomljavanje kao stvarni moduli, bez statičnih profila." count={petResults.length + 1}>
                   <div className="grid gap-4 md:grid-cols-2">
                     {petResults.map((item) => <CompactResultCard key={item.title} {...item} icon={Dog} tone="teal" />)}
                     <CompactResultCard {...lostAndAdoption[1]} icon={HeartHandshake} />
@@ -569,7 +563,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
               ) : null}
 
               {showLost ? (
-                <ResultGroup title="Izgubljeni i pronađeni" description="Hitne objave, lokacije i kontakti za pomoć u zajednici." count={1}>
+                <ResultGroup title="Izgubljeni i pronađeni" description="Stvarne prijave izgubljenih i pronađenih ljubimaca kad postoje." count={1}>
                   <div className="grid gap-4 md:grid-cols-2">
                     <CompactResultCard {...lostAndAdoption[0]} icon={Bell} tone="orange" />
                   </div>

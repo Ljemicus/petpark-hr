@@ -99,63 +99,15 @@ function getConversationContext(conversation: ConversationState) {
   return conversation.lastMessage?.booking_id ? 'Rezervacija' : 'Upit';
 }
 
-function demoMessages(currentUser: User, partnerId: string): Message[] {
-  const now = new Date();
-  return [
-    {
-      id: 'demo-system-note',
-      sender_id: partnerId,
-      receiver_id: currentUser.id,
-      booking_id: null,
-      content: 'Pozdrav! Zanima me termin za čuvanje idući tjedan.',
-      image_url: null,
-      read: true,
-      created_at: new Date(now.getTime() - 1000 * 60 * 38).toISOString(),
-    },
-    {
-      id: 'demo-reply-note',
-      sender_id: currentUser.id,
-      receiver_id: partnerId,
-      booking_id: null,
-      content: 'Može, pošaljite mi samo okvirne datume i navike ljubimca.',
-      image_url: null,
-      read: true,
-      created_at: new Date(now.getTime() - 1000 * 60 * 22).toISOString(),
-    },
-  ];
-}
-
-function normalizeConversations(currentUser: User, conversations: ConversationState[]): ConversationState[] {
-  if (conversations.length > 0) {
-    return conversations.map((conversation) => ({
-      ...conversation,
-      messages: conversation.messages.length > 0
-        ? conversation.messages
-        : conversation.lastMessage
-          ? [conversation.lastMessage]
-          : [],
-    }));
-  }
-
-  return [
-    {
-      partnerId: 'preview-luna',
-      partnerName: 'Maja i Luna',
-      partnerAvatar: null,
-      messages: demoMessages(currentUser, 'preview-luna'),
-      lastMessage: {
-        id: 'preview-last',
-        sender_id: 'preview-luna',
-        receiver_id: currentUser.id,
-        booking_id: null,
-        content: 'Super, šaljem detalje danas popodne.',
-        image_url: null,
-        read: false,
-        created_at: new Date().toISOString(),
-      },
-      unreadCount: 1,
-    },
-  ];
+function normalizeConversations(_currentUser: User, conversations: ConversationState[]): ConversationState[] {
+  return conversations.map((conversation) => ({
+    ...conversation,
+    messages: conversation.messages.length > 0
+      ? conversation.messages
+      : conversation.lastMessage
+        ? [conversation.lastMessage]
+        : [],
+  }));
 }
 
 function ProviderSidebar({ totalUnread }: { totalUnread: number }) {
