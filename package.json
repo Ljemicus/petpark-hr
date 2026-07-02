@@ -23,7 +23,7 @@
     "launch:check": "npm run preflight && echo \"✅ All pre-launch checks passed\"",
     "prepare": "husky",
     "ci:regression": "node scripts/check-regressions.mjs",
-    "prebuild": "node scripts/check-placeholders.mjs --source"
+    "prebuild": "node scripts/check-placeholders.mjs --source && node scripts/check-draft-copy.mjs"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

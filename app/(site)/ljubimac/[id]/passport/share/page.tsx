@@ -1,20 +1,29 @@
-import { notFound } from 'next/navigation';
+import type { Metadata } from 'next';
+import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { getAuthUser } from '@/lib/auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Syringe, AlertTriangle, Pill, Stethoscope, FileText, QrCode, PawPrint } from 'lucide-react';
 import { format, parseISO, isPast } from 'date-fns';
 import type { PetPassport, Pet } from '@/lib/types';
 
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 interface SharePageProps {
   params: Promise<{ id: string }>;
 }
 
-async function getPetWithPassport(petId: string): Promise<{ pet: Pet; passport: PetPassport } | null> {
+async function getPetWithPassport(petId: string, ownerId: string): Promise<{ pet: Pet; passport: PetPassport } | null> {
   const supabase = await createClient();
   
   const [{ data: pet }, { data: passport }] = await Promise.all([
-    supabase.from('pets').select('*').eq('id', petId).single(),
+    supabase.from('pets').select('*').eq('id', petId).eq('owner_id', ownerId).single(),
     supabase.from('pet_passports').select('*').eq('pet_id', petId).single(),
   ]);
   
@@ -40,8 +49,11 @@ const ALLERGY_SEVERITIES: Record<string, { label: string; color: string }> = {
 };
 
 export default async function SharePassportPage({ params }: SharePageProps) {
+  const user = await getAuthUser();
+  if (!user) redirect('/prijava');
+
   const { id } = await params;
-  const data = await getPetWithPassport(id);
+  const data = await getPetWithPassport(id, user.id);
   
   if (!data) {
     notFound();

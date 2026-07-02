@@ -27,39 +27,20 @@ function formatEUR(cents: number) {
   }).format(cents / 100);
 }
 
-const MOCK_PAYOUTS: Payout[] = [
-  {
-    id: 'po_1',
-    date: '2026-03-20T10:00:00Z',
-    amount: 850_00,
-    status: 'completed',
-  },
-  {
-    id: 'po_2',
-    date: '2026-03-13T10:00:00Z',
-    amount: 1200_00,
-    status: 'completed',
-  },
-  {
-    id: 'po_3',
-    date: '2026-03-06T10:00:00Z',
-    amount: 400_00,
-    status: 'completed',
-  },
-];
-
 export function PayoutCard({
   availableBalance,
   pendingBalance,
-  recentPayouts = MOCK_PAYOUTS,
+  recentPayouts = [],
   onRequestPayout,
 }: PayoutCardProps) {
   const [requesting, setRequesting] = useState(false);
 
+  const paymentsEnabled = false;
+
   async function handleRequest() {
+    if (!paymentsEnabled) return;
+
     setRequesting(true);
-    // Mock delay
-    await new Promise((r) => setTimeout(r, 1000));
     onRequestPayout?.();
     setRequesting(false);
   }
@@ -88,12 +69,18 @@ export function PayoutCard({
           </div>
         </div>
 
+        {!paymentsEnabled && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+            Isplate su trenutno isključene. Ne prikazujemo demo isplate ni ne pokrećemo zahtjeve za isplatu.
+          </div>
+        )}
+
         <Button
           className="w-full"
           onClick={handleRequest}
-          disabled={requesting || availableBalance === 0}
+          disabled={!paymentsEnabled || requesting || availableBalance === 0}
         >
-          {requesting ? 'Obrada...' : 'Zatraži isplatu'}
+          {paymentsEnabled ? (requesting ? 'Obrada...' : 'Zatraži isplatu') : 'Isplate uskoro'}
         </Button>
 
         {recentPayouts.length > 0 && (

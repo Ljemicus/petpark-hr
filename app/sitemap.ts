@@ -1,6 +1,5 @@
 import type { MetadataRoute } from 'next';
 import { getArticles } from '@/lib/db/blog';
-import { getTopics } from '@/lib/db/forum';
 import { getLostPets } from '@/lib/db/lost-pets';
 import { shouldIndexSitter, shouldIndexGroomer, shouldIndexTrainer, shouldIndexLostPet, shouldIndexAdoptionCard } from '@/lib/seo/indexability';
 import { appLogger } from '@/lib/logger';
@@ -35,9 +34,7 @@ const LOCALIZED_STATIC_ROUTES = new Set([
   '/dog-friendly',
   '/izgubljeni',
   '/udomljavanje',
-  '/uzgajivacnice',
   '/pretraga',
-  '/forum',
   '/faq',
   '/verifikacija',
 ]);
@@ -49,7 +46,6 @@ const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitema
   { route: '/njega', changeFrequency: 'weekly', priority: 0.8 },
   { route: '/dresura', changeFrequency: 'weekly', priority: 0.8 },
   { route: '/zajednica', changeFrequency: 'weekly', priority: 0.7 },
-  { route: '/forum', changeFrequency: 'daily', priority: 0.7 },
   { route: '/izgubljeni', changeFrequency: 'daily', priority: 0.8 },
   { route: '/privatnost', changeFrequency: 'yearly', priority: 0.2 },
   { route: '/uvjeti', changeFrequency: 'yearly', priority: 0.2 },
@@ -61,7 +57,6 @@ const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitema
   { route: '/veterinari', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/udomljavanje', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/dog-friendly', changeFrequency: 'weekly', priority: 0.6 },
-  { route: '/uzgajivacnice', changeFrequency: 'monthly', priority: 0.4 },
   { route: '/udruge', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/apelacije', changeFrequency: 'daily', priority: 0.7 },
   // /blog and /grooming are 301-redirected to /zajednica and /njega — excluded from sitemap
@@ -83,12 +78,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   const admin = createAdminClient();
-  const [providersResult, trainers, groomers, articles, topics, lostPets] = await Promise.all([
+  const [providersResult, trainers, groomers, articles, lostPets] = await Promise.all([
     admin.from('providers').select('id, provider_kind').eq('public_status', 'listed').in('provider_kind', ['sitter', 'groomer', 'trainer']),
     getProviderTrainers().catch(() => []),
     getProviderGroomers().catch(() => []),
     getArticles().catch(() => []),
-    getTopics().catch(() => []),
     getLostPets().catch(() => []),
   ]);
 
@@ -136,12 +130,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  const forumEntries: MetadataRoute.Sitemap = topics.map((t) => ({
-    url: `${BASE_URL}/forum/${t.id}`,
-    lastModified: toLastModified((t as { last_reply_at?: string; created_at?: string; updated_at?: string }).last_reply_at ?? (t as { updated_at?: string }).updated_at ?? (t as { created_at?: string }).created_at),
-    changeFrequency: 'daily' as const,
-    priority: 0.5,
-  }));
+  // Forum is excluded from the sitemap until remote forum tables exist.
 
   // "Found" pets and thin reports are excluded from the sitemap.
   const lostPetEntries: MetadataRoute.Sitemap = lostPets
@@ -184,7 +173,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...groomerEntries,
     ...trainerEntries,
     ...blogEntries,
-    ...forumEntries,
     ...lostPetEntries,
     ...adoptionEntries,
     ...rescueOrgEntries,
@@ -198,7 +186,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     groomers: groomerEntries.length,
     trainers: trainerEntries.length,
     articles: blogEntries.length,
-    forum: forumEntries.length,
+    forum: 0,
     lostPets: lostPetEntries.length,
     adoption: adoptionEntries.length,
     rescueOrgs: rescueOrgEntries.length,

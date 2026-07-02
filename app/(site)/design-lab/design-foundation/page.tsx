@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import {
   AppHeader,
   Avatar,
@@ -15,6 +16,13 @@ import {
   Tabs,
 } from '@/components/shared/petpark/design-foundation';
 import { Heart, MapPin } from 'lucide-react';
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default function DesignFoundationPreviewPage() {
   return (

@@ -9,15 +9,13 @@ import { useLanguage } from '@/lib/i18n';
 export function BottomNav() {
   const pathname = usePathname();
   const { user } = useAuth();
-  const { t, language } = useLanguage();
-
-  const blogHref = language === 'en' ? '/blog/en' : '/blog';
+  const { t } = useLanguage();
 
   const navItems = [
     { href: '/', icon: Home, label: t('common.home') },
     { href: '/pretraga', icon: Search, label: t('common.search') },
     { href: '/zajednica', icon: Users, label: 'Zajednica' },
-    { href: blogHref, icon: MessageSquare, label: 'Blog' },
+    { href: '/blog', icon: MessageSquare, label: 'Blog' },
   ];
 
   const dashboardLink = user?.role === 'sitter'

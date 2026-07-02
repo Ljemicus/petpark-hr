@@ -37,7 +37,6 @@ export const metadata: Metadata = {
   alternates: {
     languages: {
       'hr-HR': 'https://petpark.hr',
-      'en-US': 'https://petpark.hr/en',
     },
   },
   openGraph: {
@@ -113,7 +112,6 @@ export default async function RootLayout({
         
         {/* Hreflang tags for SEO */}
         <link rel="alternate" hrefLang="hr" href="https://petpark.hr" />
-        <link rel="alternate" hrefLang="en" href="https://petpark.hr/en" />
         <link rel="alternate" hrefLang="x-default" href="https://petpark.hr" />
         
         {/* Inline Critical CSS */}

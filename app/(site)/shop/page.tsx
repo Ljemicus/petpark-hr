@@ -1,14 +1,10 @@
-import { redirect } from 'next/navigation';
-import { isFeatureEnabledServer } from '@/lib/feature-flags';
+import { DisabledModule } from '@/components/shared/disabled-module';
 
-// Shop page - disabled for initial launch
 export default function ShopPage() {
-  // Check if shop feature is enabled
-  if (!isFeatureEnabledServer('shop')) {
-    redirect('/');
-  }
-
-  // If enabled, this would render the shop content
-  // For now, we redirect
-  redirect('/');
+  return (
+    <DisabledModule
+      naslov="Trgovina uskoro"
+      opis="PetPark trgovina još nije otvorena. Do tada ne prikazujemo demo proizvode ni lažne recenzije."
+    />
+  );
 }
