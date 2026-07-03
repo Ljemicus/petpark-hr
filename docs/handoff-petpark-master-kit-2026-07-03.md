@@ -4,36 +4,89 @@ Source kit: `/Users/ljemicus/.openclaw/workspace/artifacts/petpark-master-kit-20
 
 Scope: local-only application of safe, non-destructive work from the PetPark Master Kit. No deploys. No remote migrations/writes. No secrets printed.
 
+## Commits
+
+Web repo `/Users/ljemicus/Projects/petpark` on branch `fix/kit-b-pr-b6-input-validation`:
+
+- `b558b212 kit0: add master kit truth inventory`
+- `1b99fa5d kitA(legal): align copy with disabled payments`
+- `7d0db2ad kitB(security): consolidate rate limit and fail closed admin client`
+- `536964f8 kitC(docs): refresh schema truth from live dump`
+- `b56026be kitD(seo): clean localized surfaces`
+- `5d5fe040 kitF(launch): document gated readiness and health sha`
+
+Mobile repo `/Users/ljemicus/Projects/petpark-mobile` on branch `fix/kit-e-mobile-istina`:
+
+- `a3f974e kit0: refresh mobile truth inventory`
+- `ca6d41b kitE(mobile): close diagnostics and gated surfaces`
+
 ## Applied
 
 ### KIT-0 — inventory / truth
 
 - Added kit inventory scripts under `scripts/kit/`.
-- Generated route manifest:
-  - `docs/truth/ROUTE-MANIFEST.generated.md`
-  - `docs/truth/ROUTE-MANIFEST.md`
-- Generated env/fake-surface reports:
-  - `docs/truth/env-usage-web.txt`
-  - `docs/truth/fake-surfaces-web.txt`
-  - mobile repo: `docs/truth/env-usage-mobile.txt`, `docs/truth/fake-surfaces-mobile.txt`
-- Performed read-only remote Supabase introspection through pooler using Node `pg` because local `psql` was unavailable and Supabase CLI profile errored.
-- Added `docs/truth/live-schema-dump-2026-07-03.md`.
-- Added summary truth docs:
+- Generated route/env/fake-surface truth artifacts.
+- Performed read-only remote Supabase introspection through pooler.
+- Added/refreshed:
   - `docs/truth/TRUTH.md`
   - `docs/truth/TABLE-CLASSIFICATION.md`
   - `docs/truth/ENV-MATRIX.md`
   - `docs/truth/FAKE-SURFACES.md`
+  - `docs/truth/live-schema-dump-2026-07-03.md`
+
+### KIT-A — legal/copy
+
+- Removed/avoided public fake legal/payment claims.
+- Payments remain disabled/gated.
+- Legal identification fields remain blocked until owner/legal sign-off.
+
+### KIT-B — security
+
+- Consolidated rate limiting around canonical `lib/rate-limit.ts`.
+- Made Supabase admin client fail closed at runtime when admin env vars are missing.
+- Added `docs/truth/kit-b-diagnostika.md`.
+
+### KIT-C — Supabase truth
+
+- Regenerated remote Supabase types for web and mobile using neutral Sentry env workaround.
+- Confirmed generated types matched existing files:
+  - web: `lib/supabase/types.ts`
+  - mobile: `lib/database.types.ts`
+- No remote migrations applied.
+- Added Supabase CLI/Sentry local note to schema docs.
 
 ### KIT-D — SEO/frontend truth
 
-- Confirmed prior branch already had key KIT-D corrections:
-  - root metadata no longer advertises `/en`.
-  - private checkout/dashboard/onboarding/pet-passport paths have noindex layouts.
-  - checkout pages are disabled because payments are off.
-  - design-lab/redesign preview routes are disallowed/noindex.
-  - bottom nav no longer links to `/blog/en`.
-- Added `/setnja/` to `robots.txt` disallow list because walk detail is a private/demo-sensitive surface.
-- Corrected sitemap comment so it no longer claims `/blog` is a 301 redirect.
+- Added `/o-nama` to localized sitemap routes because `/o-nama/en` exists.
+- Fixed dead EN link on `/o-nama/en`.
+- Rewrote `docs/truth/en-surface.md` into concise truth doc.
+- Confirmed draft-copy guard clean and build green.
+- `PetParkLogo` and homepage slider were not touched.
+
+### KIT-E — mobile
+
+- Added breeder chat route as honest `DisabledModule` stub so nav target exists.
+- `completeOnboarding()` now captures Supabase save failures via Sentry wrapper and returns stable retry copy without locally marking onboarding complete.
+- Confirmed booking-request API calls use `auth: true` and `Authorization: Bearer <token>` through `petParkApi`.
+- Added/updated:
+  - `docs/truth/mobile-kit-e-diagnostics.md`
+  - `docs/truth/DEVICE-QA.md`
+  - `docs/truth/KIT-E5-SENTRY-RN.md`
+  - `docs/truth/KIT-E6-REAL-DEVICE-QA.md`
+
+### KIT-F — launch-grade layer, gate-aware only
+
+KIT-F prompt requires Launch Gate to be fully green first, so only safe pre-launch work was done:
+
+- `/api/health` now includes `buildSha` from Vercel commit env without exposing secrets.
+- Added launch/readiness docs:
+  - `docs/truth/LAUNCH-GATE-STATUS.md`
+  - `docs/truth/KIT-F1-PERFORMANCE.md`
+  - `docs/truth/KIT-F2-OBSERVABILITY.md`
+  - `docs/truth/KIT-F3-SUPPLY-FUNNEL.md`
+  - `docs/truth/KIT-F5-GROWTH-SEO.md`
+- Existing KIT-F docs/runbook dates refreshed to 2026-07-03.
+- No Lighthouse CI dependency, uptime monitor, Slack alert, Search Console action, remote DB index apply, or production deploy was performed.
 
 ## Remote Supabase findings
 
@@ -46,44 +99,38 @@ Scope: local-only application of safe, non-destructive work from the PetPark Mas
 - Forum/shop/product/breeder tables are absent on remote, so those surfaces remain V1 `Uskoro`/stub/gated.
 - Trainer/training tables exist remotely and can remain live.
 
-## Not applied / requires approval
-
-- Legal copy/data from KIT-A: not changed because real company/legal data and legal sign-off are required.
-- Supabase migrations from KIT-C: not run; remote DB writes need explicit owner approval.
-- Deploy/Vercel production changes: not done.
-- App Store / mobile submission work: not done.
-- Payments enablement: not done; payments remain gated/off.
-
-## Verification
-
-Web repo `/Users/ljemicus/Projects/petpark`:
-
-- `npm run type-check` — PASS
-- `npm run build` — PASS
-- `npm test` — PASS, 28 files / 237 tests
-- `npm run lint` — PASS with existing warnings only, 0 errors / 117 warnings
-
-Mobile repo `/Users/ljemicus/Projects/petpark-mobile`:
-
-- `npx tsc --noEmit --pretty false` — PASS
-- `npx expo-doctor` — PASS, 19/19
-- `npx expo export --platform ios --platform android` — PASS
-  - Sentry Expo warning only: missing organization/project config; environment fallback used.
-
-## Changed files
+## Verification passed
 
 Web:
 
-- `app/robots.ts`
-- `app/sitemap.ts`
-- `docs/truth/*`
-- `scripts/kit/run-introspect.cjs`
+- KIT-A: targeted ESLint PASS, `npm run type-check` PASS, `npm run build` PASS.
+- KIT-D: `npm run type-check` PASS, `node scripts/check-draft-copy.mjs` PASS, `npm run build` PASS.
+- KIT-F final slice: `npm run type-check` PASS, `npm run build` PASS.
 
 Mobile:
 
-- `docs/truth/env-usage-mobile.txt`
-- `docs/truth/fake-surfaces-mobile.txt`
+- `npx tsc --noEmit` PASS.
+- `npx expo-doctor` PASS, 19/19.
+- `bash scripts/audit-features.sh` PASS: tsc errors 0, nav orphans 0, iOS export PASS.
+- `node scripts/check-booking-requests-bearer.mjs` PASS.
+- `npx expo export --output-dir /tmp/petpark-mobile-export` PASS for web/iOS/Android.
 
-## Recommended next step
+## Still blocked before public launch
 
-If you want this finalized as a PR/commit, commit web and mobile separately with clear messages. Do not deploy until KIT-A legal data and any KIT-C DB migration approvals are resolved.
+- `/impressum` and footer legal identification block need real legal data and legal sign-off:
+  - full legal name
+  - OIB
+  - MBS/MBO
+  - registered address
+  - share capital
+  - competent register/court
+- Owner/legal sign-off for ToS and Privacy.
+- No remote Supabase migrations without explicit approval.
+- Real-device mobile QA is not PASS on physical iOS/Android.
+- Sentry/Slack alerting and uptime monitor not production-tested.
+- Search Console domain verification and sitemap submit require owner account/DNS action.
+- Payments remain OFF; V9 payment activation is outside this kit.
+
+## Final status
+
+Master Kit files were processed in order through KIT-F. The safe local work is committed. Launch Gate remains NOT GREEN by design until owner/legal/real-device/production-monitoring approvals are done.
