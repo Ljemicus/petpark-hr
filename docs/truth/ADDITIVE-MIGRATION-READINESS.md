@@ -1,11 +1,11 @@
 # ADDITIVE MIGRATION READINESS — forum/shop/breeder
 
-Datum: 2026-07-02
+Datum: 2026-07-03
 Scope: KIT-C C.5 dokumentacija, bez primjene migracija.
 
 ## Trenutna remote istina
 
-Prema `docs/truth/live-schema-dump-2026-07-02.md`, remote public schema **nema** ove module kao stvarne tablice:
+Prema `docs/truth/live-schema-dump-2026-07-03.md`, remote public schema **nema** ove module kao stvarne tablice:
 
 - Forum: `forum_categories`, `forum_topics`, `forum_replies`
 - Shop: `products`, `product_reviews`, `cart_items`

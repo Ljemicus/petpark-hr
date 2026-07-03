@@ -1,11 +1,11 @@
 # RLS FINDINGS — KIT-C read-only
 
-Datum: 2026-07-02
-Izvor: `docs/truth/live-schema-dump-2026-07-02.md`
+Datum: 2026-07-03
+Izvor: `docs/truth/live-schema-dump-2026-07-03.md`
 
 ## Confirmed
 
-- Sve public tablice u današnjem dumpu imaju RLS enabled.
+- Sve public tablice u 2026-07-03 dumpu imaju RLS enabled.
 - `Tablice s RLS=off` sekcija je prazna.
 - Verification bucket `verification-docs` je private (`public=false`).
 

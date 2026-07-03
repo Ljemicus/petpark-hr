@@ -1,7 +1,7 @@
 # STORAGE MATRIX — KIT-C read-only baseline
 
-Datum: 2026-07-02
-Izvor: `docs/truth/live-schema-dump-2026-07-02.md`, sekcija 6.
+Datum: 2026-07-03
+Izvor: `docs/truth/live-schema-dump-2026-07-03.md`, sekcija 6.
 
 ## Bucketi
 
@@ -46,4 +46,4 @@ Izvor: `docs/truth/live-schema-dump-2026-07-02.md`, sekcija 6.
 
 ## Blocker
 
-Object-level storage policies nisu izlistane u današnjem dumpu. Prije launcha treba poseban storage policy introspection/test harness. Nema remote policy promjena bez vlasnikovog potpisa.
+Object-level storage policies nisu izlistane u 2026-07-03 dumpu. Prije launcha treba poseban storage policy introspection/test harness. Nema remote policy promjena bez vlasnikovog potpisa.

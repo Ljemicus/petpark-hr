@@ -1,13 +1,13 @@
 # RLS MATRIX — KIT-C read-only baseline
 
-Datum: 2026-07-02
-Izvor: `docs/truth/live-schema-dump-2026-07-02.md`
+Datum: 2026-07-03
+Izvor: `docs/truth/live-schema-dump-2026-07-03.md`
 
 > Ovo je očekivana matrica za budući test harness. Nije pokrenut remote write test. Remote migracije/policy promjene nisu primijenjene.
 
 ## Globalna presuda
 
-- Sve public tablice iz današnjeg dumpa imaju RLS uključen.
+- Sve public tablice iz 2026-07-03 dumpa imaju RLS uključen.
 - `Tablice s RLS=off` sekcija je prazna.
 - Policy detalji postoje u dumpu, ali se moraju potvrditi test harnessom na lokalnom klonu/stagingu prije launch potpisa.
 

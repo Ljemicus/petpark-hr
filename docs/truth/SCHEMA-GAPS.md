@@ -1,6 +1,6 @@
 # SCHEMA GAPS — KIT-C read-only
 
-Datum: 2026-07-02
+Datum: 2026-07-03
 
 ## Types regeneration
 
@@ -14,6 +14,7 @@ Result:
 - Web `lib/supabase/types.ts` matches fresh generated remote output.
 - Mobile `lib/database.types.ts` matches fresh generated remote output.
 - No type files changed in this slice.
+- Supabase CLI local note: type generation required neutral `SENTRY_DSN`/`NEXT_PUBLIC_SENTRY_DSN` env because the default local env contains an invalid empty DSN for the CLI process.
 
 ## Known product/schema gaps
 

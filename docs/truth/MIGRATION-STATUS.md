@@ -1,7 +1,7 @@
 # MIGRATION STATUS — KIT-C read-only
 
-Datum: 2026-07-02
-Izvor istine: `docs/truth/live-schema-dump-2026-07-02.md` + lokalne migracije u web/mobile repoima.
+Datum: 2026-07-03
+Izvor istine: `docs/truth/live-schema-dump-2026-07-03.md` + lokalne migracije u web/mobile repoima.
 
 > Nije primijenjena nijedna remote migracija. Ovo je read-only klasifikacija.
 
@@ -47,7 +47,7 @@ Izvor istine: `docs/truth/live-schema-dump-2026-07-02.md` + lokalne migracije u 
 | `00007_forum_shop_breeder_pet_extras.DRAFT.sql` | DRAFT-NA-ČEKANJU                       | Forum/shop/breeder/rescue dodatne tablice ne postoje na remoteu. Čeka vlasnikov potpis i novo usklađivanje sa stvarnom canonical shemom. |
 | `additive-plan-2026-06-01.md`                   | DOKUMENTARNO                           | Plan, ne SQL migracija.                                                                                                                  |
 
-## Remote-only objekti iz današnjeg dumpa
+## Remote-only objekti iz 2026-07-03 dumpa
 
 Remote ima canonical objekte koje legacy mobile migracije ne opisuju ili ih opisuju pod drugim imenima:
 
