@@ -37,6 +37,7 @@ const LOCALIZED_STATIC_ROUTES = new Set([
   '/pretraga',
   '/faq',
   '/verifikacija',
+  '/o-nama',
 ]);
 
 const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }> = [

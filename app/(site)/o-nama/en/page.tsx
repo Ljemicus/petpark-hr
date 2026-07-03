@@ -150,7 +150,7 @@ export default function AboutPageEn() {
                   Find a sitter
                 </Button>
               </Link>
-              <Link href="/postani-sitter/en">
+              <Link href="/postani-sitter">
                 <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-xl font-bold text-lg px-8 h-14">
                   <Heart className="mr-2 h-5 w-5" />
                   Become a sitter
