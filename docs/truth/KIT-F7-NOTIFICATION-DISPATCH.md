@@ -1,6 +1,6 @@
 # KIT-F7 NOTIFICATION DISPATCH — safe slice
 
-Datum: 2026-07-02
+Datum: 2026-07-03
 Scope: lokalni kod, bez slanja vanjskih poruka u verifikaciji.
 
 ## Promjena

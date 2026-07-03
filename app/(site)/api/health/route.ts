@@ -82,6 +82,7 @@ export async function GET() {
       status: criticalChecksHealthy ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),
       version: process.env.NEXT_PUBLIC_APP_VERSION || 'unknown',
+      buildSha: process.env.VERCEL_GIT_COMMIT_SHA || process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || 'unknown',
       environment: process.env.NODE_ENV,
       responseTime: totalResponseTime,
       checks,

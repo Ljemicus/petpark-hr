@@ -1,6 +1,6 @@
 # KIT-F OPERATIONS READINESS — safe pre-launch slice
 
-Datum: 2026-07-02
+Datum: 2026-07-03
 Scope: operativa bez deploya, bez remote DB promjena.
 
 ## Što je napravljeno

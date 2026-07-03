@@ -1,6 +1,6 @@
 # KIT-F4 REVIEW INTEGRITY — read-only check
 
-Datum: 2026-07-02
+Datum: 2026-07-03
 Scope: bez DB promjena.
 
 ## Web `/api/reviews` status

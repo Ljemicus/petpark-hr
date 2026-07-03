@@ -1,6 +1,6 @@
 # PETPARK RUNBOOK — launch operations
 
-Datum: 2026-07-02
+Datum: 2026-07-03
 Scope: KIT-F8 operativni runbook. Bez deploya i bez remote DB promjena.
 
 ## 0. Zlatno pravilo

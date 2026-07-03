@@ -1,6 +1,6 @@
 # KIT-F6 SEARCH PERFORMANCE — read-only/draft slice
 
-Datum: 2026-07-02
+Datum: 2026-07-03
 Scope: bez remote applya.
 
 ## Trenutno stanje
