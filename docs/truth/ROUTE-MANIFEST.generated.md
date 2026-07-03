@@ -1,4 +1,4 @@
-# ROUTE MANIFEST (generirano 2026-07-02) — dopuni kolonu KLASIFIKACIJA
+# ROUTE MANIFEST (generirano 2026-07-03) — dopuni kolonu KLASIFIKACIJA
 
 ## Stranice
 
@@ -251,7 +251,7 @@
 | `/api/public/sitters/[id]`                                   | `app/(site)/api/public/sitters/[id]/route.ts`                                   | GET                       | NE                  | ???   | ???           |
 | `/api/public/trainers/[id]`                                  | `app/(site)/api/public/trainers/[id]/route.ts`                                  | GET                       | NE                  | ???   | ???           |
 | `/api/publisher-profile`                                     | `app/(site)/api/publisher-profile/route.ts`                                     | GET,PATCH                 | NE                  | ???   | ???           |
-| `/api/push/send`                                             | `app/(site)/api/push/send/route.ts`                                             | POST                      | da(heuristika)      | ???   | ???           |
+| `/api/push/send`                                             | `app/(site)/api/push/send/route.ts`                                             | POST                      | NE                  | ???   | ???           |
 | `/api/push/subscribe`                                        | `app/(site)/api/push/subscribe/route.ts`                                        | POST,DELETE               | da(heuristika)      | ???   | ???           |
 | `/api/rescue-verification-documents/[documentId]/signed-url` | `app/(site)/api/rescue-verification-documents/[documentId]/signed-url/route.ts` | GET                       | NE                  | ???   | ???           |
 | `/api/rescue-verification-documents/upload`                  | `app/(site)/api/rescue-verification-documents/upload/route.ts`                  | POST                      | NE                  | ???   | ???           |
@@ -262,9 +262,9 @@
 | `/api/sitters`                                               | `app/(site)/api/sitters/route.ts`                                               | GET                       | NE                  | ???   | ???           |
 | `/api/sms/send`                                              | `app/(site)/api/sms/send/route.ts`                                              | POST                      | da(heuristika)      | ???   | ???           |
 | `/api/social/challenges/[id]/entries`                        | `app/(site)/api/social/challenges/[id]/entries/route.ts`                        | GET,POST                  | da(heuristika)      | ???   | ???           |
-| `/api/social/challenges`                                     | `app/(site)/api/social/challenges/route.ts`                                     | GET,POST                  | da(heuristika)      | ???   | ???           |
+| `/api/social/challenges`                                     | `app/(site)/api/social/challenges/route.ts`                                     | GET,POST                  | NE                  | ???   | ???           |
 | `/api/social/comments`                                       | `app/(site)/api/social/comments/route.ts`                                       | GET,POST                  | da(heuristika)      | ???   | ???           |
-| `/api/social/pet-of-week`                                    | `app/(site)/api/social/pet-of-week/route.ts`                                    | GET,POST                  | da(heuristika)      | ???   | ???           |
+| `/api/social/pet-of-week`                                    | `app/(site)/api/social/pet-of-week/route.ts`                                    | GET,POST                  | NE                  | ???   | ???           |
 | `/api/social/playdates/[id]`                                 | `app/(site)/api/social/playdates/[id]/route.ts`                                 | PATCH                     | da(heuristika)      | ???   | ???           |
 | `/api/social/playdates`                                      | `app/(site)/api/social/playdates/route.ts`                                      | GET,POST                  | da(heuristika)      | ???   | ???           |
 | `/api/social/posts/[id]`                                     | `app/(site)/api/social/posts/[id]/route.ts`                                     | DELETE,PATCH              | da(heuristika)      | ???   | ???           |

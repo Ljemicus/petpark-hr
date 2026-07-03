@@ -59,7 +59,8 @@ const STATIC_PAGES: Array<{ route: string; changeFrequency: MetadataRoute.Sitema
   { route: '/dog-friendly', changeFrequency: 'weekly', priority: 0.6 },
   { route: '/udruge', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/apelacije', changeFrequency: 'daily', priority: 0.7 },
-  // /blog and /grooming are 301-redirected to /zajednica and /njega — excluded from sitemap
+  // /grooming is 301-redirected to /njega — excluded from sitemap.
+  // /blog is kept out of sitemap because canonical article URLs live under /zajednica.
   { route: '/cuvanje-pasa-zagreb', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/cuvanje-pasa-split', changeFrequency: 'weekly', priority: 0.7 },
   { route: '/cuvanje-pasa-rijeka', changeFrequency: 'weekly', priority: 0.7 },

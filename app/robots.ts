@@ -18,6 +18,7 @@ export default function robots(): MetadataRoute.Robots {
         '/design-lab/',
         '/redizajn-preview/',
         '/ljubimac/',
+        '/setnja/',
         '/nova-lozinka',
         '/zaboravljena-lozinka',
         '/azuriranja/',

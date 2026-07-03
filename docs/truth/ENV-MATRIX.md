@@ -1,80 +1,40 @@
-# ENV MATRIX — KIT-0 (2026-07-02)
+# ENV-MATRIX — 2026-07-03
 
-No values printed; env var names only.
+Izvori:
 
-## Web
+- Web: `docs/truth/env-usage-web.txt`
+- Mobile: `/Users/ljemicus/Projects/petpark-mobile/docs/truth/env-usage-mobile.txt`
 
-| Varijabla                            | Ref count | Local         | Preview       | Prod          | Obavezna?  | Missing behavior / napomena                                                                        |
-| ------------------------------------ | --------: | ------------- | ------------- | ------------- | ---------- | -------------------------------------------------------------------------------------------------- |
-| `NODE_ENV`                           |        31 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `NEXT_PUBLIC_APP_URL`                |        30 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXT_PUBLIC_SUPABASE_URL`           |        25 | set as needed | set as needed | set as needed | DA         | Required by Supabase client; missing should fail validation/type-check runtime early.              |
-| `SUPABASE_SERVICE_ROLE_KEY`          |        17 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `UPSTASH_REDIS_REST_URL`             |        13 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`      |        12 | set as needed | set as needed | set as needed | DA         | Required by Supabase client; missing should fail validation/type-check runtime early.              |
-| `UPSTASH_REDIS_REST_TOKEN`           |        11 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `SENTRY_DSN`                         |         6 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `STRIPE_SECRET_KEY`                  |         5 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `RESEND_API_KEY`                     |         4 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `NEXT_PUBLIC_VAPID_PUBLIC_KEY`       |         4 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXT_PUBLIC_SENTRY_DSN`             |         4 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `CLOUDINARY_API_SECRET`              |         4 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `STRIPE_WEBHOOK_SECRET`              |         3 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `SLACK_OPS_WEBHOOK`                  |         3 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `SLACK_INCIDENTS_WEBHOOK`            |         3 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` |         3 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXT_PUBLIC_ANALYTICS_API_KEY`      |         3 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `CLOUDINARY_API_KEY`                 |         3 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `NEXT_PUBLIC_GSC_TOKEN`              |         2 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXT_PUBLIC_ENABLE_ALL_FEATURES`    |         2 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXT_PUBLIC_ANALYTICS_ENDPOINT`     |         2 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXTAUTH_SECRET`                    |         0 | n/a           | n/a           | n/a           | NE         | Resolved cleanup: no runtime dependency; only legacy audit/test scaffolding may mention it.        |
-| `CRON_SECRET`                        |         2 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `CLOUDINARY_CLOUD_NAME`              |         2 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `APP_VERSION`                        |         2 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `VERCEL_ENV`                         |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `VAPID_SUBJECT`                      |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `VAPID_PRIVATE_KEY`                  |         1 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `TWILIO_PHONE_NUMBER`                |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `TWILIO_AUTH_TOKEN`                  |         1 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `TWILIO_ACCOUNT_SID`                 |         1 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `SMS_PROVIDER`                       |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `SMS_INTERNAL_KEY`                   |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `SITE`                               |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `SESSION_TIMEOUT_HOURS`              |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `SESSION_REFRESH_INTERVAL_MINUTES`   |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `PASSWORD_REQUIRE_UPPERCASE`         |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `PASSWORD_REQUIRE_SPECIAL_CHARS`     |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `PASSWORD_REQUIRE_NUMBERS`           |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `PASSWORD_REQUIRE_LOWERCASE`         |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `PASSWORD_MIN_LENGTH`                |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `PASSWORD_MAX_ATTEMPTS`              |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `PASSWORD_LOCKOUT_MINUTES`           |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `NEXT_PUBLIC_GOOGLE_CLIENT_ID`       |         1 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID`      |         1 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`  |         1 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXT_PUBLIC_APP_VERSION`            |         1 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXT_PUBLIC_APP_ENV`                |         1 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXT_PUBLIC_ANALYTICS_ENABLED`      |         1 | set as needed | set as needed | set as needed | NE/feature | Client-visible public config/feature flag; verify no silent placeholder in KIT-B/D.                |
-| `NEXTAUTH_URL`                       |         0 | n/a           | n/a           | n/a           | NE         | Resolved cleanup: no runtime dependency; only legacy audit/test scaffolding may mention it.        |
-| `INFOBIP_SENDER`                     |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `INFOBIP_BASE_URL`                   |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `INFOBIP_API_KEY`                    |         1 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `GOOGLE_MAPS_API_KEY`                |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `GOOGLE_CLIENT_SECRET`               |         1 | set as needed | set as needed | set as needed | DA         | Server-only/secret; required only when related feature/route is enabled; never expose client-side. |
-| `GOOGLE_CLIENT_ID`                   |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `EMAIL_FROM`                         |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `CI`                                 |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
-| `APP_URL`                            |         1 | set as needed | set as needed | set as needed | NE/feature | Runtime/optional feature config; verify fail-closed if feature is active.                          |
+Vrijednosti tajni nisu ispisivane.
+
+## Web — obavezno / fail-closed
+
+| Varijabla                                                                          | Namjena                | Obavezna?                       | Kad fali                                    |
+| ---------------------------------------------------------------------------------- | ---------------------- | ------------------------------- | ------------------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`                                                         | Supabase public client | Da                              | app/auth/data rute pucaju; treba fail jasno |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`                                                    | Supabase anon client   | Da                              | app/auth/data rute pucaju; treba fail jasno |
+| `SUPABASE_SERVICE_ROLE_KEY`                                                        | server/admin operacije | Da za server rute               | mora fail-closed u produkciji               |
+| `UPSTASH_REDIS_REST_URL`                                                           | rate limiting          | Da za produkciju                | osjetljive rute trebaju fail-closed         |
+| `UPSTASH_REDIS_REST_TOKEN`                                                         | rate limiting          | Da za produkciju                | osjetljive rute trebaju fail-closed         |
+| `CRON_SECRET`                                                                      | cron autorizacija      | Da za cron                      | cron rute moraju odbiti zahtjev             |
+| `SMS_INTERNAL_KEY` + provider keys                                                 | SMS slanje             | Da ako SMS uključen             | ruta mora odbiti slanje                     |
+| `RESEND_API_KEY`, `EMAIL_FROM`                                                     | email                  | Da ako email uključen           | ruta mora odbiti slanje ili queue           |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | payments               | Ne dok `PAYMENTS_ENABLED=false` | payments rute moraju 503 bez Stripe poziva  |
+| `PAYMENTS_ENABLED`                                                                 | server payment flag    | Da, default false               | false/fail-closed                           |
+
+## Web — javni/operativni
+
+`NEXT_PUBLIC_APP_URL`, `APP_URL`, `NEXT_PUBLIC_APP_ENV`, `NEXT_PUBLIC_APP_VERSION`, `APP_VERSION`, `VERCEL_ENV`, `NEXT_PUBLIC_SENTRY_DSN`, `SENTRY_DSN`, `SLACK_OPS_WEBHOOK`, `SLACK_INCIDENTS_WEBHOOK`, `NEXT_PUBLIC_GSC_TOKEN`, Google/Cloudinary/analytics/VAPID varijable.
 
 ## Mobile
 
-| Varijabla                       | Ref count | Local | Preview | Prod | Obavezna?  | Missing behavior / napomena                                         |
-| ------------------------------- | --------: | ----- | ------- | ---- | ---------- | ------------------------------------------------------------------- |
-| `EXPO_PUBLIC_API_URL`           |         2 | set   | set     | set  | NE/feature | API base URL / feature endpoint; verify fallback behavior in KIT-E. |
-| `EXPO_PUBLIC_SUPABASE_URL`      |         1 | set   | set     | set  | DA         | Required for remote Supabase access.                                |
-| `EXPO_PUBLIC_SUPABASE_ANON_KEY` |         1 | set   | set     | set  | DA         | Required for remote Supabase access.                                |
+| Varijabla                       | Namjena                | Obavezna?                     | Kad fali             |
+| ------------------------------- | ---------------------- | ----------------------------- | -------------------- |
+| `EXPO_PUBLIC_API_URL`           | web API endpoint       | Da za API smoke               | API pozivi ne rade   |
+| `EXPO_PUBLIC_SUPABASE_URL`      | Supabase mobile client | Da                            | auth/data ne rade    |
+| `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Supabase mobile client | Da                            | auth/data ne rade    |
+| `EXPO_PUBLIC_SENTRY_DSN`        | RN observability       | Ne za lokalni dev, da za prod | nema error reporting |
 
 ## NextAuth presuda
 
-No active `next-auth`/`NextAuth` implementation found under app/lib/components. `NEXTAUTH_*` runtime dependency was removed from env helpers/validators in the safe cleanup slice after KIT-0.
+Grep je našao `NEXTAUTH` samo u `lib/api/env.ts`. Nema potvrde aktivnog NextAuth toka u inventuri; tretirati kao legacy kandidat za KIT-D čišćenje tek nakon dodatne provjere referenci.

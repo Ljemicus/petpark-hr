@@ -1,42 +1,43 @@
-# TRUTH — PetPark KIT-0 inventura (2026-07-02)
+# PETPARK TRUTH — 2026-07-03
 
-## Kratka istina
+Ovo je kratki source of truth nakon KIT-0 inventure. Remote Supabase shema je autoritativna; repo migracije nisu dokaz produkcijskog stanja.
 
-- Web repo: route manifest generated and classified into LAUNCH/GATED/NOINDEX/STUB.
-- Mobile repo: env/fake-surface audit done; mobile route manifest generated from Expo Router files.
-- Remote Supabase schema is authoritative: 32 public tables found, all with RLS enabled.
-- No remote forum/shop/breeder tables exist. Those modules must be honest `Uskoro`/stub until a signed migration exists.
-- Trainer/training tables exist remotely and are candidates for real mobile alignment, but RLS behavior still needs KIT-C/KIT-E tests.
-- Payments remain disabled/out of scope; payment routes/screens must fail closed and show no transaction illusion.
+## Web
 
-## Web modules
+- Core marketplace/search/provider/profile/booking-request: stvarno, launch kandidat uz sigurnosne gateove iz KIT-B.
+- Payments/checkout: `GATED`; `PAYMENTS_ENABLED=false` ostaje. UI može pokazati `Plaćanje uskoro`, API mora fail-closed.
+- Shop: `Uskoro`; shop/product tablice nisu na remoteu.
+- Forum: `Uskoro`/stub; forum tablice nisu na remoteu iako web API rute postoje.
+- Breeders: `Uskoro`/stub; breeder tablice nisu na remoteu, a web još ima `lib/mock-breeders.ts`.
+- Private/dashboard/pet passport/walk/calendar/message surfaces: `NOINDEX` + auth guard obavezni.
+- Design lab/redizajn preview: interni preview; `NOINDEX` + robots disallow.
 
-- Core public pages/search/provider profiles/legal/contact: LAUNCH, subject to copy/legal gates.
-- Booking request/notifications/messages data model: real remote tables exist; behavior gates continue in KIT-B/C.
-- Shop/checkout/payments: GATED.
-- Forum: STUB because forum tables are absent remotely.
-- Breeders/uzgajivačnice: STUB/NOINDEX depending route because breeder tables are absent and mock data exists.
-- Dashboards/admin/profile/messages/settings: NOINDEX/private.
-- Design lab/redesign previews: NOINDEX and candidate for guard in KIT-D.
+## Mobile
 
-## Mobile modules
+- Mobile branch: `fix/kit-e-mobile-istina`.
+- Env refs su minimalne: API URL, Supabase URL/anon key, Sentry DSN.
+- Fake-surface grep je prazan na trenutnom branchu.
+- Mobile store submit nije dio ovog rada.
+- Walk tracker V1 odluka ostaje nakon real-device QA.
 
-- Supabase env references are minimal: `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_API_URL`.
-- Mobile shop has confirmed hardcoded fallback products/reviews in `lib/shop.ts`; KIT-E should replace with `Uskoro`.
-- Mobile payments config already hard-disables payments with `PAYMENTS_ENABLED=false`; KIT-E should verify every entry point fails closed.
-- Mobile trainer screens map to live remote trainer tables, but write/read behavior must be tested after KIT-C type/schema alignment.
+## Remote Supabase
 
-## Decisions carried forward
+- 32 public tablice potvrđene; sve imaju RLS enabled.
+- Trainer/training tablice postoje i žive su: `trainers`, `trainer_bookings`, `trainer_availability`, `trainer_reviews`, `training_programs`.
+- Forum/shop/breeder tablice nisu na remoteu.
+- Storage: `verification-docs` je private; `avatars` i `pet-photos` su public.
 
-- V1 is Croatian-first; do not invent root `/en`. Existing suffix EN pages need KIT-D SEO cleanup/no accidental hreflang expansion.
-- No production deploy/env writes/data writes/migrations without explicit approval.
-- No Šapica branding and no PetPark logo/slider changes in these kits.
+## Odluke iz master kita
 
-## Artifacts
+- V1 je hrvatski; root hreflang na nepostojeći `/en` mora van.
+- Ne deployati bez launch gate checklist pass.
+- Nijedna remote migracija bez ljudskog potpisa.
+- Legal kit čeka stvarne podatke tvrtke u `content/legal/legal-data.json` i pravni potpis.
+
+## Artefakti
 
 - `docs/truth/ROUTE-MANIFEST.md`
-- `docs/truth/MOBILE-ROUTE-MANIFEST.md` in mobile repo
-- `docs/truth/live-schema-dump-2026-07-02.md`
 - `docs/truth/TABLE-CLASSIFICATION.md`
 - `docs/truth/ENV-MATRIX.md`
 - `docs/truth/FAKE-SURFACES.md`
+- `docs/truth/live-schema-dump-2026-07-03.md`

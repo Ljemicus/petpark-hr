@@ -6,17 +6,6 @@ app/(site)/admin/marketing/marketing-dashboard.tsx:77:const MOCK_CAMPAIGNS: Emai
 app/(site)/admin/marketing/marketing-dashboard.tsx:124:const MOCK_TEMPLATES: EmailTemplate[] = [
 app/(site)/admin/marketing/marketing-dashboard.tsx:134:  const [campaigns, setCampaigns] = useState<EmailCampaign[]>(MOCK_CAMPAIGNS);
 app/(site)/admin/marketing/marketing-dashboard.tsx:135:  const [templates, _setTemplates] = useState<EmailTemplate[]>(MOCK_TEMPLATES);
-app/(site)/dashboard/breeder/upiti/page.tsx:20:const MOCK_INQUIRIES = [
-app/(site)/dashboard/breeder/upiti/page.tsx:92:          {MOCK_INQUIRIES.map((inquiry) => (
-app/(site)/dashboard/breeder/page.tsx:30:const MOCK_STATS = {
-app/(site)/dashboard/breeder/page.tsx:39:const MOCK_INQUIRIES = [
-app/(site)/dashboard/breeder/page.tsx:100:            value={MOCK_STATS.totalViews.toString()}
-app/(site)/dashboard/breeder/page.tsx:106:            value={MOCK_STATS.totalInquiries.toString()}
-app/(site)/dashboard/breeder/page.tsx:112:            value={MOCK_STATS.activeListings.toString()}
-app/(site)/dashboard/breeder/page.tsx:117:            value={`${MOCK_STATS.responseRate}%`}
-app/(site)/dashboard/breeder/page.tsx:118:            subValue={MOCK_STATS.avgResponseTime}
-app/(site)/dashboard/breeder/page.tsx:168:                {MOCK_INQUIRIES.length > 0 ? (
-app/(site)/dashboard/breeder/page.tsx:170:                    {MOCK_INQUIRIES.map((inquiry) => (
 lib/demo-data.ts:1:export const DEMO_BOOKING_IDS = new Set([
 lib/demo-data.ts:9:  return DEMO_BOOKING_IDS.has(id);
 lib/mock-breeders.ts:44:export const MOCK_BREEDERS: Breeder[] = [
@@ -26,5 +15,3 @@ lib/public/provider-profile-sanitizers.ts:139:const PRICE_FALLBACK_HR = 'Cijena 
 lib/public/provider-profile-sanitizers.ts:209:    priceFallbackLabel: PRICE_FALLBACK_HR,
 lib/public/provider-profile-sanitizers.ts:240:    priceFallbackLabel: PRICE_FALLBACK_HR,
 lib/public/provider-profile-sanitizers.ts:294:    priceFallbackLabel: PRICE_FALLBACK_HR,
-components/payments/PayoutCard.tsx:30:const MOCK_PAYOUTS: Payout[] = [
-components/payments/PayoutCard.tsx:54:  recentPayouts = MOCK_PAYOUTS,
