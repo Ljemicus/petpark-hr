@@ -1,0 +1,10 @@
+{
+  "naziv_tvrtke": "ISPUNI — puni registrirani naziv (d.o.o./j.d.o.o./obrt)",
+  "oib": "ISPUNI",
+  "mbs": "ISPUNI — ili napomena ako je obrt (MBO)",
+  "registrirana_adresa": "ISPUNI — ulica, broj, poštanski broj, grad",
+  "temeljni_kapital": "ISPUNI — iznos u EUR + 'uplaćen u cijelosti' ako jest",
+  "sud_registracije": "ISPUNI — npr. Trgovački sud u Zagrebu",
+  "email": "ISPUNI",
+  "odgovorna_osoba": "ISPUNI"
+}

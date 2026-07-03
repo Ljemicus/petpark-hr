@@ -286,9 +286,8 @@ export function Footer() {
           </div>
           <div className="border-t border-gray-800 mt-10 pt-8 space-y-5 text-sm text-gray-500">
             <div className="leading-6 text-center md:text-left">
-              <p className="font-semibold text-gray-400">PetPark d.o.o. · {'{{PUNA_ADRESA}}'}, Rijeka</p>
-              <p>OIB: {'{{OIB}}'} · MBS: {'{{MBS}}'} · Trgovački sud u Rijeci</p>
-              <p>Temeljni kapital: {'{{KAPITAL}}'} EUR, uplaćen u cijelosti</p>
+              <p className="font-semibold text-gray-400">PetPark</p>
+              <p>Registracijski podaci bit će objavljeni nakon pravne potvrde prije javnog lansiranja.</p>
             </div>
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <p>{t('footer.rights')}</p>

@@ -69,7 +69,6 @@ export function ProviderOnboardingForm({ user, initialApplication, stripeReturn 
   const searchParams = useSearchParams();
   const [savingDraft, setSavingDraft] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [connectingStripe, setConnectingStripe] = useState(false);
   const source = searchParams.get('source') || 'direct';
 
   const defaultValues = useMemo(() => mapInitialValues(user, initialApplication), [user, initialApplication]);
@@ -103,13 +102,9 @@ export function ProviderOnboardingForm({ user, initialApplication, stripeReturn 
     if (!stripeReturn) return;
 
     if (stripeReturn === 'complete') {
-      if (stripeReady) {
-        toast.success('Stripe onboarding dovršen! Isplate su spremne.');
-      } else {
-        toast.info('Vraćeni ste sa Stripea. Status računa će se ažurirati uskoro.');
-      }
+      toast.info('Vraćeni ste s postavki isplata. Isplate putem platforme trenutačno nisu aktivne.');
     } else if (stripeReturn === 'refresh') {
-      toast.info('Stripe link je istekao. Kliknite ponovo za nastavak.');
+      toast.info('Poveznica za postavke isplata je istekla. Isplate putem platforme trenutačno nisu aktivne.');
     }
 
     // Clean query params from URL without reload
@@ -139,33 +134,6 @@ export function ProviderOnboardingForm({ user, initialApplication, stripeReturn 
       toast.error('Greška pri spremanju skice');
     } finally {
       setSavingDraft(false);
-    }
-  }
-
-  async function connectStripe() {
-    setConnectingStripe(true);
-    try {
-      // Save current form state before redirecting
-      if (!locked) await saveDraft();
-      const response = await fetch('/api/provider-connect', { method: 'POST' });
-      const payload = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        toast.error(payload.error || 'Stripe onboarding trenutno nije dostupan');
-        return;
-      }
-
-      if (payload.onboardingUrl) {
-        trackEvent('Provider Stripe Onboarding Started', { source });
-        window.location.href = payload.onboardingUrl as string;
-        return;
-      }
-
-      toast.error('Stripe onboarding link nije generiran');
-    } catch {
-      toast.error('Greška pri pokretanju Stripe onboardinga');
-    } finally {
-      setConnectingStripe(false);
     }
   }
 
@@ -456,31 +424,22 @@ export function ProviderOnboardingForm({ user, initialApplication, stripeReturn 
             <Card className="rounded-2xl border-0 shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <CreditCard className="h-5 w-5 text-orange-500" /> Stripe Connect
+                  <CreditCard className="h-5 w-5 text-orange-500" /> Isplate preko platforme
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm text-muted-foreground">
                 <p>
-                  Isplate prema providerima idu preko Stripe Connect onboardinga. Ne moraš to riješiti odmah — prvo pošalji prijavu, a isplate spoji čim budeš spreman/na.
+                  Online plaćanja i isplate preko PetParka trenutačno nisu aktivne. Prvo pošalji prijavu;
+                  dogovor i plaćanje usluge za sada se odvijaju izravno između korisnika i pružatelja.
                 </p>
                 <div className="rounded-xl border p-4 bg-muted/30">
-                  {stripeReady ? (
-                    <p className="flex items-center gap-2 text-green-700 dark:text-green-400">
-                      <CheckCircle2 className="h-4 w-4" />
-                      <strong>Onboarding dovršen — isplate spremne</strong>
+                  <p><strong>Status:</strong> Plaćanja putem platforme uskoro</p>
+                  {stripeReady && (
+                    <p className="mt-2 text-xs">
+                      Ranije spremljen status isplata ostaje zabilježen, ali se ne koristi dok plaćanja nisu službeno uključena.
                     </p>
-                  ) : (
-                    <p><strong>Status:</strong> Onboarding još nije dovršen</p>
-                  )}
-                  {initialApplication?.stripe_account_id && (
-                    <p className="mt-2 break-all text-xs"><strong>Stripe account:</strong> {initialApplication.stripe_account_id}</p>
                   )}
                 </div>
-                {!stripeReady && (
-                  <Button type="button" variant="outline" className="w-full" onClick={connectStripe} disabled={connectingStripe}>
-                    {connectingStripe ? 'Otvaram Stripe...' : initialApplication?.stripe_account_id ? 'Nastavi Stripe onboarding' : 'Poveži isplate'}
-                  </Button>
-                )}
               </CardContent>
             </Card>
 
@@ -507,7 +466,7 @@ export function ProviderOnboardingForm({ user, initialApplication, stripeReturn 
               <CardContent className="space-y-3 text-sm text-muted-foreground">
                 <p>1. Ispuni osnovne podatke i usluge.</p>
                 <p>2. Pošalji prijavu na provjeru.</p>
-                <p>3. Spoji Stripe za isplate kad budeš spreman/na.</p>
+                <p>3. Plaćanja preko platforme dolaze kasnije; za sada se dogovaraš izravno s korisnikom.</p>
                 <p>4. Nakon odobrenja tvoj profil može ići live.</p>
               </CardContent>
             </Card>

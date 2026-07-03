@@ -23,7 +23,7 @@ export default function UvjetiPage() {
           <p className="text-white/80 max-w-2xl mx-auto">
             Korištenjem platforme PetPark prihvaćate ove uvjete. Molimo vas da ih pažljivo pročitate.
           </p>
-          <p className="text-sm text-white/60 mt-4">Posljednje ažuriranje: 12. lipnja 2026.</p>
+          <p className="text-sm text-white/60 mt-4">Posljednje ažuriranje: 3. srpnja 2026.</p>
         </div>
       </section>
 
@@ -193,8 +193,8 @@ export default function UvjetiPage() {
                 prije potvrde termina ili početka suradnje.
               </p>
               <p>
-                PetPark ne naplaćuje proviziju dok se ne uvede online plaćanje na platformi. Ako se model naplate
-                promijeni, korisnici će biti pravovremeno obaviješteni izmjenom ovih uvjeta.
+                PetPark trenutačno ne naplaćuje proviziju. Ako se model naplate ili online plaćanja promijeni,
+                korisnici će biti pravovremeno obaviješteni izmjenom ovih uvjeta prije početka primjene.
               </p>
               <p>
                 Otkazivanje dogovora trebalo bi se obaviti što ranije uz jasnu obavijest drugoj strani. Za sporove
@@ -249,7 +249,7 @@ export default function UvjetiPage() {
             <ul className="space-y-2 text-muted-foreground">
               <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Zlostavljanje, zanemarivanje ili neadekvatna briga o ljubimcima</li>
               <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Lažno predstavljanje, korištenje tuđih identiteta ili lažnih referenci</li>
-              <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Pokušaj izbjegavanja plaćanja putem platforme (dogovaranje &quot;ispod stola&quot;)</li>
+              <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Dogovaranje usluge na način koji obmanjuje drugu stranu ili zaobilazi dogovorene uvjete suradnje</li>
               <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Uznemiravanje, prijetnje ili diskriminacija drugih korisnika</li>
               <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Korištenje platforme za ilegalne aktivnosti</li>
               <li className="flex gap-2"><span className="text-red-500 font-bold">•</span>Spam, phishing ili distribucija malicioznog sadržaja</li>
@@ -305,8 +305,8 @@ export default function UvjetiPage() {
             <h2 className="text-2xl font-bold text-foreground mb-4">12. Primjenjivo pravo i rješavanje sporova</h2>
             <p className="text-muted-foreground leading-relaxed">
               Na ove uvjete korištenja primjenjuje se pravo Republike Hrvatske.
-              Za sve sporove koji proizlaze iz korištenja platforme nadležan je sud u Zagrebu.
-              {/* TODO(human): potvrditi Zagreb vs. Rijeka prema sjedištu */}
+              Nadležnost suda odredit će se prema važećim propisima i podacima registriranog subjekta.
+              {/* PRAVNI PREGLED: potvrditi sudsku nadležnost nakon upisa stvarnih podataka društva. */}
               Prije pokretanja sudskog postupka, obvezujemo se pokušati riješiti spor mirnim putem.
             </p>
           </section>
@@ -319,9 +319,9 @@ export default function UvjetiPage() {
               Potrošači imaju pravo podnijeti pisani prigovor na rad platforme putem e-maila na{' '}
               <a href="mailto:info@petpark.hr" className="text-orange-600 hover:underline">info@petpark.hr</a>.
               Na prigovor ćemo odgovoriti u zakonskom roku. Sporove je moguće pokušati riješiti i izvansudskim putem,
-              uključujući nadležna tijela za alternativno rješavanje potrošačkih sporova. Informacije o EU ODR platformi
-              dostupne su na{' '}
-              <a href="https://ec.europa.eu/consumers/odr" className="text-orange-600 hover:underline" target="_blank" rel="noopener noreferrer">ec.europa.eu/consumers/odr</a>.
+              uključujući nadležna tijela za alternativno rješavanje potrošačkih sporova u Republici Hrvatskoj,
+              primjerice pri Hrvatskoj gospodarskoj komori — Sudu časti HGK ili Centru za mirenje HGK.
+              {/* PRAVNI PREGLED: potvrditi konačnu formulaciju i poveznice za alternativno rješavanje sporova. */}
             </p>
           </section>
 
@@ -331,9 +331,11 @@ export default function UvjetiPage() {
               <Building2 className="mt-1 h-5 w-5 text-orange-600" />
               <div className="text-sm leading-7 text-muted-foreground">
                 <p className="font-semibold text-foreground">Impressum</p>
-                <p>PetPark d.o.o. · {'{{PUNA_ADRESA}}'}, Rijeka</p>
-                <p>OIB: {'{{OIB}}'} · MBS: {'{{MBS}}'} · Trgovački sud u Rijeci</p>
-                <p>Temeljni kapital: {'{{KAPITAL}}'} EUR, uplaćen u cijelosti</p>
+                <p>Podaci o registriranom subjektu bit će objavljeni nakon pravne potvrde.</p>
+                <p>
+                  Prije javnog lansiranja potrebno je unijeti puni naziv, OIB, MBS/MBO, registriranu adresu,
+                  temeljni kapital i nadležni registar.
+                </p>
               </div>
             </div>
           </section>

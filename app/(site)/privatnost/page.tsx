@@ -23,7 +23,7 @@ export default function PrivatnostPage() {
           <p className="text-white/80 max-w-2xl mx-auto">
             Vaša privatnost nam je iznimno važna. Ovdje možete saznati kako prikupljamo, koristimo i štitimo vaše osobne podatke.
           </p>
-          <p className="text-sm text-white/60 mt-4">Posljednje ažuriranje: 24. ožujka 2026.</p>
+          <p className="text-sm text-white/60 mt-4">Posljednje ažuriranje: 3. srpnja 2026.</p>
         </div>
       </section>
 
@@ -55,8 +55,10 @@ export default function PrivatnostPage() {
               {[
                 { title: 'Podaci o računu', desc: 'Ime i prezime, e-mail adresa, grad, broj telefona — podatci koje unosite prilikom registracije.' },
                 { title: 'Autentikacija', desc: 'Koristimo Supabase za autentikaciju. Možete se registrirati putem e-maila i lozinke ili Google OAuth prijave.' },
-                { title: 'Fotografije', desc: 'Fotografije ljubimaca, profilne fotografije i slike na forumu pohranjuju se u Supabase Storage.' },
-                { title: 'Lokacija', desc: 'Grad i približna lokacija koriste se za povezivanje s čuvarima u vašoj blizini.' },
+                { title: 'Fotografije', desc: 'Fotografije ljubimaca, profilne fotografije i slike u zajednici pohranjuju se u Supabase Storage.' },
+                { title: 'Verifikacijski dokumenti', desc: 'Ako tražite verifikaciju pružatelja ili udruge, možemo zatražiti dokumente potrebne za provjeru identiteta ili statusa.' },
+                { title: 'Podaci o ljubimcima', desc: 'Podaci o ljubimcu, uključujući podatke za pet passport, vidljivi su vlasniku i osobama kojima ih vlasnik izričito podijeli.' },
+                { title: 'Lokacija', desc: 'Grad i približna lokacija koriste se za povezivanje s pružateljima usluga u vašoj blizini.' },
                 { title: 'Podaci o korištenju', desc: 'Koristimo Plausible Analytics koji ne koristi kolačiće i ne prikuplja osobne podatke posjetitelja.' },
               ].map((item) => (
                 <Card key={item.title} className="border-0 shadow-sm">
@@ -148,7 +150,29 @@ export default function PrivatnostPage() {
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span><strong>Google</strong> — samo ako koristite Google OAuth prijavu, u skladu s Googleovom politikom privatnosti</li>
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span><strong>Vercel</strong> — za hosting platforme</li>
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span><strong>Plausible Analytics</strong> — anonimna analitika bez osobnih podataka</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span><strong>Sentry</strong> — tehnička dijagnostika grešaka, bez namjernog slanja osjetljivih sadržaja poruka ili dokumenata</li>
             </ul>
+          </section>
+
+          {/* 5a. Posebne obrade */}
+          <section>
+            <h2 className="text-2xl font-bold text-foreground mb-4">5a. Verifikacija, pet passport i izgubljeni ljubimci</h2>
+            <div className="space-y-4 text-muted-foreground leading-relaxed">
+              <p>
+                <strong>Verifikacijski dokumenti:</strong> dokumente pružatelja usluga i udruga koristimo isključivo za provjeru identiteta,
+                statusa ili prava objave. Pristup imaju samo ovlašteni administratori. Dokumenti se čuvaju u privatnoj pohrani,
+                a pristup se daje vremenski ograničenim poveznicama.
+                {/* PRAVNI PREGLED: potvrditi rok brisanja verifikacijskih dokumenata, predloženo najkasnije 90 dana nakon završetka verifikacije. */}
+              </p>
+              <p>
+                <strong>Pet passport:</strong> podaci o ljubimcu, zdravlju i dokumentima nisu javno indeksirani. Vlasnik ih vidi u svom računu,
+                a dijeljeni prikaz dostupan je samo osobama kojima vlasnik izričito podijeli poveznicu ili pristup.
+              </p>
+              <p>
+                <strong>Izgubljeni ljubimci:</strong> kod kontakt-posredovanja ne objavljujemo privatne kontakt podatke pronalazača ili vlasnika.
+                Koristimo ih za posredovanje poruke i zaštitu od zlouporabe, uz ograničenja slanja i sigurnosne provjere.
+              </p>
+            </div>
           </section>
 
           {/* 6. Vaša prava */}
@@ -203,7 +227,8 @@ export default function PrivatnostPage() {
             <ul className="space-y-2 text-muted-foreground text-sm">
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Korisnički profil: dok je račun aktivan + 30 dana</li>
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Poruke: 1 godina nakon slanja</li>
-              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Financijski podaci: 5 godina (zakonska obveza)</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Financijski podaci: samo ako i kada online plaćanja budu aktivirana; tada prema zakonskim rokovima</li>
+              <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Verifikacijski dokumenti: do završetka provjere i najkasnije prema roku potvrđenom pravnim pregledom</li>
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Fotografije: brišu se zajedno s profilom ili na zahtjev</li>
               <li className="flex gap-2"><span className="text-warm-orange font-bold">•</span>Analitički podaci: anonimizirani, bez vremenskog ograničenja</li>
             </ul>
@@ -236,9 +261,11 @@ export default function PrivatnostPage() {
               <Building2 className="mt-1 h-5 w-5 text-orange-600" />
               <div className="text-sm leading-7 text-muted-foreground">
                 <p className="font-semibold text-foreground">Impressum</p>
-                <p>PetPark d.o.o. · {'{{PUNA_ADRESA}}'}, Rijeka</p>
-                <p>OIB: {'{{OIB}}'} · MBS: {'{{MBS}}'} · Trgovački sud u Rijeci</p>
-                <p>Temeljni kapital: {'{{KAPITAL}}'} EUR, uplaćen u cijelosti</p>
+                <p>Podaci o registriranom subjektu bit će objavljeni nakon pravne potvrde.</p>
+                <p>
+                  Prije javnog lansiranja potrebno je unijeti puni naziv, OIB, MBS/MBO, registriranu adresu,
+                  temeljni kapital i nadležni registar.
+                </p>
               </div>
             </div>
           </section>
