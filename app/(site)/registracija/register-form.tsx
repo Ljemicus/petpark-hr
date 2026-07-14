@@ -76,9 +76,9 @@ export function RegisterForm() {
 
       if (payload.session) {
         toast.success(language === 'en' ? 'Registration successful!' : 'Registracija uspješna!');
-        const target = redirect || (data.role === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik');
-        router.push(target);
+        const target = redirect || (data.role === 'sitter' ? '/dashboard/sitter' : '/dashboard/vlasnik/onboarding');
         router.refresh();
+        window.location.assign(target);
       } else {
         toast.success(language === 'en' ? 'Registration successful! Check your email to confirm your account.' : 'Registracija uspješna! Provjerite email za potvrdu.');
         const loginUrl = `/prijava${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`;
