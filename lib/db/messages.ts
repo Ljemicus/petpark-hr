@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { isSupabaseConfigured } from './helpers';
 import type { Message } from '@/lib/types';
 
@@ -195,7 +196,7 @@ export async function sendMessage(
   if (!isSupabaseConfigured()) return null;
 
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const conversationId = await ensureDirectConversation(
       supabase,
       messageData.sender_id,
