@@ -3,6 +3,10 @@ import { Redis } from '@upstash/redis';
 // Redis client singleton
 let redis: Redis | null = null;
 
+function isConfiguredValue(value: string | undefined, placeholder: string): value is string {
+  return Boolean(value && !value.includes(placeholder) && !value.includes('REPLACE'));
+}
+
 /**
  * Gets or creates the Redis client
  */
@@ -11,7 +15,7 @@ export function getRedisClient(): Redis {
     const url = process.env.UPSTASH_REDIS_REST_URL;
     const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-    if (!url || !token) {
+    if (!isConfiguredValue(url, 'your-url') || !isConfiguredValue(token, 'your-token')) {
       throw new Error('Upstash Redis credentials not configured. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN.');
     }
 
@@ -28,9 +32,9 @@ export function getRedisClient(): Redis {
  * Checks if Redis is configured
  */
 export function isRedisConfigured(): boolean {
-  return !!(
-    process.env.UPSTASH_REDIS_REST_URL &&
-    process.env.UPSTASH_REDIS_REST_TOKEN
+  return Boolean(
+    isConfiguredValue(process.env.UPSTASH_REDIS_REST_URL, 'your-url') &&
+      isConfiguredValue(process.env.UPSTASH_REDIS_REST_TOKEN, 'your-token')
   );
 }
 

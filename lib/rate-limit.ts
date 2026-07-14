@@ -7,6 +7,10 @@ const memoryStore = new Map<string, { count: number; resetTime: number }>();
 const MEMORY_CLEANUP_INTERVAL = 5 * 60 * 1000;
 let lastCleanup = Date.now();
 
+function isConfiguredValue(value: string | undefined, placeholder: string): value is string {
+  return Boolean(value && !value.includes(placeholder) && !value.includes('REPLACE'));
+}
+
 export interface RateLimitConfig {
   limit: number;
   windowSeconds: number;
@@ -36,7 +40,7 @@ export function getRedisClient(): Redis {
     const url = process.env.UPSTASH_REDIS_REST_URL;
     const token = process.env.UPSTASH_REDIS_REST_TOKEN;
 
-    if (!url || !token) {
+    if (!isConfiguredValue(url, 'your-url') || !isConfiguredValue(token, 'your-token')) {
       throw new Error('Upstash Redis credentials not configured. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN.');
     }
 
@@ -47,7 +51,14 @@ export function getRedisClient(): Redis {
 }
 
 export function isRedisConfigured(): boolean {
-  return Boolean(process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN);
+  return Boolean(
+    isConfiguredValue(process.env.UPSTASH_REDIS_REST_URL, 'your-url') &&
+      isConfiguredValue(process.env.UPSTASH_REDIS_REST_TOKEN, 'your-token'),
+  );
+}
+
+function hasPartialRedisConfig(): boolean {
+  return Boolean(process.env.UPSTASH_REDIS_REST_URL || process.env.UPSTASH_REDIS_REST_TOKEN) && !isRedisConfigured();
 }
 
 function getRateLimiter(config: RateLimitConfig): Ratelimit {
@@ -115,7 +126,7 @@ function checkMemoryRateLimit(key: string, config: RateLimitConfig): RateLimitRe
 export async function checkRateLimit(key: string, config: RateLimitConfig): Promise<RateLimitResult> {
   if (!isRedisConfigured()) {
     console.warn('[rate-limit] Redis not configured', { identifier: config.identifier, failClosed: Boolean(config.failClosed) });
-    return config.failClosed ? deny(config, 'redis_unavailable') : checkMemoryRateLimit(key, config);
+    return config.failClosed && hasPartialRedisConfig() ? deny(config, 'redis_unavailable') : checkMemoryRateLimit(key, config);
   }
 
   try {

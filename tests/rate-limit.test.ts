@@ -191,8 +191,22 @@ describe('checkRateLimit (in-memory fallback)', () => {
 
 
 
-  it('should fail closed for sensitive limits when Redis is missing', async () => {
+  it('should use memory fallback for sensitive limits when Redis is not configured', async () => {
     const result = await checkRateLimit('sensitive-key', {
+      limit: 5,
+      windowSeconds: 60,
+      identifier: 'sensitive:test',
+      failClosed: true,
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.remaining).toBe(4);
+  });
+
+  it('should fail closed for sensitive limits when Redis config is partial', async () => {
+    process.env.UPSTASH_REDIS_REST_URL = 'https://example.upstash.io';
+
+    const result = await checkRateLimit('sensitive-partial-key', {
       limit: 5,
       windowSeconds: 60,
       identifier: 'sensitive:test',
