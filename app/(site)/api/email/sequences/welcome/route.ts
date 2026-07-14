@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { apiError } from '@/lib/api-errors';
 import { scheduleWelcomeSequence } from '@/lib/email-sequences';
 import { requireAdmin } from '@/lib/admin-guard';
@@ -37,10 +38,12 @@ export async function POST(request: NextRequest) {
       if (!admin.ok) return admin.response;
     }
 
-    // Get user details
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('id, email, name, role, created_at')
+    // Get user details from the canonical profile table. Role-specific welcome
+    // content is driven by the validated request role below.
+    const admin = createAdminClient();
+    const { data: userData, error: userError } = await admin
+      .from('profiles')
+      .select('id, email, name:display_name, avatar_url, phone, city, created_at')
       .eq('id', userId)
       .single();
 
@@ -52,10 +55,10 @@ export async function POST(request: NextRequest) {
       id: userData.id,
       email: userData.email,
       name: userData.name,
-      role: userData.role as User['role'],
-      avatar_url: null,
-      phone: null,
-      city: null,
+      role: role === 'sitter' ? 'sitter' : 'owner',
+      avatar_url: userData.avatar_url,
+      phone: userData.phone,
+      city: userData.city,
       created_at: userData.created_at,
     };
 
