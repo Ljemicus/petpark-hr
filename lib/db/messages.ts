@@ -140,7 +140,7 @@ export async function getMessages(userId: string): Promise<Message[]> {
   if (!isSupabaseConfigured()) return [];
 
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const conversationIds = await getParticipantConversationIds(supabase, userId);
     if (conversationIds.length === 0) return [];
 
@@ -173,7 +173,7 @@ export async function getConversation(userId1: string, userId2: string): Promise
   if (!isSupabaseConfigured()) return [];
 
   try {
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     const conversationId = await findDirectConversationId(supabase, userId1, userId2);
     if (!conversationId) return [];
 
