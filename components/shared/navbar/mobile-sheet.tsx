@@ -42,9 +42,9 @@ export function MobileSheet({ open, setOpen, t, language = 'hr', user, onLogout,
   );
 
   return (
-    <div className="flex items-center gap-1.5 md:hidden">
+    <div className="flex items-center gap-1.5 xl:hidden">
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger render={<Button variant="ghost" size="icon" />} className="md:hidden rounded-xl min-w-[44px] min-h-[44px]" aria-label={t('common.open_menu')}>
+        <SheetTrigger render={<Button variant="ghost" size="icon" />} className="xl:hidden rounded-xl min-w-[44px] min-h-[44px]" aria-label={t('common.open_menu')}>
           <Menu className="h-5 w-5" />
         </SheetTrigger>
         <SheetContent side="right" className="w-[300px] p-0">

@@ -569,7 +569,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
           </Card>
 
           <Card radius="24" className="p-3">
-            <div className="flex gap-2 overflow-x-auto pb-1">
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.key;

@@ -34,7 +34,7 @@ export function DesktopActions({ t, user, loading, signOut, pendingRescueCount =
   };
 
   return (
-    <div className="hidden md:flex items-center gap-2">
+    <div className="hidden xl:flex items-center gap-2">
       <LanguageSwitcher />
       
       {/* Admin notification badge */}
