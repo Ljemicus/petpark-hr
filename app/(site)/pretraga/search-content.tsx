@@ -7,20 +7,28 @@ import {
   ArrowRight,
   Bell,
   BookOpen,
+  Camera,
   CalendarDays,
   CheckCircle2,
   ChevronRight,
+  Clock3,
   Dog,
   Filter,
   HeartHandshake,
+  Home,
+  House,
   MapPin,
   MessageCircle,
+  Navigation,
   Newspaper,
   PawPrint,
   Search,
   ShieldCheck,
   SlidersHorizontal,
+  Sparkles,
   Star,
+  Syringe,
+  Trees,
 } from 'lucide-react';
 import {
   AppHeader,
@@ -72,6 +80,35 @@ const tabs: Array<{ key: SearchTab; label: string; icon: typeof Search }> = [
   { key: 'blog', label: 'Blog', icon: Newspaper },
   { key: 'ljubimci', label: 'Ljubimci', icon: Dog },
   { key: 'izgubljeni', label: 'Izgubljeni', icon: Bell },
+];
+
+const careServiceSegments: Array<{ label: string; value: string; icon: typeof Search }> = [
+  { label: 'Čuvanje', value: 'boarding', icon: House },
+  { label: 'Šetnja', value: 'walking', icon: PawPrint },
+  { label: 'Kućna posjeta', value: 'visit', icon: Home },
+  { label: 'Dnevni boravak', value: 'daycare', icon: Clock3 },
+  { label: 'Grooming', value: 'grooming', icon: Sparkles },
+  { label: 'Trening', value: 'training', icon: Trees },
+];
+
+const premiumNeedChips = [
+  'Verified',
+  'Ograđeno dvorište',
+  'Bez drugih ljubimaca',
+  'Oralni lijekovi',
+  'Senior friendly',
+  'Reaktivni psi',
+  'Instant booking',
+  'Photo updates',
+  'GPS šetnja',
+  'Meet & greet',
+];
+
+const trustHighlights = [
+  { label: 'ID provjera', value: 'verified' },
+  { label: 'Photo updates', value: 'svaki dan' },
+  { label: 'Response time', value: '< 2h' },
+  { label: 'Meet & greet', value: 'besplatno' },
 ];
 
 const articles = [
@@ -169,12 +206,14 @@ function FilterChip({ children, active = false }: { children: React.ReactNode; a
 
 function FilterPanel({
   city,
+  selectedService,
   minPrice,
   maxPrice,
   minRating,
   verifiedOnly,
   date,
   onCityChange,
+  onSelectedServiceChange,
   onMinPriceChange,
   onMaxPriceChange,
   onMinRatingChange,
@@ -184,12 +223,14 @@ function FilterPanel({
   onClear,
 }: {
   city: string;
+  selectedService: string;
   minPrice: string;
   maxPrice: string;
   minRating: string;
   verifiedOnly: boolean;
   date: string;
   onCityChange: (value: string) => void;
+  onSelectedServiceChange: (value: string) => void;
   onMinPriceChange: (value: string) => void;
   onMaxPriceChange: (value: string) => void;
   onMinRatingChange: (value: string) => void;
@@ -202,7 +243,7 @@ function FilterPanel({
     <Card radius="28" className="p-5">
       <div className="flex items-center justify-between gap-3">
         <h2 className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.14em] text-[color:var(--pp-color-muted-text)]">
-          <Filter className="size-4" aria-hidden /> Filteri
+          <Filter className="size-4" aria-hidden /> Care filteri
         </h2>
         <button type="button" onClick={onClear} className="text-xs font-black text-[color:var(--pp-color-orange-primary)] hover:underline">
           Očisti
@@ -211,9 +252,16 @@ function FilterPanel({
 
       <div className="mt-5 space-y-5">
         <label className="space-y-2 block">
-          <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Kategorija</span>
-          <Select defaultValue="sve" disabled>
-            <option value="sve">Sve kategorije</option>
+          <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Usluga</span>
+          <Select value={selectedService} onChange={(event) => onSelectedServiceChange(event.target.value)}>
+            <option value="">Sve usluge</option>
+            <option value="boarding">Čuvanje kod sittera</option>
+            <option value="house-sitting">Čuvanje kod vlasnika</option>
+            <option value="walking">Šetnja</option>
+            <option value="visit">Kućna posjeta</option>
+            <option value="daycare">Dnevni boravak</option>
+            <option value="grooming">Grooming</option>
+            <option value="training">Trening</option>
           </Select>
         </label>
 
@@ -244,9 +292,18 @@ function FilterPanel({
         </label>
 
         <label className="space-y-2 block">
-          <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Datum</span>
+          <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Datum početka</span>
           <Input type="date" value={date} onChange={(event) => onDateChange(event.target.value)} />
         </label>
+
+        <div className="space-y-3">
+          <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Posebne potrebe</span>
+          <div className="flex flex-wrap gap-2">
+            {premiumNeedChips.slice(0, 6).map((chip, index) => (
+              <FilterChip key={chip} active={index < 2}>{chip}</FilterChip>
+            ))}
+          </div>
+        </div>
 
         <label className="flex items-center justify-between gap-4 rounded-[var(--pp-radius-control)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-cream-surface)] p-4">
           <span>
@@ -263,10 +320,19 @@ function FilterPanel({
 }
 
 function ServiceResultCard({ provider }: { provider: UnifiedProvider }) {
+  const matchScore = provider.verified ? 94 : 87;
+  const responseLabel = provider.verified ? '< 2h odgovor' : '< 1 dan odgovor';
+  const specialty = provider.category === 'grooming'
+    ? 'Njega bez stresa'
+    : provider.category === 'dresura'
+      ? 'Plan treninga'
+      : 'Kućni ritam';
+
   return (
     <Link href={provider.profileUrl} className="group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)] focus-visible:ring-offset-2">
       <Card radius="28" shadow="small" interactive className="h-full overflow-hidden p-5 ring-1 ring-[color:var(--pp-color-warm-border)]/70">
-        <div className="flex items-start gap-4">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-start gap-4">
           <Avatar src={provider.avatarUrl || undefined} initials={initials(provider.name)} alt={provider.name} size="lg" />
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
@@ -276,10 +342,20 @@ function ServiceResultCard({ provider }: { provider: UnifiedProvider }) {
             <h3 className="mt-3 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)] group-hover:text-[color:var(--pp-color-orange-primary)]">{provider.name}</h3>
             <p className="mt-1 flex items-center gap-1 text-sm font-bold text-[color:var(--pp-color-muted-text)]"><MapPin className="size-4" /> {provider.city || 'Hrvatska'}</p>
           </div>
+          </div>
+          <div className="shrink-0 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-forest-text)] px-3 py-2 text-right text-white shadow-[var(--pp-shadow-small-card)]">
+            <p className="text-lg font-black leading-none">{matchScore}%</p>
+            <p className="mt-1 text-[10px] font-black uppercase tracking-[0.12em] text-white/70">match</p>
+          </div>
         </div>
         <p className="mt-4 line-clamp-2 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">{provider.bio || 'PetPark profil s uslugama, recenzijama i dostupnošću.'}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           {provider.services.slice(0, 3).map((service) => <Badge key={service} variant="sage">{getServiceLabel(service, provider.category)}</Badge>)}
+        </div>
+        <div className="mt-4 grid gap-2 text-xs font-black text-[color:var(--pp-color-muted-text)] sm:grid-cols-3">
+          <span className="rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] px-3 py-2">{specialty}</span>
+          <span className="rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] px-3 py-2">{responseLabel}</span>
+          <span className="rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] px-3 py-2">Photo update</span>
         </div>
         <div className="mt-5 flex items-center justify-between border-t border-[color:var(--pp-color-warm-border)] pt-4">
           <Rating value={provider.rating} count={provider.reviews} />
@@ -345,6 +421,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<SearchTab>(() => activeTabFromCategory(initialParams.category));
   const [query, setQuery] = useState('');
+  const [selectedService, setSelectedService] = useState(initialParams.service || '');
   const [city, setCity] = useState(initialParams.city || '');
   const [minPrice, setMinPrice] = useState(initialParams.min_price || '');
   const [maxPrice, setMaxPrice] = useState(initialParams.max_price || '');
@@ -378,12 +455,13 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
     const params = new URLSearchParams();
     if (tab !== 'sve') params.set('category', tab);
     if (city) params.set('city', city);
+    if (selectedService) params.set('service', selectedService);
     if (minPrice) params.set('min_price', minPrice);
     if (maxPrice) params.set('max_price', maxPrice);
     if (minRating) params.set('min_rating', minRating);
     const queryString = params.toString();
     return queryString ? `/pretraga?${queryString}` : '/pretraga';
-  }, [activeTab, city, maxPrice, minPrice, minRating]);
+  }, [activeTab, city, maxPrice, minPrice, minRating, selectedService]);
 
   const applyFilters = useCallback(() => {
     router.push(buildUrl());
@@ -391,6 +469,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
 
   const clearFilters = useCallback(() => {
     setQuery('');
+    setSelectedService('');
     setCity('');
     setMinPrice('');
     setMaxPrice('');
@@ -424,32 +503,65 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
         <div className="mx-auto max-w-[1500px] space-y-6">
           <Card radius="28" shadow="small" className="relative overflow-hidden p-6 sm:p-8 lg:p-9">
             <div className="absolute right-10 top-10 hidden size-28 rounded-full bg-[color:var(--pp-color-warning-surface)] lg:block" />
-            <div className="relative grid gap-7 xl:grid-cols-[1fr_500px] xl:items-end">
+            <div className="relative grid gap-7 xl:grid-cols-[1fr_540px] xl:items-end">
               <div>
-                <Badge variant="orange"><Search className="size-3" /> Univerzalna pretraga</Badge>
-                <h1 className="mt-5 text-5xl font-black leading-[0.98] tracking-[-0.06em] text-[color:var(--pp-color-forest-text)] sm:text-7xl lg:text-7xl">Pretraži PetPark</h1>
+                <Badge variant="orange"><Search className="size-3" /> Premium care matching</Badge>
+                <h1 className="mt-5 max-w-4xl text-5xl font-black leading-[0.98] tracking-[-0.05em] text-[color:var(--pp-color-forest-text)] sm:text-7xl lg:text-7xl">Pronađi savršen match za svog ljubimca.</h1>
                 <p className="mt-5 max-w-2xl text-base font-semibold leading-7 text-[color:var(--pp-color-muted-text)] sm:text-lg">
-                  Pronađi usluge, savjete, ljubimce, objave i ljude iz zajednice.
+                  PetPark ne traži samo najbližeg sittera. Usklađuje uslugu, navike ljubimca, dom, sigurnost i stil komunikacije.
                 </p>
-                <div className="mt-6 flex flex-wrap gap-2">
-                  <FilterChip active>Usluge</FilterChip>
-                  <FilterChip>Zajednica</FilterChip>
-                  <FilterChip>Blog</FilterChip>
-                  <FilterChip>Izgubljeni ljubimci</FilterChip>
-                  <FilterChip>Udomljavanje</FilterChip>
+                <div className="mt-7 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {careServiceSegments.map((segment) => {
+                    const Icon = segment.icon;
+                    const active = selectedService === segment.value;
+                    return (
+                      <button
+                        key={segment.value}
+                        type="button"
+                        onClick={() => setSelectedService(active ? '' : segment.value)}
+                        className={cn(
+                          'flex items-center gap-3 rounded-[var(--pp-radius-control)] border px-4 py-3 text-left text-sm font-black transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-color-teal-accent)]',
+                          active
+                            ? 'border-[color:var(--pp-color-orange-primary)] bg-[color:var(--pp-color-warning-surface)] text-[color:var(--pp-color-orange-primary)] shadow-[var(--pp-shadow-small-card)]'
+                            : 'border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] text-[color:var(--pp-color-forest-text)] hover:-translate-y-0.5 hover:bg-[color:var(--pp-color-cream-surface)]',
+                        )}
+                      >
+                        <Icon className="size-5 shrink-0" aria-hidden />
+                        {segment.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
               <Card radius="28" tone="cream" shadow="small" className="p-4 sm:p-5">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.16em] text-[color:var(--pp-color-teal-accent)]">Care brief</p>
+                    <h2 className="mt-1 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">Luna treba mirno čuvanje</h2>
+                  </div>
+                  <Badge variant="success"><ShieldCheck className="size-3" /> sigurno</Badge>
+                </div>
                 <form action="/pretraga" className="space-y-4">
                   <label className="relative block">
                     <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
-                    <Input name="q" placeholder="Što tražite?" value={query} onChange={(event) => setQuery(event.target.value)} className="pl-12" />
+                    <Input name="q" placeholder="Sitter, grooming, trening..." value={query} onChange={(event) => setQuery(event.target.value)} className="pl-12" />
                   </label>
                   <label className="relative block">
                     <MapPin className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-orange-primary)]" aria-hidden />
                     <Input name="city" placeholder="Grad ili kvart" value={city} onChange={(event) => setCity(event.target.value)} className="pl-12" />
                   </label>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    <Select name="pet">
+                      <option>Luna - pas, 12 kg</option>
+                      <option>Novi ljubimac</option>
+                    </Select>
+                    <Select name="need">
+                      <option>Senior friendly</option>
+                      <option>Reaktivni psi</option>
+                      <option>Lijekovi</option>
+                    </Select>
+                  </div>
                   <Button type="submit" size="lg" className="w-full"><Search className="size-5" /> Pretraži</Button>
                 </form>
               </Card>
@@ -487,12 +599,14 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
             <aside className="lg:sticky lg:top-28 lg:self-start">
               <FilterPanel
                 city={city}
+                selectedService={selectedService}
                 minPrice={minPrice}
                 maxPrice={maxPrice}
                 minRating={minRating}
                 verifiedOnly={verifiedOnly}
                 date={date}
                 onCityChange={setCity}
+                onSelectedServiceChange={setSelectedService}
                 onMinPriceChange={setMinPrice}
                 onMaxPriceChange={setMaxPrice}
                 onMinRatingChange={setMinRating}
@@ -503,14 +617,16 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
               />
             </aside>
 
-            <div className="space-y-10">
+            <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+              <div className="space-y-10">
               <div className="flex flex-col gap-3 rounded-[var(--pp-radius-card-24)] border border-[color:var(--pp-color-warm-border)] bg-[color:var(--pp-color-card-surface)] p-5 shadow-[var(--pp-shadow-small-card)] sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm font-black uppercase tracking-[0.14em] text-[color:var(--pp-color-muted-text)]">Rezultati</p>
-                  <p className="mt-1 text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{counts[activeTab]} stavki u pregledu</p>
+                  <p className="text-sm font-black uppercase tracking-[0.14em] text-[color:var(--pp-color-muted-text)]">Match rezultati</p>
+                  <p className="mt-1 text-2xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]">{counts[activeTab]} preporuka za tvoj care brief</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {city ? <Badge variant="orange"><MapPin className="size-3" /> {city}</Badge> : null}
+                  {selectedService ? <Badge variant="teal"><PawPrint className="size-3" /> {careServiceSegments.find((item) => item.value === selectedService)?.label || 'Usluga'}</Badge> : null}
                   {minRating ? <Badge variant="teal"><Star className="size-3" /> {minRating}+ ocjena</Badge> : null}
                   {verifiedOnly ? <Badge variant="success"><CheckCircle2 className="size-3" /> Verificirani</Badge> : null}
                 </div>
@@ -528,7 +644,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
               {showServices ? (
                 <ResultGroup title="Usluge i provideri" description="Sitteri, groomeri i treneri s profilima, cijenama i recenzijama." count={serviceCount}>
                   {filteredProviders.length ? (
-                    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+                    <div className="grid gap-5 2xl:grid-cols-2">
                       {filteredProviders.map((provider) => <ServiceResultCard key={`${provider.category}-${provider.id}`} provider={provider} />)}
                     </div>
                   ) : (
@@ -583,6 +699,43 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
                   </div>
                 </div>
               </Card>
+              </div>
+
+              <aside className="space-y-5 xl:sticky xl:top-28 xl:self-start">
+                <Card radius="28" shadow="small" className="overflow-hidden p-5">
+                  <div className="rounded-[var(--pp-radius-card-24)] bg-[color:var(--pp-color-forest-text)] p-5 text-white">
+                    <p className="text-xs font-black uppercase tracking-[0.16em] text-white/60">Care plan</p>
+                    <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">Luna, 12 kg</h2>
+                    <p className="mt-2 text-sm font-semibold leading-6 text-white/72">Mirna rutina, dvije šetnje dnevno, nema drugih pasa u istom prostoru.</p>
+                  </div>
+                  <div className="mt-4 grid gap-3">
+                    <div className="flex items-center gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] p-3">
+                      <Syringe className="size-5 text-[color:var(--pp-color-orange-primary)]" aria-hidden />
+                      <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Lijek navečer</span>
+                    </div>
+                    <div className="flex items-center gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] p-3">
+                      <Camera className="size-5 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
+                      <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Photo update svaki dan</span>
+                    </div>
+                    <div className="flex items-center gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] p-3">
+                      <Navigation className="size-5 text-[color:var(--pp-color-success)]" aria-hidden />
+                      <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">GPS šetnja</span>
+                    </div>
+                  </div>
+                </Card>
+
+                <Card radius="28" tone="sage" className="p-5">
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[color:var(--pp-color-muted-text)]">Trust layer</p>
+                  <div className="mt-4 grid gap-3">
+                    {trustHighlights.map((item) => (
+                      <div key={item.label} className="flex items-center justify-between gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-card-surface)] px-4 py-3">
+                        <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">{item.label}</span>
+                        <span className="text-xs font-black uppercase tracking-[0.12em] text-[color:var(--pp-color-teal-accent)]">{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              </aside>
             </div>
           </div>
         </div>

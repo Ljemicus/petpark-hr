@@ -7,10 +7,9 @@ export function PerformanceMonitor() {
   useEffect(() => {
     // Report Web Vitals to console in development
     if (process.env.NODE_ENV === 'development') {
-      // @ts-expect-error - web-vitals types
-      import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB }) => {
+      import('web-vitals').then(({ onCLS, onINP, onFCP, onLCP, onTTFB }) => {
         onCLS(console.log);
-        onFID(console.log);
+        onINP(console.log);
         onFCP(console.log);
         onLCP(console.log);
         onTTFB(console.log);

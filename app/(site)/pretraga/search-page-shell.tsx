@@ -1,5 +1,4 @@
 import { SearchContent } from './search-content';
-import { ServiceHubOverview } from '@/components/shared/petpark/service-hub-overview';
 import { type InternalLinkItem } from '@/components/shared/internal-link-section';
 import { DiscoveryPageShell } from '@/components/shared/discovery-page-shell';
 import { getUnifiedProviders, normalizeProviderSearchParams } from '@/lib/search/providers';
@@ -101,7 +100,6 @@ export async function SearchPageShell({ searchParams, locale }: SearchPageShellP
         ctaLabel: copy.internalLinksCta,
       }}
     >
-      {locale === 'hr' ? <ServiceHubOverview mode="production" /> : null}
       <SearchContent
         providers={providers}
         initialParams={params}
