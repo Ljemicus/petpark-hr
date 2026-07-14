@@ -3,14 +3,18 @@ import { arePaymentsEnabled, paymentsDisabledResponse } from '@/lib/payments-gat
 import { appLogger } from '@/lib/logger';
 import { dispatchAlert } from '@/lib/alerting';
 import { getAuthUser } from '@/lib/auth';
-import { createCheckoutSession, calculatePlatformFee } from '@/lib/payment';
+import { createCheckoutSession } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
 import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
+import { enforcePaymentRateLimit } from '@/lib/payments-rate-limit';
 
 export async function POST(request: Request) {
   if (!arePaymentsEnabled()) {
     return paymentsDisabledResponse();
   }
+
+  const rateLimitResponse = await enforcePaymentRateLimit(request, 'checkout');
+  if (rateLimitResponse) return rateLimitResponse;
 
   const user = await getAuthUser();
   if (!user) {

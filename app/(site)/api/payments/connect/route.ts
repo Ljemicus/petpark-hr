@@ -5,12 +5,16 @@ import { dispatchAlert } from '@/lib/alerting';
 import { getAuthUser } from '@/lib/auth';
 import { createConnectAccount, createAccountLink, getAccountStatus } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
+import { enforcePaymentRateLimit } from '@/lib/payments-rate-limit';
 
 // GET — return sitter's Stripe account status
-export async function GET() {
+export async function GET(request: Request) {
   if (!arePaymentsEnabled()) {
     return paymentsDisabledResponse();
   }
+
+  const rateLimitResponse = await enforcePaymentRateLimit(request, 'connect');
+  if (rateLimitResponse) return rateLimitResponse;
 
   const user = await getAuthUser();
   if (!user) {
@@ -51,10 +55,13 @@ export async function GET() {
 }
 
 // POST — create new Stripe Express account or generate new onboarding link
-export async function POST() {
+export async function POST(request: Request) {
   if (!arePaymentsEnabled()) {
     return paymentsDisabledResponse();
   }
+
+  const rateLimitResponse = await enforcePaymentRateLimit(request, 'connect');
+  if (rateLimitResponse) return rateLimitResponse;
 
   const user = await getAuthUser();
   if (!user) {

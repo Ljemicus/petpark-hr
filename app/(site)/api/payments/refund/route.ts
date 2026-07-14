@@ -7,6 +7,7 @@ import { createRefund, formatCurrency } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
 import { sendEmail } from '@/lib/email';
 import { bookingCancelledEmail } from '@/lib/email-templates';
+import { enforcePaymentRateLimit } from '@/lib/payments-rate-limit';
 
 type RefundReason = 'owner_cancel' | 'sitter_cancel' | 'other';
 
@@ -29,6 +30,9 @@ export async function POST(request: Request) {
   if (!arePaymentsEnabled()) {
     return paymentsDisabledResponse();
   }
+
+  const rateLimitResponse = await enforcePaymentRateLimit(request, 'refund');
+  if (rateLimitResponse) return rateLimitResponse;
 
   const user = await getAuthUser();
   if (!user) {

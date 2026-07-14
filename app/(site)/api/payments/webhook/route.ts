@@ -9,6 +9,7 @@ import { dispatchAlert } from '@/lib/alerting';
 import { getRequestId, createScopedLogger } from '@/lib/request-context';
 import { sendEmail } from '@/lib/email';
 import { paymentConfirmationEmail, sitterPaymentNotificationEmail } from '@/lib/email-templates';
+import { enforcePaymentRateLimit } from '@/lib/payments-rate-limit';
 import type Stripe from 'stripe';
 
 export const runtime = 'nodejs';
@@ -18,6 +19,9 @@ export async function POST(request: Request) {
   if (!arePaymentsEnabled()) {
     return paymentsDisabledResponse();
   }
+
+  const rateLimitResponse = await enforcePaymentRateLimit(request, 'webhook');
+  if (rateLimitResponse) return rateLimitResponse;
 
   const reqId = getRequestId(request);
   const log = createScopedLogger('payments.webhook', reqId);
@@ -59,6 +63,90 @@ export async function POST(request: Request) {
   }
 
   const supabase = createSupabaseClient(supabaseUrl, serviceRoleKey);
+
+  const { error: eventInsertError } = await supabase.from('stripe_events').insert({
+    event_id: event.id,
+    event_type: event.type,
+    payload: event as unknown as Record<string, unknown>,
+  });
+
+  if (eventInsertError) {
+    if (eventInsertError.code === '23505') {
+      const { data: existingEvent, error: existingEventError } = await supabase
+        .from('stripe_events')
+        .select('processed_at')
+        .eq('event_id', event.id)
+        .maybeSingle();
+
+      if (existingEventError) {
+        log.error('Failed to inspect duplicate Stripe webhook event', {
+          eventId: event.id,
+          eventType: event.type,
+          reason: existingEventError.message,
+        });
+        return apiError({ status: 500, code: 'WEBHOOK_IDEMPOTENCY_UNAVAILABLE', message: 'Webhook idempotency unavailable' });
+      }
+
+      if (!existingEvent?.processed_at) {
+        log.warn('Duplicate Stripe webhook event is still unprocessed', {
+          eventId: event.id,
+          eventType: event.type,
+        });
+        return apiError({ status: 409, code: 'WEBHOOK_EVENT_IN_PROGRESS', message: 'Webhook event already received' });
+      }
+
+      log.info('Skipping duplicate Stripe webhook event', {
+        eventId: event.id,
+        eventType: event.type,
+      });
+      return NextResponse.json({ received: true, duplicate: true });
+    }
+
+    log.error('Failed to record Stripe webhook event for idempotency', {
+      eventId: event.id,
+      eventType: event.type,
+      reason: eventInsertError.message,
+    });
+    dispatchAlert({
+      severity: 'P1',
+      service: 'payments.webhook',
+      description: 'Failed to record Stripe event idempotency key — webhook processing stopped fail-closed',
+      value: `event=${event.id}, type=${event.type}`,
+      owner: 'platform',
+    });
+    return apiError({ status: 500, code: 'WEBHOOK_IDEMPOTENCY_UNAVAILABLE', message: 'Webhook idempotency unavailable' });
+  }
+
+  async function failWebhookForRetry(params: {
+    code: string;
+    message: string;
+    description: string;
+    value: string;
+  }) {
+    const { error: releaseError } = await supabase
+      .from('stripe_events')
+      .delete()
+      .eq('event_id', event.id)
+      .is('processed_at', null);
+
+    if (releaseError) {
+      log.error('Failed to release Stripe webhook event for retry', {
+        eventId: event.id,
+        eventType: event.type,
+        reason: releaseError.message,
+      });
+    }
+
+    dispatchAlert({
+      severity: 'P1',
+      service: 'payments.webhook',
+      description: params.description,
+      value: params.value,
+      owner: 'platform',
+    });
+
+    return apiError({ status: 500, code: params.code, message: params.message });
+  }
 
   switch (event.type) {
     case 'checkout.session.completed': {
@@ -122,14 +210,12 @@ export async function POST(request: Request) {
             sessionId: session.id,
             reason: bookingUpdateError.message,
           });
-          dispatchAlert({
-            severity: 'P1',
-            service: 'payments.webhook',
-            description: 'Failed to update booking after successful Stripe checkout',
+          return failWebhookForRetry({
+            code: 'BOOKING_PAYMENT_UPDATE_FAILED',
+            message: 'Booking payment update failed',
+            description: 'Failed to update booking after successful Stripe checkout — webhook released for retry',
             value: `booking=${bookingId}`,
-            owner: 'platform',
           });
-          break;
         }
 
         // Log payment
@@ -233,12 +319,11 @@ export async function POST(request: Request) {
           paymentIntentId: pi.id,
           reason: paymentFailedUpdateError.message,
         });
-        dispatchAlert({
-          severity: 'P1',
-          service: 'payments.webhook',
-          description: 'Failed to mark booking as payment_failed in DB after Stripe failure event',
+        return failWebhookForRetry({
+          code: 'BOOKING_PAYMENT_FAILURE_UPDATE_FAILED',
+          message: 'Booking payment failure update failed',
+          description: 'Failed to mark booking as payment_failed in DB after Stripe failure event — webhook released for retry',
           value: `booking=${bookingId}, pi=${pi.id}`,
-          owner: 'platform',
         });
       } else {
         // Payment failed is noteworthy even when DB update succeeds
@@ -270,6 +355,12 @@ export async function POST(request: Request) {
           stripeAccountId: account.id,
           reason: accountUpdateError.message,
         });
+        return failWebhookForRetry({
+          code: 'STRIPE_ACCOUNT_UPDATE_FAILED',
+          message: 'Stripe account update failed',
+          description: 'Failed to update sitter onboarding status from Stripe account.updated — webhook released for retry',
+          value: `stripeAccount=${account.id}`,
+        });
       }
       break;
     }
@@ -292,6 +383,22 @@ export async function POST(request: Request) {
 
     default:
       break;
+  }
+
+  const { error: eventProcessedError } = await supabase
+    .from('stripe_events')
+    .update({
+      processed_at: new Date().toISOString(),
+      processing_result: { received: true },
+    })
+    .eq('event_id', event.id);
+
+  if (eventProcessedError) {
+    log.error('Failed to mark Stripe webhook event as processed', {
+      eventId: event.id,
+      eventType: event.type,
+      reason: eventProcessedError.message,
+    });
   }
 
   return NextResponse.json({ received: true });

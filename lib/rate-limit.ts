@@ -158,6 +158,14 @@ export const RateLimits = {
   socialComments: { limit: 20, windowSeconds: 60, identifier: 'social:comments' },
   socialLikes: { limit: 30, windowSeconds: 60, identifier: 'social:likes' },
   messages: { limit: 30, windowSeconds: 60, identifier: 'messages:send' },
+
+  paymentConnect: { limit: 10, windowSeconds: 60, identifier: 'payments:connect', failClosed: true },
+  paymentAccountLink: { limit: 10, windowSeconds: 60, identifier: 'payments:account-link', failClosed: true },
+  paymentAccountStatus: { limit: 60, windowSeconds: 60, identifier: 'payments:account-status', failClosed: true },
+  paymentCheckout: { limit: 10, windowSeconds: 60, identifier: 'payments:checkout', failClosed: true },
+  paymentDashboardLink: { limit: 10, windowSeconds: 60, identifier: 'payments:dashboard-link', failClosed: true },
+  paymentRefund: { limit: 5, windowSeconds: 60, identifier: 'payments:refund', failClosed: true },
+  paymentWebhook: { limit: 120, windowSeconds: 60, identifier: 'payments:webhook', failClosed: true },
 } as const;
 
 export async function rateLimitRequest(

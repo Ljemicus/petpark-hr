@@ -5,11 +5,15 @@ import { dispatchAlert } from '@/lib/alerting';
 import { getAuthUser } from '@/lib/auth';
 import { createAccountLink } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
+import { enforcePaymentRateLimit } from '@/lib/payments-rate-limit';
 
-export async function POST() {
+export async function POST(request: Request) {
   if (!arePaymentsEnabled()) {
     return paymentsDisabledResponse();
   }
+
+  const rateLimitResponse = await enforcePaymentRateLimit(request, 'accountLink');
+  if (rateLimitResponse) return rateLimitResponse;
 
   const user = await getAuthUser();
   if (!user) {

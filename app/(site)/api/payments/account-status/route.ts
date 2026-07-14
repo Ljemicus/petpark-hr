@@ -4,11 +4,15 @@ import { appLogger } from '@/lib/logger';
 import { getAuthUser } from '@/lib/auth';
 import { getAccountStatus } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
+import { enforcePaymentRateLimit } from '@/lib/payments-rate-limit';
 
-export async function GET() {
+export async function GET(request: Request) {
   if (!arePaymentsEnabled()) {
     return paymentsDisabledResponse();
   }
+
+  const rateLimitResponse = await enforcePaymentRateLimit(request, 'accountStatus');
+  if (rateLimitResponse) return rateLimitResponse;
 
   const user = await getAuthUser();
   if (!user) {
