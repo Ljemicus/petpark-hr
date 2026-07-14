@@ -63,7 +63,7 @@ export async function POST(request: Request) {
 
   const supabase = await createClient();
   const { data: receiver, error: receiverError } = await supabase
-    .from('users')
+    .from('profiles')
     .select('id')
     .eq('id', parsed.data.receiver_id)
     .maybeSingle();

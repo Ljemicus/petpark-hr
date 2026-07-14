@@ -20,8 +20,8 @@ export async function GET(
         *,
         post:social_posts(
           *,
-          user:users(id, name, avatar_url),
-          pet:pets(id, name, species, breed, photo_url)
+          user:profiles!social_posts_user_id_fkey(id, name:display_name, avatar_url),
+          pet:pets!social_posts_pet_id_fkey(id, name, species, breed)
         )
       `)
       .eq('challenge_id', id);

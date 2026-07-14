@@ -20,7 +20,7 @@ export async function GET(request: Request) {
       .from('social_comments')
       .select(`
         *,
-        user:users(id, name, avatar_url)
+        user:profiles!social_comments_user_id_fkey(id, name:display_name, avatar_url)
       `)
       .eq('post_id', postId)
       .order('created_at', { ascending: true });
@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       })
       .select(`
         *,
-        user:users(id, name, avatar_url)
+        user:profiles!social_comments_user_id_fkey(id, name:display_name, avatar_url)
       `)
       .single();
 

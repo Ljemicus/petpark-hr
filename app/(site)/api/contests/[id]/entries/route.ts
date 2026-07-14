@@ -16,7 +16,7 @@ export async function GET(
 
     let query = supabase
       .from('contest_entries')
-      .select('*, user:users(id, name, avatar_url), pet:pets(id, name, species)')
+      .select('*, user:profiles!contest_entries_user_id_fkey(id, name:display_name, avatar_url), pet:pets!contest_entries_pet_id_fkey(id, name, species)')
       .eq('contest_id', id)
       .eq('is_approved', true)
       .eq('is_disqualified', false);

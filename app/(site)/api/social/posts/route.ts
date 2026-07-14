@@ -20,8 +20,8 @@ export async function GET(request: Request) {
       .from('social_posts')
       .select(`
         *,
-        user:users(id, name, avatar_url),
-        pet:pets(id, name, species, breed, photo_url)
+        user:profiles!social_posts_user_id_fkey(id, name:display_name, avatar_url),
+        pet:pets!social_posts_pet_id_fkey(id, name, species, breed)
       `)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -102,8 +102,8 @@ export async function POST(request: Request) {
       .insert(postData)
       .select(`
         *,
-        user:users(id, name, avatar_url),
-        pet:pets(id, name, species, breed, photo_url)
+        user:profiles!social_posts_user_id_fkey(id, name:display_name, avatar_url),
+        pet:pets!social_posts_pet_id_fkey(id, name, species, breed)
       `)
       .single();
 

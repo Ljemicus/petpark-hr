@@ -16,7 +16,7 @@ export async function GET(request: Request) {
       .from('pet_of_the_week')
       .select(`
         *,
-        pet:pets(id, name, species, breed, photo_url),
+        pet:pets!pet_of_the_week_pet_id_fkey(id, name, species, breed),
         post:social_posts(id, content, media_urls)
       `)
       .order('week_start', { ascending: false })
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
       })
       .select(`
         *,
-        pet:pets(id, name, species, breed, photo_url),
+        pet:pets!pet_of_the_week_pet_id_fkey(id, name, species, breed),
         post:social_posts(id, content, media_urls)
       `)
       .single();
