@@ -119,14 +119,22 @@ export async function getAuthUser(): Promise<User | null> {
     if (!authUser) return null;
 
     const { data: profileData } = await supabase
-      .from('users')
-      .select('id, email, name, role, avatar_url, phone, city, created_at')
+      .from('profiles')
+      .select('id, email, name:display_name, avatar_url, phone, city, created_at')
       .eq('id', authUser.id)
       .single();
 
-    if (isUserRecord(profileData)) return applyDbBackedRole(supabase, profileData);
+    if (profileData) {
+      const authFallback = buildUserFromAuth(authUser);
+      return applyDbBackedRole(supabase, {
+        ...authFallback,
+        ...profileData,
+        role: authFallback.role,
+        name: profileData.name || authFallback.name,
+      });
+    }
 
-    appLogger.warn('auth', 'Falling back to auth metadata because public.users profile is missing', {
+    appLogger.warn('auth', 'Falling back to auth metadata because public.profiles row is missing', {
       userId: authUser.id,
     });
     return applyDbBackedRole(supabase, buildUserFromAuth(authUser));

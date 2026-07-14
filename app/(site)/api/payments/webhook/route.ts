@@ -4,7 +4,6 @@ import { createClient as createSupabaseClient } from '@supabase/supabase-js';
 import { apiError } from '@/lib/api-errors';
 import { getStripe } from '@/lib/stripe';
 import { calculateSitterPayout, calculatePlatformFee, formatCurrency } from '@/lib/payment';
-import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
 import { dispatchAlert } from '@/lib/alerting';
 import { getRequestId, createScopedLogger } from '@/lib/request-context';
 import { sendEmail } from '@/lib/email';
@@ -170,21 +169,31 @@ export async function POST(request: Request) {
         break;
       }
 
-      // Idempotency: skip if already processed
-      {
-        const { data: existingBooking } = await supabase
-          .from('bookings')
-          .select('payment_status')
-          .eq('id', bookingId)
-          .single();
+      const { data: existingBooking } = await supabase
+        .from('bookings')
+        .select('payment_status, provider_id')
+        .eq('id', bookingId)
+        .single();
 
-        if (existingBooking?.payment_status === 'paid') {
-          log.info('Skipping already-paid booking (duplicate webhook)', {
-            bookingId,
-            sessionId: session.id,
-          });
-          break;
-        }
+      if (existingBooking?.payment_status === 'paid') {
+        log.info('Skipping already-paid booking (duplicate webhook)', {
+          bookingId,
+          sessionId: session.id,
+        });
+        break;
+      }
+
+      if (!existingBooking?.provider_id) {
+        log.error('Booking missing provider_id for payment log', {
+          bookingId,
+          sessionId: session.id,
+        });
+        return failWebhookForRetry({
+          code: 'BOOKING_PROVIDER_MISSING',
+          message: 'Booking provider missing',
+          description: 'Failed to log payment because booking provider_id is missing — webhook released for retry',
+          value: `booking=${bookingId}`,
+        });
       }
 
       {
@@ -199,7 +208,8 @@ export async function POST(request: Request) {
             stripe_payment_intent_id: typeof session.payment_intent === 'string'
               ? session.payment_intent
               : session.payment_intent?.id || null,
-            stripe_session_id: session.id,
+            stripe_checkout_session_id: session.id,
+            platform_fee_amount: platformFee / 100,
             platform_fee: platformFee / 100,
           })
           .eq('id', bookingId);
@@ -221,15 +231,17 @@ export async function POST(request: Request) {
         // Log payment
         const { error: paymentInsertError } = await supabase.from('payments').insert({
           booking_id: bookingId,
+          provider_id: existingBooking.provider_id,
           stripe_payment_intent_id: typeof session.payment_intent === 'string'
             ? session.payment_intent
             : session.payment_intent?.id || null,
-          stripe_session_id: session.id,
+          stripe_checkout_session_id: session.id,
           amount: amountTotal,
-          platform_fee: platformFee,
-          sitter_payout: sitterPayout,
+          platform_fee_amount: platformFee,
           currency: session.currency || 'eur',
           status: 'succeeded',
+          raw_provider_payload: session as unknown as Record<string, unknown>,
+          paid_at: new Date().toISOString(),
         });
 
         if (paymentInsertError) {
@@ -251,19 +263,19 @@ export async function POST(request: Request) {
         try {
           const { data: bookingDetails } = await supabase
             .from('bookings')
-            .select('*, owner:profiles!bookings_owner_id_fkey(name, email), sitter:profiles!bookings_sitter_id_fkey(name, email), pet:pets!bookings_pet_id_fkey(name)')
+            .select('*, owner:profiles!bookings_owner_profile_id_fkey(display_name, email), provider:providers!bookings_provider_id_fkey(display_name, email), pet:pets!bookings_pet_id_fkey(name)')
             .eq('id', bookingId)
             .single();
 
           if (bookingDetails?.owner?.email) {
-            const dates = `${new Date(bookingDetails.start_date).toLocaleDateString('hr-HR')} – ${new Date(bookingDetails.end_date).toLocaleDateString('hr-HR')}`;
-            const serviceName = SERVICE_LABELS[bookingDetails.service_type as ServiceType] || bookingDetails.service_type || 'Usluga';
+            const dates = `${new Date(bookingDetails.starts_at).toLocaleDateString('hr-HR')} – ${new Date(bookingDetails.ends_at).toLocaleDateString('hr-HR')}`;
+            const serviceName = bookingDetails.primary_service_code || 'Usluga';
 
             sendEmail({
               to: bookingDetails.owner.email,
               subject: 'Plaćanje potvrđeno!',
               html: paymentConfirmationEmail(
-                bookingDetails.owner.name || 'Korisnik',
+                bookingDetails.owner.display_name || 'Korisnik',
                 bookingDetails.pet?.name || 'Ljubimac',
                 serviceName,
                 dates,
@@ -271,13 +283,13 @@ export async function POST(request: Request) {
               ),
             }).catch((err) => log.error('Failed to send owner payment email', { error: String(err) }));
 
-            if (bookingDetails.sitter?.email) {
+            if (bookingDetails.provider?.email) {
               sendEmail({
-                to: bookingDetails.sitter.email,
+                to: bookingDetails.provider.email,
                 subject: 'Nova uplata primljena!',
                 html: sitterPaymentNotificationEmail(
-                  bookingDetails.sitter.name || 'Čuvar',
-                  bookingDetails.owner.name || 'Korisnik',
+                  bookingDetails.provider.display_name || 'Čuvar',
+                  bookingDetails.owner.display_name || 'Korisnik',
                   bookingDetails.pet?.name || 'Ljubimac',
                   serviceName,
                   dates,

@@ -8,9 +8,9 @@ export async function getUser(id: string): Promise<User | null> {
   }
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('users').select('id, email, name, role, avatar_url, phone, city, created_at').eq('id', id).single();
+    const { data, error } = await supabase.from('profiles').select('id, email, name:display_name, avatar_url, phone, city, created_at').eq('id', id).single();
     if (error || !data) return null;
-    return data as User;
+    return { ...(data as Omit<User, 'role'>), role: 'owner' };
   } catch {
     return null;
   }
@@ -25,11 +25,11 @@ export async function getUsers(fields: UserFields = 'full'): Promise<User[]> {
   try {
     const supabase = await createClient();
     const selectClause = fields === 'admin-list'
-      ? 'id, email, name, role, avatar_url, city, created_at'
-      : '*';
-    const { data, error } = await supabase.from('users').select(selectClause);
+      ? 'id, email, name:display_name, avatar_url, city, created_at'
+      : 'id, email, name:display_name, avatar_url, phone, city, created_at';
+    const { data, error } = await supabase.from('profiles').select(selectClause);
     if (error || !data) return [];
-    return data as unknown as User[];
+    return (data as unknown as Array<Omit<User, 'role'>>).map((user) => ({ ...user, role: 'owner' }));
   } catch {
     return [];
   }
@@ -45,13 +45,13 @@ export async function updateUserProfile(
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from('users')
+      .from('profiles')
       .update(updates)
       .eq('id', id)
       .select()
       .single();
     if (error || !data) return null;
-    return data as User;
+    return { ...(data as Omit<User, 'role'>), role: updates.role || 'owner' };
   } catch {
     return null;
   }
@@ -63,9 +63,10 @@ export async function getUsersByRole(role: string): Promise<User[]> {
   }
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase.from('users').select('id, email, name, role, avatar_url, phone, city, created_at').eq('role', role);
+    if (role !== 'owner') return [];
+    const { data, error } = await supabase.from('profiles').select('id, email, name:display_name, avatar_url, phone, city, created_at');
     if (error || !data) return [];
-    return data as unknown as User[];
+    return (data as Array<Omit<User, 'role'>>).map((user) => ({ ...user, role: 'owner' }));
   } catch {
     return [];
   }

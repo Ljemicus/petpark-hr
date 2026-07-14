@@ -39,10 +39,10 @@ function createServiceClient() {
   return createClient(url, key);
 }
 
-type KpiBookingRow = { id: string; is_demo?: boolean | null };
+type KpiBookingRow = { id: string };
 
 function countRealBookings(rows: KpiBookingRow[] | null | undefined): number {
-  return (rows ?? []).filter((row) => row.is_demo !== true && !isDemoBookingId(row.id)).length;
+  return (rows ?? []).filter((row) => !isDemoBookingId(row.id)).length;
 }
 
 export async function collectKpis(): Promise<KpiSnapshot> {
@@ -65,13 +65,13 @@ export async function collectKpis(): Promise<KpiSnapshot> {
     newAppsRes,
     reviewsRes,
   ] = await Promise.all([
-    db.from('users').select('id', { count: 'exact', head: true }).gte('created_at', since),
-    db.from('users').select('id', { count: 'exact', head: true }),
-    db.from('bookings').select('id, is_demo').gte('created_at', since),
-    db.from('bookings').select('id, is_demo').eq('status', 'completed').gte('created_at', since),
-    db.from('bookings').select('id, is_demo').eq('status', 'cancelled').gte('created_at', since),
-    db.from('bookings').select('id, is_demo').in('status', ['pending', 'accepted']),
-    db.from('payments').select('amount, platform_fee').eq('status', 'succeeded').gte('created_at', since),
+    db.from('profiles').select('id', { count: 'exact', head: true }).gte('created_at', since),
+    db.from('profiles').select('id', { count: 'exact', head: true }),
+    db.from('bookings').select('id').gte('created_at', since),
+    db.from('bookings').select('id').eq('status', 'completed').gte('created_at', since),
+    db.from('bookings').select('id').eq('status', 'cancelled').gte('created_at', since),
+    db.from('bookings').select('id').in('status', ['pending', 'accepted']),
+    db.from('payments').select('amount, platform_fee_amount').eq('status', 'succeeded').gte('created_at', since),
     db.from('provider_applications').select('id', { count: 'exact', head: true }).eq('status', 'pending_verification'),
     db.from('provider_applications').select('id', { count: 'exact', head: true }).eq('status', 'active'),
     db.from('provider_applications').select('id', { count: 'exact', head: true }).gte('created_at', since),
@@ -81,7 +81,7 @@ export async function collectKpis(): Promise<KpiSnapshot> {
   // Aggregate payment totals
   const payments = paymentsRes.data ?? [];
   const totalCents = payments.reduce((sum, p) => sum + (p.amount ?? 0), 0);
-  const platformFeeCents = payments.reduce((sum, p) => sum + (p.platform_fee ?? 0), 0);
+  const platformFeeCents = payments.reduce((sum, p) => sum + (p.platform_fee_amount ?? 0), 0);
 
   // Aggregate review rating
   const reviews = reviewsRes.data ?? [];

@@ -12,7 +12,7 @@ interface ProfileTableClient {
 }
 
 export interface AuthProfileSupabaseLike {
-  from: (table: 'users' | 'sitter_profiles') => ProfileTableClient;
+  from: (table: 'profiles' | 'sitter_profiles') => ProfileTableClient;
 }
 
 export async function syncUserProfile(params: {
@@ -21,12 +21,11 @@ export async function syncUserProfile(params: {
 }) {
   const { supabase, user } = params;
 
-  const { error } = await supabase.from('users').upsert(
+  const { error } = await supabase.from('profiles').upsert(
     {
       id: user.id,
       email: user.email,
-      name: user.name,
-      role: user.role,
+      display_name: user.name,
       avatar_url: user.avatar_url,
       city: user.city,
     },

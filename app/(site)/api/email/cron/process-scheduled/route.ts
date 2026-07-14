@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     // Get pending scheduled emails that should be sent
     const { data: pendingEmails, error } = await supabase
       .from('scheduled_emails')
-      .select('*, users:user_id(id, email, name, role, created_at)')
+      .select('*, profile:profiles!scheduled_emails_user_id_fkey(id, email, display_name, created_at)')
       .is('sent_at', null)
       .lte('scheduled_for', new Date().toISOString())
       .limit(100);
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     for (const email of pendingEmails) {
       try {
         // Determine which sequence and email to send
-        const role = (email.metadata?.role as string) || 'owner';
+        const role = ((email.metadata?.role as User['role'] | undefined) || 'owner');
         const sequence = getWelcomeSequence(role as User['role'] | 'groomer' | 'trainer' | 'breeder' | 'rescue');
         const sequenceEmail = sequence.find(e => e.name === email.email_name);
 
@@ -55,15 +55,22 @@ export async function GET(request: NextRequest) {
           continue;
         }
 
+        const profile = email.profile;
+        if (!profile?.email) {
+          appLogger.warn('email_cron', `Profile missing for scheduled email: ${email.id}`);
+          failed++;
+          continue;
+        }
+
         const user: User = {
-          id: email.users.id,
-          email: email.users.email,
-          name: email.users.name,
-          role: email.users.role,
+          id: profile.id,
+          email: profile.email,
+          name: profile.display_name || profile.email,
+          role,
           avatar_url: null,
           phone: null,
           city: null,
-          created_at: email.users.created_at,
+          created_at: profile.created_at,
         };
 
         // Send the email

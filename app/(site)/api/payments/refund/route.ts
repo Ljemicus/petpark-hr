@@ -60,7 +60,7 @@ export async function POST(request: Request) {
 
   const { data: booking, error: bookingError } = await supabase
     .from('bookings')
-    .select('*')
+    .select('*, provider:providers!bookings_provider_id_fkey(profile_id)')
     .eq('id', bookingId)
     .single();
 
@@ -69,8 +69,8 @@ export async function POST(request: Request) {
   }
 
   // Check authorization
-  const isOwner = booking.owner_id === user.id;
-  const isSitter = booking.sitter_id === user.id;
+  const isOwner = booking.owner_profile_id === user.id;
+  const isSitter = booking.provider?.profile_id === user.id;
   if (!isOwner && !isSitter && user.role !== 'admin') {
     return NextResponse.json({ error: 'Nemate pristup ovoj rezervaciji.' }, { status: 403 });
   }
@@ -91,8 +91,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Nema podataka o plaćanju za povrat.' }, { status: 400 });
   }
 
-  const refundPercentage = calculateRefundPercentage(booking.start_date, reason);
-  const totalCents = Math.round(booking.total_price * 100);
+  const refundPercentage = calculateRefundPercentage(booking.starts_at, reason);
+  const totalCents = Math.round(Number(booking.total_amount ?? 0) * 100);
   const refundAmountCents = Math.round(totalCents * (refundPercentage / 100));
 
   if (refundPercentage === 0) {
@@ -130,32 +130,33 @@ export async function POST(request: Request) {
     // Log refund in payments
     await supabase.from('payments').insert({
       booking_id: bookingId,
+      provider_id: booking.provider_id,
       stripe_payment_intent_id: booking.stripe_payment_intent_id,
       amount: refundAmountCents,
-      platform_fee: 0,
-      sitter_payout: 0,
+      platform_fee_amount: 0,
       currency: booking.currency || 'EUR',
       status: 'refunded',
-      refund_id: refundId,
-      refund_amount: refundAmountCents,
+      refund_status: 'succeeded',
+      refunded_amount: refundAmountCents,
+      raw_provider_payload: { refund_id: refundId },
     });
 
     // Best-effort: send cancellation email to the other party
     try {
       const { data: bookingDetails } = await supabase
         .from('bookings')
-        .select('start_date, end_date, owner:users!owner_id(name, email), sitter:users!sitter_id(name, email), pet:pets(name)')
+        .select('starts_at, ends_at, owner:profiles!bookings_owner_profile_id_fkey(display_name, email), provider:providers!bookings_provider_id_fkey(display_name, email), pet:pets(name)')
         .eq('id', bookingId)
         .single();
 
       if (bookingDetails) {
-        const dates = `${new Date(bookingDetails.start_date).toLocaleDateString('hr-HR')} – ${new Date(bookingDetails.end_date).toLocaleDateString('hr-HR')}`;
+        const dates = `${new Date(bookingDetails.starts_at).toLocaleDateString('hr-HR')} – ${new Date(bookingDetails.ends_at).toLocaleDateString('hr-HR')}`;
         const pet = bookingDetails.pet as unknown as { name: string } | null;
-        const owner = bookingDetails.owner as unknown as { name: string; email: string } | null;
-        const sitter = bookingDetails.sitter as unknown as { name: string; email: string } | null;
+        const owner = bookingDetails.owner as unknown as { display_name: string; email: string } | null;
+        const sitter = bookingDetails.provider as unknown as { display_name: string; email: string } | null;
         const petName = pet?.name || 'Ljubimac';
         const recipientEmail = isOwner ? sitter?.email : owner?.email;
-        const recipientName = isOwner ? sitter?.name : owner?.name;
+        const recipientName = isOwner ? sitter?.display_name : owner?.display_name;
 
         if (recipientEmail) {
           sendEmail({

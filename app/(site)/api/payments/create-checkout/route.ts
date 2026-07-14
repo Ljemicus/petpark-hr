@@ -5,7 +5,6 @@ import { dispatchAlert } from '@/lib/alerting';
 import { getAuthUser } from '@/lib/auth';
 import { createCheckoutSession } from '@/lib/payment';
 import { createClient } from '@/lib/supabase/server';
-import { SERVICE_LABELS, type ServiceType } from '@/lib/types';
 import { enforcePaymentRateLimit } from '@/lib/payments-rate-limit';
 
 export async function POST(request: Request) {
@@ -53,7 +52,7 @@ export async function POST(request: Request) {
   }
 
   // Check ownership
-  if (booking.owner_id !== user.id) {
+  if (booking.owner_profile_id !== user.id) {
     return NextResponse.json({ error: 'Nemate pristup ovoj rezervaciji.' }, { status: 403 });
   }
 
@@ -62,7 +61,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Samo prihvaćene rezervacije mogu biti plaćene.' }, { status: 400 });
   }
 
-  if (booking.total_price <= 0) {
+  const totalAmount = Number(booking.total_amount ?? booking.subtotal_amount ?? 0);
+  if (totalAmount <= 0) {
     appLogger.warn('payments.checkout', 'Booking has invalid total price for checkout', { bookingId });
     return NextResponse.json({ error: 'Rezervacija ima neispravan iznos za plaćanje.' }, { status: 400 });
   }
@@ -71,15 +71,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Ova rezervacija je već plaćena.' }, { status: 400 });
   }
 
-  if (booking.payment_status === 'pending' && booking.stripe_session_id) {
+  if (booking.payment_status === 'pending' && booking.stripe_checkout_session_id) {
     return NextResponse.json({ error: 'Plaćanje je već u tijeku. Osvježite stranicu.' }, { status: 400 });
   }
 
   // Get sitter's Stripe account
   const { data: sitterProfile } = await supabase
-    .from('sitter_profiles')
+    .from('providers')
     .select('stripe_account_id, stripe_onboarding_complete')
-    .eq('user_id', booking.sitter_id)
+    .eq('id', booking.provider_id)
     .single();
 
   if (!sitterProfile?.stripe_account_id || !sitterProfile.stripe_onboarding_complete) {
@@ -91,10 +91,10 @@ export async function POST(request: Request) {
 
   try {
     // Sellerova cijena (ono što ide selleru)
-    const sellerPriceInCents = Math.round(booking.total_price * 100);
+    const sellerPriceInCents = Math.round(totalAmount * 100);
     // Customer cijena = seller cijena + 10%
     const customerPriceInCents = Math.round(sellerPriceInCents * 1.10);
-    const serviceName = SERVICE_LABELS[booking.service_type as ServiceType] || 'Usluga';
+    const serviceName = booking.primary_service_code || 'Usluga';
 
     const { url, sessionId } = await createCheckoutSession(
       bookingId,
@@ -109,10 +109,11 @@ export async function POST(request: Request) {
     await supabase
       .from('bookings')
       .update({
-        stripe_session_id: sessionId,
+        stripe_checkout_session_id: sessionId,
         payment_status: 'pending',
+        platform_fee_amount: (customerPriceInCents - sellerPriceInCents) / 100,
         platform_fee: (customerPriceInCents - sellerPriceInCents) / 100, // 10% razlika
-        customer_total: customerPriceInCents / 100, // koliko je korisnik zapravo platio
+        total_amount: customerPriceInCents / 100, // koliko je korisnik zapravo platio
       })
       .eq('id', bookingId);
 
