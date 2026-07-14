@@ -37,17 +37,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const fetchUserProfile = useCallback(async (authUser: SupabaseUser): Promise<User | null> => {
     const { data } = await supabase
-      .from('users')
-      .select('*')
+      .from('profiles')
+      .select('id, email, name:display_name, avatar_url, phone, city, created_at')
       .eq('id', authUser.id)
       .single();
 
+    const meta = authUser.user_metadata;
     let profile: User;
     
     if (data) {
-      profile = data as User;
+      profile = {
+        ...(data as Omit<User, 'role'>),
+        name: data.name || meta?.name || meta?.full_name || authUser.email?.split('@')[0] || '',
+        role: meta?.role === 'sitter' || meta?.role === 'admin' ? meta.role : 'owner',
+      };
     } else {
-      const meta = authUser.user_metadata;
       profile = {
         id: authUser.id,
         email: authUser.email || '',
