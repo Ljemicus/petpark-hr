@@ -53,11 +53,14 @@ export async function POST(request: Request) {
     return apiError({ status: 401, code: 'INVALID_CREDENTIALS', message: 'Pogrešan email ili lozinka.' });
   }
 
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .select('id')
     .eq('id', data.user.id)
     .single();
+  if (profileError) {
+    log.warn('Profile row missing after login', { userId: data.user.id });
+  }
 
   const { data: publisherProfile } = await supabase
     .from('publisher_profiles')
@@ -65,7 +68,7 @@ export async function POST(request: Request) {
     .eq('user_id', data.user.id)
     .maybeSingle();
 
-  const profileRole = parseAuthRole(profile?.role);
+  const profileRole = parseAuthRole(data.user.user_metadata?.role);
   const role = (await hasDbAdminRole(supabase, data.user.id))
     ? 'admin'
     : profileRole === 'admin'
