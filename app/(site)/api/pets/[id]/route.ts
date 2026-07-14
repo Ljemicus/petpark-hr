@@ -21,11 +21,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     name: parsed.data.name,
     species: parsed.data.species,
     breed: parsed.data.breed || null,
-    age: parsed.data.age ?? null,
-    weight: parsed.data.weight ?? null,
+    weight_kg: parsed.data.weight ?? null,
     special_needs: parsed.data.special_needs || null,
-    photo_url: parsed.data.photo_url || null,
-  }).eq('id', id).eq('owner_id', user.id).select().single();
+  }).eq('id', id).eq('owner_profile_id', user.id).select().single();
 
   if (error || !data) return apiError({ status: 500, code: 'PET_UPDATE_FAILED', message: 'Failed to update pet' });
   return NextResponse.json(data);
@@ -39,7 +37,7 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   if (!pet || pet.owner_id !== user.id) return apiError({ status: 404, code: 'PET_NOT_FOUND', message: 'Not found' });
 
   const supabase = await createClient();
-  const { error } = await supabase.from('pets').delete().eq('id', id).eq('owner_id', user.id);
+  const { error } = await supabase.from('pets').delete().eq('id', id).eq('owner_profile_id', user.id);
   if (error) return apiError({ status: 500, code: 'PET_DELETE_FAILED', message: 'Failed to delete pet' });
   return NextResponse.json({ success: true });
 }

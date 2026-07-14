@@ -33,6 +33,21 @@ export async function getPets(): Promise<Pet[]> {
 
 type PetFields = 'full' | 'walk-label';
 
+function normalizePet(row: Record<string, unknown>): Pet {
+  return {
+    id: String(row.id),
+    owner_id: String(row.owner_id ?? row.owner_profile_id),
+    name: String(row.name),
+    species: row.species as Pet['species'],
+    breed: (row.breed as string | null) ?? null,
+    age: (row.age as number | null) ?? null,
+    weight: (row.weight as number | null) ?? (row.weight_kg as number | null) ?? null,
+    special_needs: (row.special_needs as string | null) ?? null,
+    photo_url: (row.photo_url as string | null) ?? null,
+    created_at: String(row.created_at),
+  };
+}
+
 export async function getPetsByOwner(ownerId: string, fields: 'walk-label'): Promise<WalkLabelPet[]>;
 export async function getPetsByOwner(ownerId: string, fields?: 'full'): Promise<Pet[]>;
 export async function getPetsByOwner(ownerId: string, fields: PetFields = 'full'): Promise<Pet[] | WalkLabelPet[]> {
@@ -41,10 +56,15 @@ export async function getPetsByOwner(ownerId: string, fields: PetFields = 'full'
   }
   try {
     const supabase = await createClient();
-    const selectClause = fields === 'walk-label' ? 'id, owner_id, name, species, created_at' : '*';
-    const { data, error } = await supabase.from('pets').select(selectClause).eq('owner_id', ownerId);
+    const { data, error } = await supabase
+      .from('pets')
+      .select('*')
+      .eq('owner_profile_id', ownerId);
     if (error || !data) return [];
-    return fields === 'walk-label' ? (data as unknown as WalkLabelPet[]) : (data as unknown as Pet[]);
+    const pets = (data as unknown as Record<string, unknown>[]).map(normalizePet);
+    return fields === 'walk-label'
+      ? pets.map(({ id, owner_id, name, species, created_at }) => ({ id, owner_id, name, species, created_at })) as WalkLabelPet[]
+      : pets;
   } catch {
     return [];
   }
@@ -58,7 +78,7 @@ export async function getPet(id: string): Promise<Pet | null> {
     const supabase = await createClient();
     const { data, error } = await supabase.from('pets').select('*').eq('id', id).single();
     if (error || !data) return null;
-    return data as Pet;
+    return normalizePet(data as Record<string, unknown>);
   } catch {
     return null;
   }
@@ -81,11 +101,18 @@ export async function createPet(petData: {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from('pets')
-      .insert(petData)
+      .insert({
+        owner_profile_id: petData.owner_id,
+        name: petData.name,
+        species: petData.species,
+        breed: petData.breed ?? null,
+        weight_kg: petData.weight ?? null,
+        special_needs: petData.special_needs ?? null,
+      })
       .select()
       .single();
     if (error || !data) return null;
-    return data as Pet;
+    return normalizePet(data as Record<string, unknown>);
   } catch {
     return null;
   }

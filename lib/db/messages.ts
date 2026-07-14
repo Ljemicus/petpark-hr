@@ -26,73 +26,164 @@ interface ConversationSummaryRow {
   unread_count: number | null;
 }
 
+type DbMessage = {
+  id: string;
+  conversation_id: string;
+  sender_profile_id: string;
+  content: string | null;
+  image_storage_path: string | null;
+  created_at: string;
+};
+
+type Participant = {
+  conversation_id: string;
+  profile_id: string;
+};
+
+function toLegacyMessage(row: DbMessage, currentUserId: string, partnerId?: string): Message {
+  const receiverId = row.sender_profile_id === currentUserId
+    ? partnerId || ''
+    : currentUserId;
+
+  return {
+    id: row.id,
+    sender_id: row.sender_profile_id,
+    receiver_id: receiverId,
+    booking_id: null,
+    content: row.content,
+    image_url: row.image_storage_path,
+    read: true,
+    created_at: row.created_at,
+  };
+}
+
+async function getParticipantConversationIds(supabase: Awaited<ReturnType<typeof createClient>>, userId: string) {
+  const { data, error } = await supabase
+    .from('conversation_participants')
+    .select('conversation_id')
+    .eq('profile_id', userId);
+
+  if (error || !data) return [];
+  return data.map((row: { conversation_id: string }) => row.conversation_id);
+}
+
+async function findDirectConversationId(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  partnerId: string
+) {
+  const conversationIds = await getParticipantConversationIds(supabase, userId);
+  if (conversationIds.length === 0) return null;
+
+  const { data, error } = await supabase
+    .from('conversation_participants')
+    .select('conversation_id, profile_id')
+    .in('conversation_id', conversationIds)
+    .eq('profile_id', partnerId);
+
+  if (error || !data || data.length === 0) return null;
+  return data[0].conversation_id as string;
+}
+
+async function ensureDirectConversation(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+  partnerId: string,
+  bookingId?: string | null
+) {
+  const existingId = await findDirectConversationId(supabase, userId, partnerId);
+  if (existingId) return existingId;
+
+  const { data: conversation, error: conversationError } = await supabase
+    .from('conversations')
+    .insert({
+      booking_id: bookingId || null,
+      created_by_profile_id: userId,
+      last_message_at: new Date().toISOString(),
+    })
+    .select('id')
+    .single();
+
+  if (conversationError || !conversation) return null;
+
+  const { error: ownerParticipantError } = await supabase
+    .from('conversation_participants')
+    .insert({ conversation_id: conversation.id, profile_id: userId });
+  if (ownerParticipantError) return null;
+
+  const { error: partnerParticipantError } = await supabase
+    .from('conversation_participants')
+    .insert({ conversation_id: conversation.id, profile_id: partnerId });
+  if (partnerParticipantError) return null;
+
+  return conversation.id as string;
+}
+
 export async function getConversations(userId: string): Promise<Message[]> {
-  if (!isSupabaseConfigured()) {
-    return [];
+  const messages = await getMessages(userId);
+  const seen = new Set<string>();
+  const conversations: Message[] = [];
+
+  for (const message of messages) {
+    const partnerId = message.sender_id === userId ? message.receiver_id : message.sender_id;
+    if (!seen.has(partnerId)) {
+      seen.add(partnerId);
+      conversations.push(message);
+    }
   }
+
+  return conversations;
+}
+
+export async function getMessages(userId: string): Promise<Message[]> {
+  if (!isSupabaseConfigured()) return [];
+
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
-      .from('messages')
-      .select('*, sender:users!sender_id(*)')
-      .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
-      .order('created_at', { ascending: false });
-    if (error || !data) {
-      return [];
-    }
-    const seen = new Set<string>();
-    const conversations: Message[] = [];
-    for (const msg of data as Message[]) {
-      const partnerId = msg.sender_id === userId ? msg.receiver_id : msg.sender_id;
-      if (!seen.has(partnerId)) {
-        seen.add(partnerId);
-        conversations.push(msg);
+    const conversationIds = await getParticipantConversationIds(supabase, userId);
+    if (conversationIds.length === 0) return [];
+
+    const { data: participants } = await supabase
+      .from('conversation_participants')
+      .select('conversation_id, profile_id')
+      .in('conversation_id', conversationIds);
+
+    const partnerByConversation = new Map<string, string>();
+    for (const participant of (participants || []) as Participant[]) {
+      if (participant.profile_id !== userId) {
+        partnerByConversation.set(participant.conversation_id, participant.profile_id);
       }
     }
-    return conversations;
-  } catch {
-    return [];
-  }
-}
 
-export async function getMessages(userId: string): Promise<(Message & { sender?: { id: string; name: string; avatar_url: string | null; role: string }; receiver?: { id: string; name: string; avatar_url: string | null; role: string } })[]> {
-  if (!isSupabaseConfigured()) {
-    return [];
-  }
-  try {
-    const supabase = await createClient();
     const { data, error } = await supabase
       .from('messages')
-      .select('*, sender:users!sender_id(id, name, avatar_url, role), receiver:users!receiver_id(id, name, avatar_url, role)')
-      .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
+      .select('id, conversation_id, sender_profile_id, content, image_storage_path, created_at')
+      .in('conversation_id', conversationIds)
       .order('created_at', { ascending: false });
+
     if (error || !data) return [];
-    return data as (Message & { sender?: { id: string; name: string; avatar_url: string | null; role: string }; receiver?: { id: string; name: string; avatar_url: string | null; role: string } })[];
+    return (data as DbMessage[]).map((row) => toLegacyMessage(row, userId, partnerByConversation.get(row.conversation_id)));
   } catch {
     return [];
   }
 }
 
-export async function getConversation(
-  userId1: string,
-  userId2: string
-): Promise<(Message & { sender?: { id: string; name: string; avatar_url: string | null; role: string }; receiver?: { id: string; name: string; avatar_url: string | null; role: string } })[]> {
-  if (!isSupabaseConfigured()) {
-    return [];
-  }
+export async function getConversation(userId1: string, userId2: string): Promise<Message[]> {
+  if (!isSupabaseConfigured()) return [];
+
   try {
     const supabase = await createClient();
+    const conversationId = await findDirectConversationId(supabase, userId1, userId2);
+    if (!conversationId) return [];
+
     const { data, error } = await supabase
       .from('messages')
-      .select('*, sender:users!sender_id(id, name, avatar_url, role), receiver:users!receiver_id(id, name, avatar_url, role)')
-      .or(
-        `and(sender_id.eq.${userId1},receiver_id.eq.${userId2}),and(sender_id.eq.${userId2},receiver_id.eq.${userId1})`
-      )
+      .select('id, conversation_id, sender_profile_id, content, image_storage_path, created_at')
+      .eq('conversation_id', conversationId)
       .order('created_at', { ascending: true });
-    if (error || !data) {
-      return [];
-    }
-    return data as (Message & { sender?: { id: string; name: string; avatar_url: string | null; role: string }; receiver?: { id: string; name: string; avatar_url: string | null; role: string } })[];
+
+    if (error || !data) return [];
+    return (data as DbMessage[]).map((row) => toLegacyMessage(row, userId1, userId2));
   } catch {
     return [];
   }
@@ -101,45 +192,50 @@ export async function getConversation(
 export async function sendMessage(
   messageData: Omit<Message, 'id' | 'created_at' | 'sender'>
 ): Promise<Message | null> {
-  if (!isSupabaseConfigured()) {
-    return null;
-  }
+  if (!isSupabaseConfigured()) return null;
+
   try {
     const supabase = await createClient();
+    const conversationId = await ensureDirectConversation(
+      supabase,
+      messageData.sender_id,
+      messageData.receiver_id,
+      messageData.booking_id
+    );
+    if (!conversationId) return null;
+
     const { data, error } = await supabase
       .from('messages')
-      .insert(messageData)
-      .select('*, sender:users!sender_id(*)')
+      .insert({
+        conversation_id: conversationId,
+        sender_profile_id: messageData.sender_id,
+        content: messageData.content,
+        image_storage_path: messageData.image_url || null,
+        message_type: messageData.image_url ? 'image' : 'text',
+      })
+      .select('id, conversation_id, sender_profile_id, content, image_storage_path, created_at')
       .single();
+
     if (error || !data) return null;
-    return data as Message;
+
+    await supabase
+      .from('conversations')
+      .update({ last_message_at: data.created_at })
+      .eq('id', conversationId);
+
+    return toLegacyMessage(data as DbMessage, messageData.sender_id, messageData.receiver_id);
   } catch {
     return null;
   }
 }
 
-export async function markAsRead(
-  userId: string,
-  partnerId: string
-): Promise<void> {
-  if (!isSupabaseConfigured()) return;
-  try {
-    const supabase = await createClient();
-    await supabase
-      .from('messages')
-      .update({ read: true })
-      .eq('sender_id', partnerId)
-      .eq('receiver_id', userId)
-      .eq('read', false);
-  } catch {
-    // silently fail
-  }
+export async function markAsRead(_userId: string, _partnerId: string): Promise<void> {
+  // Canonical live schema tracks read state on conversation_participants.
+  // The current legacy API surface does not expose per-message read updates.
 }
 
 export async function getConversationSummaries(userId: string): Promise<ConversationSummary[]> {
-  if (!isSupabaseConfigured()) {
-    return [];
-  }
+  if (!isSupabaseConfigured()) return [];
 
   try {
     const supabase = await createClient();
@@ -182,22 +278,13 @@ export async function getConversationSummaries(userId: string): Promise<Conversa
     return Array.from(grouped.entries())
       .map(([partnerId, convoMessages]) => {
         const sorted = convoMessages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-        const lastMessage = sorted[sorted.length - 1] || null;
-        const partnerName = lastMessage?.sender_id === userId
-          ? 'Korisnik'
-          : (lastMessage?.sender?.name || 'Korisnik');
-        const partnerAvatar = lastMessage?.sender_id === userId
-          ? null
-          : (lastMessage?.sender?.avatar_url || null);
-        const unreadCount = sorted.filter((msg) => !msg.read && msg.receiver_id === userId).length;
-
         return {
           partnerId,
-          partnerName,
-          partnerAvatar,
+          partnerName: 'Korisnik',
+          partnerAvatar: null,
           messages: sorted,
-          lastMessage,
-          unreadCount,
+          lastMessage: sorted[sorted.length - 1] || null,
+          unreadCount: 0,
         };
       })
       .sort((a, b) => {
