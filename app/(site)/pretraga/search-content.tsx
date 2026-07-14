@@ -493,7 +493,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
 
   return (
     <main id={resultsAnchorId} data-petpark-route="pretraga" className="min-h-screen overflow-hidden bg-[color:var(--pp-color-cream-background)] text-[color:var(--pp-color-forest-text)]">
-      <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm">Spremi nacrt</ButtonLink>} />
+      <AppHeader navItems={navItems} actions={<ButtonLink href="/objavi-uslugu" size="sm">Objavi uslugu</ButtonLink>} />
 
       <section className="relative px-5 pb-12 pt-10 sm:px-8 lg:px-20">
         <LeafDecoration className="-right-12 top-24 hidden rotate-12 lg:block" />

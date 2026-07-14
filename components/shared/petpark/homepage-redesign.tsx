@@ -3,16 +3,13 @@ import Link from 'next/link';
 import {
   Bell,
   BookOpen,
-  Bookmark,
   ChevronRight,
   Heart,
   MapPin,
   MessageCircle,
   PawPrint,
-  Plus,
   Search,
   ShieldCheck,
-  UserRound,
   UsersRound,
 } from 'lucide-react';
 import { PetParkLogo } from '@/components/shared/brand';
@@ -353,8 +350,8 @@ function MobileHomepage() {
             <Link prefetch={false} href="/prijava" className="inline-flex h-10 items-center justify-center rounded-full bg-[#F26A00] px-3 text-[11px] font-black text-white shadow-[0_10px_22px_rgba(242,106,0,.22)] min-[380px]:px-4 min-[380px]:text-[12px] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
               Prijava
             </Link>
-            <Link prefetch={false} href="/objavi-uslugu" className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-full border border-[#D8CBB8] bg-[#FFFDF8] px-3 text-[11px] font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.07)] min-[380px]:text-[12px] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
-              Spremi nacrt
+            <Link prefetch={false} href="/postani-sitter" className="inline-flex h-10 items-center justify-center whitespace-nowrap rounded-full border border-[#D8CBB8] bg-[#FFFDF8] px-3 text-[11px] font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.07)] min-[380px]:text-[12px] sm:h-11 sm:px-5 sm:text-[13px]" style={{ paddingLeft: 12, paddingRight: 12 }}>
+              Postani sitter
             </Link>
           </div>
         </header>
@@ -445,39 +442,125 @@ function MobileHomepage() {
 }
 
 
-function PixelPerfectDesktopHomepage({ isPreview }: { isPreview: boolean }) {
+function PremiumDesktopHomepage({ isPreview }: { isPreview: boolean }) {
   return (
-    <div className="relative mx-auto hidden aspect-[1448/1086] w-full max-w-[1448px] overflow-hidden bg-[#FAF6EA] lg:block">
-      <img
-        src="/images/design-lab/petpark-reference-homepage-pixel-match.webp"
-        alt="PetPark početna stranica"
-        className="absolute inset-0 h-full w-full object-fill"
-        draggable={false}
-      />
-      <div className="pointer-events-none absolute left-[38px] top-[18px] h-[62px] w-[235px] bg-[#FAF6EA]" />
-      <Link prefetch={false} href="/" aria-label="PetPark početna" className="absolute left-[45px] top-[24px] h-12 w-[211px]">
-        <PetParkLogo width={211} height={48} priority className="h-12 w-auto" />
-      </Link>
-      <Link prefetch={false} href="/usluge" aria-label="Usluge" className="absolute left-[29.2%] top-[3.2%] h-[2.4%] w-[4.4%]" />
-      <Link prefetch={false} href="#kako-radi" aria-label="Kako radi" className="absolute left-[36.3%] top-[3.2%] h-[2.4%] w-[5.6%]" />
-      <Link prefetch={false} href="/zajednica" aria-label="Zajednica" className="absolute left-[44.7%] top-[3.2%] h-[2.4%] w-[6.0%]" />
-      <Link prefetch={false} href="/blog" aria-label="Blog" className="absolute left-[53.4%] top-[3.2%] h-[2.4%] w-[3.4%]" />
-      <Link prefetch={false} href="/prijava" aria-label="Prijava" className="absolute left-[74.5%] top-[2.2%] h-[4.5%] w-[9.0%]" />
-      <Link prefetch={false} href="/objavi-uslugu" aria-label="Spremi nacrt usluge" className="absolute left-[84.8%] top-[2.2%] h-[4.5%] w-[12.0%]" />
-      <Link prefetch={false} href="/usluge" aria-label="Čuvanje" className="absolute left-[4.7%] top-[32.8%] h-[11.2%] w-[6.4%]" />
-      <Link prefetch={false} href="/usluge" aria-label="Šetnja" className="absolute left-[12.2%] top-[32.8%] h-[11.2%] w-[6.4%]" />
-      <Link prefetch={false} href="/njega" aria-label="Grooming" className="absolute left-[19.7%] top-[32.8%] h-[11.2%] w-[6.6%]" />
-      <Link prefetch={false} href="/dresura" aria-label="Trening" className="absolute left-[27.1%] top-[32.8%] h-[11.2%] w-[6.6%]" />
-      <Link prefetch={false} href="/izgubljeni" aria-label="Izgubljeni" className="absolute left-[34.5%] top-[32.8%] h-[11.2%] w-[6.7%]" />
-      <Link prefetch={false} href="/udomljavanje" aria-label="Udomljavanje" className="absolute left-[42.0%] top-[32.8%] h-[11.2%] w-[7.0%]" />
-      <Link prefetch={false} href="/izgubljeni/prijavi" aria-label="Objavi upozorenje" className="absolute left-[4.7%] top-[46.0%] h-[4.7%] w-[14.7%]" />
-      <Link prefetch={false} href="/usluge" aria-label="Pogledaj usluge" className="absolute left-[20.8%] top-[46.0%] h-[4.7%] w-[13.4%]" />
-      <Link prefetch={false} href="/zajednica" aria-label="Pogledaj sve iz zajednice" className="absolute left-[53.0%] top-[53.7%] h-[3.0%] w-[8.0%]" />
-      <Link prefetch={false} href="/forum" aria-label="Forum" className="absolute left-[62.5%] top-[57.1%] h-[6.4%] w-[33.7%]" />
-      <Link prefetch={false} href="/izgubljeni" aria-label="Izgubljeni i pronađeni" className="absolute left-[62.5%] top-[64.4%] h-[6.4%] w-[33.7%]" />
-      <Link prefetch={false} href="/udomljavanje" aria-label="Udomljavanje" className="absolute left-[62.5%] top-[71.8%] h-[6.4%] w-[33.7%]" />
-      <Link prefetch={false} href="/blog" aria-label="Blog savjeti" className="absolute left-[62.5%] top-[79.1%] h-[6.4%] w-[33.7%]" />
-      <p className="sr-only">Mjesto gdje zajednica pomaže ljubimcima. PetPark povezuje usluge, upozorenja, savjete i udomljavanje — sve za ljubimce na jednom mjestu.</p>
+    <div className="relative hidden overflow-hidden bg-[#FAF6EA] px-8 pb-16 pt-6 text-[#003B2F] lg:block xl:px-12">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-[640px] bg-[radial-gradient(circle_at_82%_12%,rgba(251,233,219,.92),transparent_34%),radial-gradient(circle_at_9%_16%,rgba(225,237,216,.78),transparent_34%)]" />
+      <div className="relative mx-auto flex w-full max-w-[1360px] flex-col gap-12">
+        <header className="flex h-16 items-center justify-between gap-8">
+          <Link prefetch={false} href="/" aria-label="PetPark početna" className="shrink-0">
+            <PetParkLogo width={188} height={44} priority className="h-11 w-auto" />
+          </Link>
+          <nav aria-label="Glavna navigacija" className="flex items-center gap-1 rounded-full border border-[#E5DAC8] bg-[#FFFDF8]/86 p-1 shadow-[0_10px_24px_rgba(80,55,25,.06)] backdrop-blur">
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                prefetch={false}
+                href={item.href}
+                className="rounded-full px-5 py-2.5 text-sm font-black text-[#315049] transition hover:bg-[#E9F0DF] hover:text-[#003B2F] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#159C98]"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+          <div className="flex items-center gap-3">
+            <Link prefetch={false} href="/prijava" className="inline-flex h-11 items-center justify-center rounded-full border border-[#D8CBB8] bg-[#FFFDF8] px-5 text-sm font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.06)]">
+              Prijava
+            </Link>
+            <Link prefetch={false} href="/postani-sitter" className="inline-flex h-11 items-center justify-center rounded-full bg-[#F26A00] px-5 text-sm font-black text-white shadow-[0_12px_24px_rgba(242,106,0,.22)]">
+              Postani sitter
+            </Link>
+          </div>
+        </header>
+
+        <section className="grid min-h-[620px] gap-10 xl:grid-cols-[minmax(0,1.04fr)_minmax(430px,.96fr)] xl:items-center">
+          <div className="max-w-[720px]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#E9E0D1] bg-[#FFFDF8]/92 px-4 py-2 text-xs font-black uppercase text-[#C65F26] shadow-sm">
+              <PawPrint className="h-4 w-4 fill-[#F26A00] text-[#F26A00]" />
+              Premium care matching
+            </div>
+            <h1 className="mt-6 font-serif text-[76px] font-black leading-[0.94] tracking-[-0.055em] text-[#003B2F] xl:text-[86px]">
+              Nađi osobu kojoj mirno ostavljaš ljubimca.
+            </h1>
+            <p className="mt-6 max-w-[640px] text-[20px] font-semibold leading-8 text-[#46545A]">
+              PetPark spaja čuvanje, šetnje, grooming, trening i zajednicu u jedan care brief: potrebe ljubimca, sigurnost doma, komunikacija i povjerenje.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link prefetch={false} href="/pretraga" className="inline-flex h-14 items-center justify-center gap-2 rounded-[16px] bg-[#F26A00] px-7 text-base font-black text-white shadow-[0_16px_30px_rgba(242,106,0,.24)] transition hover:-translate-y-0.5">
+                <Search className="h-5 w-5" />
+                Pronađi match
+              </Link>
+              <Link prefetch={false} href="/postani-sitter" className="inline-flex h-14 items-center justify-center gap-2 rounded-[16px] border border-[#4F7772] bg-[#FFFDF8] px-7 text-base font-black text-[#103D3A] shadow-[0_10px_22px_rgba(80,55,25,.07)] transition hover:-translate-y-0.5">
+                Postani provider
+                <ChevronRight className="h-5 w-5" />
+              </Link>
+            </div>
+            <div className="mt-9 grid max-w-[720px] grid-cols-3 gap-3">
+              {trustItems.slice(0, 3).map(({ title, body, Icon }) => (
+                <div key={title} className="rounded-[20px] border border-[#E7DDCC] bg-[#FFFDF8]/88 p-4 shadow-[0_12px_24px_rgba(80,55,25,.06)]">
+                  <Icon className="h-6 w-6 text-[#159C98]" />
+                  <p className="mt-3 text-sm font-black leading-5 text-[#003B2F]">{title}</p>
+                  <p className="mt-1 text-xs font-semibold leading-4 text-[#65746E]">{body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="relative min-h-[610px]">
+            <div className="absolute inset-x-0 top-0 h-[490px] overflow-hidden rounded-[38px] border border-[#E7DDCC] bg-[#FFFDF8]/80 shadow-[0_28px_70px_rgba(80,55,25,.16)]">
+              <Image src="/images/design-lab/petpark-reference-hero-tablet-clean.webp" alt="Pas i mačka u PetPark zajednici" fill sizes="(min-width: 1024px) 48vw, 0px" className="object-cover object-center" priority />
+              <div className="absolute inset-x-5 bottom-5 rounded-[24px] border border-white/70 bg-[#FFFDF8]/90 p-5 shadow-[0_16px_32px_rgba(80,55,25,.14)] backdrop-blur">
+                <p className="text-xs font-black uppercase text-[#C65F26]">Care brief</p>
+                <p className="mt-1 text-lg font-black leading-6 text-[#123D36]">Mirno čuvanje, photo update svaki dan, verified profil.</p>
+              </div>
+            </div>
+            <div className="absolute -bottom-2 left-6 right-6 grid grid-cols-3 gap-3">
+              {categories.slice(0, 3).map((category) => (
+                <Link key={category.label} prefetch={false} href={category.href} className="rounded-[22px] border border-[#E7DDCC] bg-[#FFFDF8] p-4 text-center shadow-[0_16px_34px_rgba(80,55,25,.10)] transition hover:-translate-y-0.5">
+                  <span className={cn('mx-auto flex h-14 w-14 items-center justify-center rounded-full', category.tone === 'orange' ? 'bg-[#FBE9DB]' : 'bg-[#E9F0DF]')}>
+                    <img src={officialCategoryIcons[category.icon]} alt="" width={42} height={42} className="h-[42px] w-[42px]" aria-hidden="true" />
+                  </span>
+                  <span className="mt-3 block text-sm font-black text-[#14231D]">{category.label}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section aria-label="PetPark usluge" className="grid grid-cols-6 gap-3">
+          {categories.map((category) => (
+            <Link key={category.label} prefetch={false} href={category.href} className="group rounded-[24px] border border-[#E7DDCC] bg-[#FFFDF8] p-4 text-center shadow-[0_12px_26px_rgba(80,55,25,.07)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(80,55,25,.10)]">
+              <span className={cn('mx-auto flex h-16 w-16 items-center justify-center rounded-full transition group-hover:scale-105', category.tone === 'orange' ? 'bg-[#FBE9DB]' : 'bg-[#E9F0DF]')}>
+                <img src={officialCategoryIcons[category.icon]} alt="" width={48} height={48} className="h-12 w-12" aria-hidden="true" />
+              </span>
+              <span className="mt-3 block text-sm font-black text-[#14231D]">{category.label}</span>
+            </Link>
+          ))}
+        </section>
+
+        <section id="kako-radi" className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
+          <div className="rounded-[32px] border border-[#E7DDCC] bg-[#FFF7EC]/72 p-6 shadow-[0_18px_38px_rgba(80,55,25,.08)]">
+            <div className="flex items-end justify-between gap-4">
+              <div>
+                <p className="text-xs font-black uppercase text-[#C65F26]">Zajednica</p>
+                <h2 className="mt-1 font-serif text-5xl font-black tracking-[-0.05em] text-[#003B2F]">Aktualno</h2>
+              </div>
+              <Link prefetch={false} href="/zajednica" className="inline-flex items-center gap-1 rounded-full bg-[#FFFDF8] px-4 py-2 text-sm font-black text-[#C65F26] shadow-sm">
+                Sve <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="mt-5 grid gap-4 md:grid-cols-2">
+              {feedItems.slice(0, 4).map((item) => (
+                <MobileFeedItem key={item.title} item={item} featured={'image' in item} />
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-4">
+            {quickAccess.map((item) => <MobileQuickCard key={item.title} {...item} />)}
+          </div>
+        </section>
+      </div>
       {isPreview ? <span className="sr-only">Preview mode</span> : null}
     </div>
   );
@@ -491,7 +574,7 @@ export function HomepageRedesign({ mode = 'production' }: HomepageRedesignProps)
       <style dangerouslySetInnerHTML={{ __html: shellHideCss }} />
       <main id="petpark-homepage-live-reference" className="min-h-screen overflow-hidden bg-[#FAF6EA] text-[#003B2F]">
         <MobileHomepage />
-        <PixelPerfectDesktopHomepage isPreview={isPreview} />
+        <PremiumDesktopHomepage isPreview={isPreview} />
         <footer id="petpark-home-footer" className="sr-only">PetPark</footer>
       </main>
     </>
