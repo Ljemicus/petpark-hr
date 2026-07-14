@@ -8,7 +8,7 @@ import { messageSchema, type MessageInput } from '@/lib/validations';
 import { sendPushToMultiple, NotificationTemplates } from '@/lib/push-notifications';
 import { getUserPushSubscriptions, canSendNotification } from '@/lib/db/notifications';
 import { checkRateLimit, RateLimits, getClientIdentifier } from '@/lib/upstash-rate-limit';
-import { sanitizeInput } from '@/lib/sanitize';
+import { sanitizeInput } from '@/lib/sanitize-api';
 
 export async function GET(request: Request) {
   const user = await getAuthUser();

@@ -45,3 +45,11 @@ export function sanitizeText(text: string | null | undefined): string {
   }
   return text.replace(/<[^>]*>/g, '').trim();
 }
+
+/**
+ * Sanitizes plain user input for API routes.
+ * Strips tags, trims whitespace, and normalizes internal spacing.
+ */
+export function sanitizeInput(input: string | null | undefined): string {
+  return sanitizeText(input).replace(/\s+/g, ' ');
+}

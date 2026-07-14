@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import { checkRateLimit, RateLimits, getClientIdentifier } from '@/lib/upstash-rate-limit';
-import { sanitizeRichText } from '@/lib/sanitize';
+import { sanitizeRichText } from '@/lib/sanitize-api';
 import type { SocialCommentWithUser } from '@/lib/types';
 
 // GET /api/social/comments - Get comments for a post
