@@ -19,6 +19,27 @@ import { CITIES } from '@/lib/types';
 import { toast } from 'sonner';
 import { PetParkLogo } from '@/components/shared/brand';
 
+function getRegistrationErrorMessage(payload: unknown, fallback: string) {
+  if (!payload || typeof payload !== 'object') {
+    return fallback;
+  }
+
+  const maybeError = (payload as { error?: unknown }).error;
+
+  if (typeof maybeError === 'string') {
+    return maybeError;
+  }
+
+  if (maybeError && typeof maybeError === 'object') {
+    const maybeMessage = (maybeError as { message?: unknown }).message;
+    if (typeof maybeMessage === 'string' && maybeMessage.trim().length > 0) {
+      return maybeMessage;
+    }
+  }
+
+  return fallback;
+}
+
 export function RegisterForm() {
   const { language } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
@@ -48,7 +69,7 @@ export function RegisterForm() {
       const payload = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        toast.error(payload.error || (language === 'en' ? 'Registration failed' : 'Registracija nije uspjela'));
+        toast.error(getRegistrationErrorMessage(payload, language === 'en' ? 'Registration failed' : 'Registracija nije uspjela'));
         setLoading(false);
         return;
       }

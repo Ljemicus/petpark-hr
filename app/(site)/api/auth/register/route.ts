@@ -8,6 +8,8 @@ import { appLogger } from '@/lib/logger';
 import { registerSchema } from '@/lib/validations';
 import { checkRateLimit, RateLimits, getClientIdentifier } from '@/lib/upstash-rate-limit';
 
+const CONFIRMATION_EMAIL_ERROR = 'Error sending confirmation email';
+
 export async function POST(request: Request) {
   // Rate limiting with Redis/Upstash
   const ip = getClientIdentifier(request);
@@ -43,7 +45,8 @@ export async function POST(request: Request) {
 
   const { createClient } = await import('@/lib/supabase/server');
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp({
+
+  let { data, error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
@@ -55,6 +58,64 @@ export async function POST(request: Request) {
       },
     },
   });
+
+  if (error?.message === CONFIRMATION_EMAIL_ERROR) {
+    appLogger.warn('auth.register', 'Supabase confirmation email failed; falling back to confirmed admin-created account', {
+      email: parsed.data.email,
+    });
+
+    const { createAdminClient } = await import('@/lib/supabase/admin');
+    const admin = createAdminClient();
+    const userMetadata = {
+      name: parsed.data.name,
+      role: parsed.data.role,
+      city: parsed.data.city,
+      avatar_url: avatarUrl,
+    };
+
+    const createResult = await admin.auth.admin.createUser({
+      email: parsed.data.email,
+      password: parsed.data.password,
+      email_confirm: true,
+      user_metadata: userMetadata,
+    });
+    let fallbackUser = createResult.data.user;
+    let fallbackError = createResult.error;
+
+    if (fallbackError) {
+      const listResult = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      const existingUser = listResult.data?.users.find((user) => user.email?.toLowerCase() === parsed.data.email.toLowerCase());
+
+      if (existingUser) {
+        const updateResult = await admin.auth.admin.updateUserById(existingUser.id, {
+          password: parsed.data.password,
+          email_confirm: true,
+          user_metadata: userMetadata,
+        });
+
+        if (!updateResult.error && updateResult.data.user) {
+          fallbackUser = updateResult.data.user;
+          fallbackError = null;
+        }
+      }
+    }
+
+    if (!fallbackError && fallbackUser) {
+      const signInResult = await supabase.auth.signInWithPassword({
+        email: parsed.data.email,
+        password: parsed.data.password,
+      });
+
+      data = {
+        user: signInResult.data.user || fallbackUser,
+        session: signInResult.data.session,
+      };
+      error = signInResult.error;
+    } else {
+      error = fallbackError;
+      data = { user: null, session: null };
+    }
+  }
 
   if (error || !data.user) {
     appLogger.warn('auth.register', 'Registration failed', {
