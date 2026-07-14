@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { apiError } from '@/lib/api-errors';
 import { getAuthUser } from '@/lib/auth';
 import { getConversation, getMessages, sendMessage } from '@/lib/db';
-import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { appLogger } from '@/lib/logger';
 import { messageSchema, type MessageInput } from '@/lib/validations';
 import { sendPushToMultiple, NotificationTemplates } from '@/lib/push-notifications';
@@ -61,8 +61,8 @@ export async function POST(request: Request) {
     return apiError({ status: 400, code: 'SELF_MESSAGE_NOT_ALLOWED', message: 'Ne možeš poslati poruku sam sebi.' });
   }
 
-  const supabase = await createClient();
-  const { data: receiver, error: receiverError } = await supabase
+  const admin = createAdminClient();
+  const { data: receiver, error: receiverError } = await admin
     .from('profiles')
     .select('id')
     .eq('id', parsed.data.receiver_id)
