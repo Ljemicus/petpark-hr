@@ -48,8 +48,8 @@ export function ListingProviderCard({ provider, className }: ListingProviderCard
             {initials}
           </div>
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-[color:var(--pp-muted)]">{provider.city}</p>
-            <h3 className="font-heading text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-ink)]">{provider.name}</h3>
+            <p className="text-xs font-black uppercase text-[color:var(--pp-muted)]">{provider.city}</p>
+            <h3 className="font-heading text-2xl font-black text-[color:var(--pp-ink)]">{provider.name}</h3>
           </div>
         </div>
         {provider.verified ? <PetParkBadge variant="verified">Verificiran</PetParkBadge> : null}
@@ -67,11 +67,11 @@ export function ListingProviderCard({ provider, className }: ListingProviderCard
 
       <div className="mt-5 grid gap-3 rounded-[var(--pp-radius-24)] bg-[color:var(--pp-cream)] p-4 sm:grid-cols-2">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-[color:var(--pp-muted)]">Recenzije</p>
+          <p className="text-xs font-black uppercase text-[color:var(--pp-muted)]">Recenzije</p>
           <RatingSummary rating={provider.rating} reviewCount={provider.reviewCount} newLabel="Novo na PetParku · još nema recenzija" />
         </div>
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-[color:var(--pp-muted)]">Cijena</p>
+          <p className="text-xs font-black uppercase text-[color:var(--pp-muted)]">Cijena</p>
           <PriceRange priceFrom={provider.priceFrom} />
         </div>
       </div>

@@ -21,7 +21,7 @@ export function BlogCard({ title, excerpt, href, imageUrl, categoryLabel = 'Vodi
           <PetParkBadge variant="community">{categoryLabel}</PetParkBadge>
           {readingTime ? <span className="text-xs font-bold text-[color:var(--pp-muted)]">{readingTime}</span> : null}
         </div>
-        <h3 className="font-heading text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-ink)]">{title}</h3>
+        <h3 className="font-heading text-2xl font-black text-[color:var(--pp-ink)]">{title}</h3>
         {excerpt ? <p className="line-clamp-3 leading-7 text-[color:var(--pp-muted)]">{excerpt}</p> : null}
       </div>
     </Link>

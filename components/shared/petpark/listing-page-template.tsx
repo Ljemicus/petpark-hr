@@ -54,8 +54,8 @@ export function ListingPageTemplate({ sections, trustItems }: ListingPageTemplat
             <section key={section.id} id={section.id} className={cn('scroll-mt-28 rounded-[var(--pp-radius-40)] border border-[color:var(--pp-line)] bg-gradient-to-br p-5 shadow-[var(--pp-shadow-soft)] md:p-7', sectionAccent[section.accent])}>
               <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
                 <div className="max-w-2xl space-y-3">
-                  <p className="text-sm font-black uppercase tracking-[0.18em] text-[color:var(--pp-logo-orange)]">{section.eyebrow}</p>
-                  <h2 className="font-heading text-3xl font-black tracking-[-0.045em] text-[color:var(--pp-ink)] md:text-5xl">{section.title}</h2>
+                  <p className="text-sm font-black uppercase text-[color:var(--pp-logo-orange)]">{section.eyebrow}</p>
+                  <h2 className="font-heading text-3xl font-black text-[color:var(--pp-ink)] md:text-5xl">{section.title}</h2>
                   <p className="text-base leading-7 text-[color:var(--pp-muted)]">{section.description}</p>
                 </div>
                 <PetParkBadge variant={section.accent === 'grooming' ? 'grooming' : 'trainer'}>{section.resultSummary}</PetParkBadge>

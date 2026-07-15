@@ -177,7 +177,7 @@ export function GroomingContent({ groomers, initialParams, forcedLanguage }: Gro
         <div className="container relative mx-auto px-6 py-16 md:px-10 md:py-24 lg:px-16">
           <div className="max-w-3xl space-y-5">
             <PetParkBadge variant="grooming">{copy.eyebrow}</PetParkBadge>
-            <h1 className="font-heading text-4xl font-black leading-[1.06] tracking-[-0.055em] md:text-6xl">
+            <h1 className="font-heading text-4xl font-black leading-[1.06] md:text-6xl">
               {copy.title}
             </h1>
             <p className="max-w-2xl text-base leading-8 text-[color:var(--pp-muted)] md:text-lg">
@@ -191,7 +191,7 @@ export function GroomingContent({ groomers, initialParams, forcedLanguage }: Gro
         <div className="rounded-[var(--pp-radius-32)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] p-5 shadow-[var(--pp-shadow-card)] md:p-7">
           <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
             <div>
-              <h2 className="font-heading text-2xl font-black tracking-[-0.04em]">{copy.filterTitle}</h2>
+              <h2 className="font-heading text-2xl font-black">{copy.filterTitle}</h2>
               <p className="mt-1 max-w-2xl text-sm leading-6 text-[color:var(--pp-muted)]">{copy.filterDescription}</p>
             </div>
             <p className="text-sm font-bold text-[color:var(--pp-muted)]">
@@ -257,7 +257,7 @@ export function GroomingContent({ groomers, initialParams, forcedLanguage }: Gro
                 <SheetTitle className="mb-6 font-heading">{isEn ? 'Filters' : 'Filteri'}</SheetTitle>
                 <div className="space-y-5">
                   <div>
-                    <p className="mb-3 text-xs font-black uppercase tracking-[0.16em] text-[color:var(--pp-muted)]">{copy.service}</p>
+                    <p className="mb-3 text-xs font-black uppercase text-[color:var(--pp-muted)]">{copy.service}</p>
                     <div className="flex flex-wrap gap-2">
                       {serviceOptions.map((option) => (
                         <button
@@ -272,7 +272,7 @@ export function GroomingContent({ groomers, initialParams, forcedLanguage }: Gro
                     </div>
                   </div>
                   <div>
-                    <label htmlFor="grooming-mobile-city-filter" className="mb-3 block text-xs font-black uppercase tracking-[0.16em] text-[color:var(--pp-muted)]">{copy.city}</label>
+                    <label htmlFor="grooming-mobile-city-filter" className="mb-3 block text-xs font-black uppercase text-[color:var(--pp-muted)]">{copy.city}</label>
                     <select id="grooming-mobile-city-filter" value={city} onChange={(event) => setCity(event.target.value)} className="min-h-11 w-full rounded-[var(--pp-radius-16)] border border-[color:var(--pp-line)] bg-[color:var(--pp-cream)] px-3 py-2 outline-none focus:ring-2 focus:ring-[color:var(--pp-logo-teal)]">
                       <option value="">{copy.allCities}</option>
                       {CITIES.map((availableCity) => <option key={availableCity} value={availableCity}>{availableCity}</option>)}
@@ -358,7 +358,7 @@ export function GroomingContent({ groomers, initialParams, forcedLanguage }: Gro
         )}
 
         <aside className="mt-8 rounded-[var(--pp-radius-32)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] p-5 shadow-[var(--pp-shadow-card)]">
-          <h2 className="font-heading text-2xl font-black tracking-[-0.04em]">{copy.trustTitle}</h2>
+          <h2 className="font-heading text-2xl font-black">{copy.trustTitle}</h2>
           <div className="mt-4 grid gap-3 md:grid-cols-3">
             {[copy.trustOne, copy.trustTwo, copy.trustThree].map((item) => (
               <p key={item} className="rounded-[var(--pp-radius-20)] bg-[color:var(--pp-cream)] p-4 text-sm font-bold leading-6 text-[color:var(--pp-muted)]">

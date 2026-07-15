@@ -30,7 +30,7 @@ export function EmptyStateCard({ variant = 'noResults', title, description, prim
   return (
     <div className={cn('rounded-[var(--pp-radius-32)] border border-dashed border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] p-8 text-center shadow-[var(--pp-shadow-card)]', className)}>
       <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[var(--pp-radius-24)] bg-[color:var(--pp-cream)] text-3xl" aria-hidden="true">{icon ?? copy.icon}</div>
-      <h3 className="font-heading text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-ink)]">{title ?? copy.title}</h3>
+      <h3 className="font-heading text-2xl font-black text-[color:var(--pp-ink)]">{title ?? copy.title}</h3>
       <p className="mx-auto mt-3 max-w-xl leading-7 text-[color:var(--pp-muted)]">{description ?? copy.description}</p>
       {(primaryActionLabel && primaryActionHref) || (secondaryActionLabel && secondaryActionHref) ? (
         <div className="mt-6 flex flex-wrap justify-center gap-3">

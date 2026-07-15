@@ -27,15 +27,15 @@ export function CTASection({ variant = 'default', eyebrow, title, description, p
   const dark = variant === 'partner';
 
   return (
-    <section className={cn('rounded-[var(--pp-radius-40)] border border-[color:var(--pp-line)] p-6 shadow-[var(--pp-shadow-soft)] md:p-10', variantClasses[variant], className)}>
-      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-        <div className="max-w-3xl space-y-3">
-          {eyebrow ? <p className={cn('text-sm font-black uppercase tracking-[0.18em]', dark ? 'text-[color:var(--pp-logo-yellow)]' : 'text-[color:var(--pp-logo-orange)]')}>{eyebrow}</p> : null}
-          <h2 className="font-heading text-3xl font-black tracking-[-0.04em] md:text-5xl">{title}</h2>
-          {description ? <p className={cn('text-base leading-7 md:text-lg', dark ? 'text-[color:var(--pp-sand)]' : 'text-[color:var(--pp-muted)]')}>{description}</p> : null}
+    <section className={cn('max-w-full overflow-x-clip rounded-[var(--pp-radius-28)] border border-[color:var(--pp-line)] p-5 shadow-[var(--pp-shadow-soft)] sm:rounded-[var(--pp-radius-40)] sm:p-6 md:p-10', variantClasses[variant], className)}>
+      <div className="flex min-w-0 flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div className="min-w-0 max-w-3xl space-y-3">
+          {eyebrow ? <p className={cn('text-sm font-black uppercase', dark ? 'text-[color:var(--pp-logo-yellow)]' : 'text-[color:var(--pp-logo-orange)]')}>{eyebrow}</p> : null}
+          <h2 className="break-words font-heading text-3xl font-black leading-tight md:text-5xl">{title}</h2>
+          {description ? <p className={cn('break-words text-base leading-7 md:text-lg', dark ? 'text-[color:var(--pp-sand)]' : 'text-[color:var(--pp-muted)]')}>{description}</p> : null}
         </div>
         {(primaryLabel && primaryHref) || (secondaryLabel && secondaryHref) ? (
-          <div className="flex shrink-0 flex-wrap gap-3">
+          <div className="flex min-w-0 shrink-0 flex-col gap-3 sm:flex-row sm:flex-wrap">
             {primaryLabel && primaryHref ? <PetParkButton href={primaryHref} variant={dark ? 'accent' : 'primary'}>{primaryLabel}</PetParkButton> : null}
             {secondaryLabel && secondaryHref ? <PetParkButton href={secondaryHref} variant={dark ? 'secondary' : 'ghost'}>{secondaryLabel}</PetParkButton> : null}
           </div>

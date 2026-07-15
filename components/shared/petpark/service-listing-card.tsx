@@ -101,8 +101,8 @@ export function ServiceListingCard({
             {initials || makeInitials(name)}
           </div>
           <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-[color:var(--pp-muted)]">{city}</p>
-            <h3 className="font-heading text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-ink)]">{name}</h3>
+            <p className="text-xs font-black uppercase text-[color:var(--pp-muted)]">{city}</p>
+            <h3 className="font-heading text-2xl font-black text-[color:var(--pp-ink)]">{name}</h3>
           </div>
         </div>
         {verified ? <PetParkBadge variant="verified">{verifiedLabel}</PetParkBadge> : null}
@@ -129,11 +129,11 @@ export function ServiceListingCard({
 
       <div className="mt-5 grid gap-3 rounded-[var(--pp-radius-24)] bg-[color:var(--pp-cream)] p-4 sm:grid-cols-2">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-[color:var(--pp-muted)]">{reviewsLabel}</p>
+          <p className="text-xs font-black uppercase text-[color:var(--pp-muted)]">{reviewsLabel}</p>
           <RatingSummary rating={rating} reviewCount={reviewCount} newLabel={noReviewsLabel} />
         </div>
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-[color:var(--pp-muted)]">{priceTitle}</p>
+          <p className="text-xs font-black uppercase text-[color:var(--pp-muted)]">{priceTitle}</p>
           <PriceRange priceFrom={priceFrom} label={priceLabel} fallbackLabel={priceFallbackLabel} />
         </div>
       </div>

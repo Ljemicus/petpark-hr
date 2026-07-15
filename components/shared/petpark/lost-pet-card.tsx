@@ -21,7 +21,7 @@ export function LostPetCard({ name, location, lastSeen, imageUrl, statusLabel = 
       </div>
       <div className="space-y-3 p-5">
         <PetParkBadge variant="urgent">{statusLabel}</PetParkBadge>
-        <h3 className="font-heading text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-ink)]">{name}</h3>
+        <h3 className="font-heading text-2xl font-black text-[color:var(--pp-ink)]">{name}</h3>
         {description ? <p className="line-clamp-2 leading-7 text-[color:var(--pp-muted)]">{description}</p> : null}
         <div className="space-y-1 text-sm font-bold text-[color:var(--pp-muted)]">
           {location ? <p>{location}</p> : null}

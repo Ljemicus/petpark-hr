@@ -121,17 +121,17 @@ function HeroVisual() {
       <div className="absolute -bottom-20 -left-16 h-52 w-52 rounded-full bg-[color:var(--pp-logo-teal)]/35 blur-2xl" />
       <div className="relative grid min-h-[300px] gap-3 rounded-[var(--pp-radius-24)] border border-white/55 bg-[color:var(--pp-warm-white)]/82 p-4 shadow-[var(--pp-shadow-card)] backdrop-blur sm:grid-cols-2">
         <div className="rounded-[var(--pp-radius-24)] bg-white/85 p-4 shadow-[var(--pp-shadow-card)]">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--pp-logo-orange)]">Dostupno sada</p>
+          <p className="text-xs font-black uppercase text-[color:var(--pp-logo-orange)]">Dostupno sada</p>
           <div className="mt-8 text-5xl" aria-hidden="true">🐕</div>
-          <p className="mt-5 font-heading text-2xl font-black tracking-[-0.04em] text-[color:var(--pp-ink)]">Usluge za svakodnevnu brigu.</p>
+          <p className="mt-5 font-heading text-2xl font-black text-[color:var(--pp-ink)]">Usluge za svakodnevnu brigu.</p>
         </div>
         <div className="flex flex-col gap-3">
           <div className="rounded-[var(--pp-radius-24)] bg-[color:var(--pp-forest)] p-4 text-white shadow-[var(--pp-shadow-soft)]">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--pp-logo-yellow)]">Zajednica</p>
+            <p className="text-xs font-black uppercase text-[color:var(--pp-logo-yellow)]">Zajednica</p>
             <p className="mt-3 text-sm leading-6 text-[color:var(--pp-cream)]">Pomoć, savjeti i lokalne informacije za ljude koji vole životinje.</p>
           </div>
           <div className="rounded-[var(--pp-radius-24)] bg-white/85 p-4 shadow-[var(--pp-shadow-card)]">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-[color:var(--pp-logo-teal)]">U pripremi</p>
+            <p className="text-xs font-black uppercase text-[color:var(--pp-logo-teal)]">U pripremi</p>
             <p className="mt-3 text-sm leading-6 text-[color:var(--pp-muted)]">Nove kategorije rastu postupno, bez lažnih obećanja o ponudi.</p>
           </div>
         </div>
@@ -142,13 +142,13 @@ function HeroVisual() {
 
 function QuickEntryBlock() {
   return (
-    <section aria-labelledby="service-hub-search-title" className="space-y-5">
+    <section aria-labelledby="service-hub-search-title" className="min-w-0 space-y-5">
       <SectionHeader
         kicker="Brzi početak"
         title="Kreni od potrebe, ne od menija."
         description="Odaberi uslugu, grad ili vrstu ljubimca i otvori postojeću PetPark pretragu kada želiš stvarne profile i rezultate."
       />
-      <div className="rounded-[var(--pp-radius-40)] border border-[color:var(--pp-line)] bg-[color:var(--pp-surface)] p-4 shadow-[var(--pp-shadow-soft)] md:p-6">
+      <div className="min-w-0 max-w-full overflow-x-clip rounded-[var(--pp-radius-28)] border border-[color:var(--pp-line)] bg-[color:var(--pp-surface)] p-4 shadow-[var(--pp-shadow-soft)] sm:rounded-[var(--pp-radius-40)] md:p-6">
         <SearchFilterBar
           action="/pretraga"
           service="Čuvanje"
@@ -158,13 +158,13 @@ function QuickEntryBlock() {
           submitLabel="Prikaži usluge"
           popularCities={['Rijeka', 'Zagreb', 'Split']}
         />
-        <div className="mt-5 flex flex-wrap gap-2" aria-label="Brzi linkovi za kategorije">
+        <div className="mt-5 flex min-w-0 flex-wrap gap-2" aria-label="Brzi linkovi za kategorije">
           {quickLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               prefetch={false}
-              className={cn('rounded-[var(--pp-radius-pill)] px-4 py-2 text-sm font-black transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-logo-teal)]', link.tone)}
+              className={cn('max-w-full rounded-[var(--pp-radius-pill)] px-4 py-2 text-sm font-black transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--pp-logo-teal)]', link.tone)}
             >
               {link.label} →
             </Link>
@@ -177,9 +177,9 @@ function QuickEntryBlock() {
 
 function ServiceGroup({ kicker, title, description, cards }: { kicker: string; title: string; description: string; cards: HubCard[] }) {
   return (
-    <section aria-labelledby={`service-hub-${kicker.toLowerCase().replaceAll(' ', '-')}`} className="space-y-8">
+    <section aria-labelledby={`service-hub-${kicker.toLowerCase().replaceAll(' ', '-')}`} className="min-w-0 space-y-8">
       <SectionHeader kicker={kicker} title={title} description={description} />
-      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      <div className="grid min-w-0 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {cards.map((card) => (
           <ServiceCard key={card.title} {...card} ctaLabel="Otvori" />
         ))}
@@ -196,8 +196,8 @@ export function ServiceHubOverview({ mode = 'preview' }: ServiceHubOverviewProps
   const isProduction = mode === 'production';
 
   return (
-    <div className="bg-[color:var(--pp-cream)] text-[color:var(--pp-ink)]">
-      <div className="mx-auto flex max-w-7xl flex-col gap-16 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+    <div className="max-w-full overflow-x-clip bg-[color:var(--pp-cream)] text-[color:var(--pp-ink)]">
+      <div className="mx-auto flex max-w-7xl flex-col gap-10 px-4 py-6 sm:gap-16 sm:px-6 sm:py-8 lg:px-8 lg:py-12">
         <PageHero
           variant="colorful"
           eyebrow="PetPark usluge"
