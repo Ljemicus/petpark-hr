@@ -371,7 +371,7 @@ function MotionFlowSection() {
       <div className="petpark-sheen pointer-events-none absolute inset-0 opacity-70" />
       <div className="relative z-10">
         <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#FFE0BC]">PetPark u pokretu</p>
-        <h2 className="mt-3 max-w-[520px] font-serif text-[38px] font-black leading-[.98] tracking-[-0.055em] sm:text-5xl lg:text-[58px]">
+        <h2 className="mt-3 max-w-[520px] font-serif text-[34px] font-black leading-[.98] tracking-[-0.055em] sm:text-5xl lg:text-[58px]">
           Ne stoji kao katalog. Radi kao dnevni tok.
         </h2>
         <p className="mt-4 max-w-[520px] text-[15px] font-semibold leading-7 text-white/74 sm:text-base">
@@ -389,14 +389,16 @@ function MotionFlowSection() {
         </div>
       </div>
 
-      <div className="relative z-10 mt-6 overflow-hidden sm:hidden">
-        <div className="petpark-marquee flex w-max gap-3">
-          {repeatedFlow.concat(repeatedFlow).map((item, index) => (
-            <div className="w-[270px]" key={`${item.title}-mobile-${index}`}>
-              <FlowCard {...item} />
-            </div>
-          ))}
-        </div>
+      <div className="relative z-10 mt-6 grid gap-2.5 sm:hidden">
+        {flowItems.slice(0, 3).map((item, index) => (
+          <div
+            className="petpark-pop-in"
+            key={`${item.title}-mobile-${index}`}
+            style={{ '--delay': `${index * 110 + 120}ms` } as React.CSSProperties}
+          >
+            <FlowCard {...item} />
+          </div>
+        ))}
       </div>
 
       <div className="relative z-10 mt-7 hidden h-[306px] grid-cols-2 gap-3 overflow-hidden sm:grid lg:mt-0">
