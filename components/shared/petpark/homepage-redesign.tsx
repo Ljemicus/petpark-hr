@@ -130,6 +130,13 @@ const quickAccess = [
   { title: 'Pročitaj vodič', body: 'Praktični savjeti za rutinu, zdravlje i ponašanje.', href: '/blog', Icon: BookOpen, tone: 'yellow' as Tone },
 ];
 
+const flowItems = [
+  { title: 'Upit poslan sitteru', meta: 'Luna · subota i nedjelja', Icon: CalendarDays, tone: 'orange' as Tone },
+  { title: 'Foto update stigao', meta: 'Šetnja završena u 19:40', Icon: Camera, tone: 'green' as Tone },
+  { title: 'Kvart prati objavu', meta: 'Kantrida · pronađen pas', Icon: Bell, tone: 'orange' as Tone },
+  { title: 'Forum ima odgovor', meta: 'pas vuče na povodcu', Icon: MessageCircle, tone: 'teal' as Tone },
+];
+
 const trustItems = [
   { title: 'Jasniji prvi korak', body: 'Upit kreće od ljubimca, rutine i datuma.', Icon: CheckCircle2 },
   { title: 'Manje slijepog biranja', body: 'Profili, grad, iskustvo i način rada su odmah vidljivi.', Icon: ShieldCheck },
@@ -163,6 +170,13 @@ const shellHideCss = `
   #petpark-homepage-live-reference .petpark-drift-soft { animation: petpark-drift-soft 9s ease-in-out infinite; }
   #petpark-homepage-live-reference .petpark-pop-in { animation: petpark-pop-in .72s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--delay, 0ms); }
   #petpark-homepage-live-reference .petpark-marquee { animation: petpark-marquee 28s linear infinite; }
+  #petpark-homepage-live-reference .petpark-flow-up { animation: petpark-flow-up 18s linear infinite; }
+  #petpark-homepage-live-reference .petpark-flow-down { animation: petpark-flow-down 21s linear infinite; }
+  #petpark-homepage-live-reference .petpark-sheen {
+    background-image: linear-gradient(110deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.22) 28%,rgba(255,255,255,0) 54%);
+    background-size: 220% 100%;
+    animation: petpark-sheen 4.8s ease-in-out infinite;
+  }
   #petpark-homepage-live-reference .petpark-wave-band { animation: petpark-wave-band 16s ease-in-out infinite alternate; transform-origin: center; }
   #petpark-homepage-live-reference .petpark-pulse-dot::before {
     content: "";
@@ -188,6 +202,18 @@ const shellHideCss = `
     from { transform: translate3d(0, 0, 0); }
     to { transform: translate3d(-50%, 0, 0); }
   }
+  @keyframes petpark-flow-up {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(0, -50%, 0); }
+  }
+  @keyframes petpark-flow-down {
+    from { transform: translate3d(0, -50%, 0); }
+    to { transform: translate3d(0, 0, 0); }
+  }
+  @keyframes petpark-sheen {
+    0%, 42% { background-position: 160% 0; }
+    68%, 100% { background-position: -80% 0; }
+  }
   @keyframes petpark-wave-band {
     from { transform: translate3d(-1.5%, 0, 0) skewY(-1deg); }
     to { transform: translate3d(1.5%, -10px, 0) skewY(1deg); }
@@ -202,6 +228,9 @@ const shellHideCss = `
     #petpark-homepage-live-reference .petpark-drift-soft,
     #petpark-homepage-live-reference .petpark-pop-in,
     #petpark-homepage-live-reference .petpark-marquee,
+    #petpark-homepage-live-reference .petpark-flow-up,
+    #petpark-homepage-live-reference .petpark-flow-down,
+    #petpark-homepage-live-reference .petpark-sheen,
     #petpark-homepage-live-reference .petpark-wave-band,
     #petpark-homepage-live-reference .petpark-pulse-dot::before { animation: none; }
   }
@@ -310,6 +339,77 @@ function QuickCard({ title, body, href, Icon, tone }: (typeof quickAccess)[numbe
       </span>
       <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-[#8B958D] transition group-hover:translate-x-0.5 group-hover:text-[#C65F26]" />
     </Link>
+  );
+}
+
+function FlowCard({ title, meta, Icon, tone }: (typeof flowItems)[number]) {
+  return (
+    <div className="flex items-center gap-3 rounded-[24px] border border-white/16 bg-white/12 p-3 text-white shadow-[0_14px_30px_rgba(8,35,27,.16)] backdrop-blur-md">
+      <span
+        className={cn(
+          'flex h-11 w-11 shrink-0 items-center justify-center rounded-[15px]',
+          tone === 'orange' && 'bg-[#FFE0BC] text-[#C65F26]',
+          tone === 'green' && 'bg-[#DCF0E4] text-[#1D7862]',
+          tone === 'teal' && 'bg-[#DDF1EE] text-[#08776F]',
+        )}
+      >
+        <Icon className="h-5 w-5" />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-sm font-black leading-5">{title}</span>
+        <span className="mt-0.5 block text-[12px] font-semibold leading-4 text-white/70">{meta}</span>
+      </span>
+    </div>
+  );
+}
+
+function MotionFlowSection() {
+  const repeatedFlow = flowItems.concat(flowItems);
+
+  return (
+    <section className="relative flex flex-col overflow-hidden rounded-[34px] border border-[#0F6B57]/18 bg-[#0F6B57] p-5 text-white shadow-[0_24px_60px_rgba(18,56,41,.18)] sm:p-7 lg:grid lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:gap-8 lg:p-8">
+      <div className="petpark-sheen pointer-events-none absolute inset-0 opacity-70" />
+      <div className="relative z-10">
+        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#FFE0BC]">PetPark u pokretu</p>
+        <h2 className="mt-3 max-w-[520px] font-serif text-[38px] font-black leading-[.98] tracking-[-0.055em] sm:text-5xl lg:text-[58px]">
+          Ne stoji kao katalog. Radi kao dnevni tok.
+        </h2>
+        <p className="mt-4 max-w-[520px] text-[15px] font-semibold leading-7 text-white/74 sm:text-base">
+          Upit, odgovor, šetnja, alert i savjet trebaju izgledati kao da se stvarno događaju. Zato je PetPark više feed nego statična brošura.
+        </p>
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <Link prefetch={false} href="/pretraga" className="inline-flex h-12 items-center justify-center gap-2 rounded-[16px] bg-[#FFE0BC] px-5 text-sm font-black text-[#123829] shadow-[0_14px_28px_rgba(0,0,0,.14)] transition hover:-translate-y-1 active:scale-[.98]">
+            <Search className="h-5 w-5" />
+            Otvori pretragu
+          </Link>
+          <Link prefetch={false} href="/zajednica" className="inline-flex h-12 items-center justify-center gap-2 rounded-[16px] border border-white/22 bg-white/10 px-5 text-sm font-black text-white transition hover:-translate-y-1 hover:bg-white/16 active:scale-[.98]">
+            <MessageCircle className="h-5 w-5" />
+            Zajednica
+          </Link>
+        </div>
+      </div>
+
+      <div className="relative z-10 mt-6 overflow-hidden sm:hidden">
+        <div className="petpark-marquee flex w-max gap-3">
+          {repeatedFlow.concat(repeatedFlow).map((item, index) => (
+            <div className="w-[270px]" key={`${item.title}-mobile-${index}`}>
+              <FlowCard {...item} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="relative z-10 mt-7 hidden h-[306px] grid-cols-2 gap-3 overflow-hidden sm:grid lg:mt-0">
+        <div className="petpark-flow-up grid gap-3">
+          {repeatedFlow.map((item, index) => <FlowCard key={`${item.title}-up-${index}`} {...item} />)}
+        </div>
+        <div className="petpark-flow-down hidden gap-3 sm:grid">
+          {repeatedFlow.slice().reverse().map((item, index) => <FlowCard key={`${item.title}-down-${index}`} {...item} />)}
+        </div>
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-[#0F6B57] to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0F6B57] to-transparent" />
+      </div>
+    </section>
   );
 }
 
@@ -462,6 +562,8 @@ function HomeContent() {
           {categories.map((category) => <CategoryRailCard key={category.label} {...category} />)}
         </div>
       </section>
+
+      <MotionFlowSection />
 
       <section id="kako-radi" className="grid gap-5 lg:grid-cols-[.92fr_1.08fr] lg:items-start">
         <div className="rounded-[32px] border border-[#E5DAC8] bg-[#123829] p-6 text-white shadow-[0_22px_54px_rgba(18,56,41,.18)] lg:sticky lg:top-6 lg:min-h-[520px] lg:p-8">
