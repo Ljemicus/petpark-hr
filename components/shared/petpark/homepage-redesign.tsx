@@ -46,58 +46,91 @@ const categories: { label: string; href: string; icon: CategoryIconName; tone: '
   { label: 'Udomljavanje', href: '/udomljavanje', icon: 'adoption', tone: 'orange' },
 ];
 
-const serviceDetails: Record<CategoryIconName, string> = {
-  care: 'noćenje i posjete',
-  walk: 'šetnje po kvartu',
-  grooming: 'kupanje i šišanje',
-  training: 'rad s trenerom',
-  lost: 'brza objava',
-  adoption: 'novi dom',
-};
+const heroMoments = [
+  { title: 'Mila traži čuvanje', meta: 'subota, 2 noći · Rijeka', Icon: Home, tone: 'orange' as Tone },
+  { title: 'Bobi ide u šetnju', meta: '18:30 · kvart Zamet', Icon: Footprints, tone: 'green' as Tone },
+  { title: 'Pronađena maca', meta: 'Kantrida · zajednica prati', Icon: Bell, tone: 'teal' as Tone },
+];
 
 const dailySignals = [
-  { title: 'Photo update iz čuvanja', meta: 'mirna poruka vlasniku', Icon: Camera, tone: 'orange' as Tone },
-  { title: 'Šetnja u 18:30', meta: 'dogovor po kvartu', Icon: Clock3, tone: 'green' as Tone },
-  { title: 'Upit za vikend', meta: 'miran stan i rutina', Icon: PawPrint, tone: 'teal' as Tone },
+  { title: 'Photo update', meta: 'Mila je pojela i spava', Icon: Camera, tone: 'orange' as Tone },
+  { title: 'Šetnja potvrđena', meta: 'Bobi · 18:30 · Zamet', Icon: Clock3, tone: 'green' as Tone },
+  { title: 'Hitna objava', meta: 'pronađena maca kod parka', Icon: Bell, tone: 'teal' as Tone },
 ];
 
 const feedItems = [
   {
     title: 'Primjer upozorenja o nestalom ljubimcu',
-    body: 'Ovako će izgledati objava kada zajednica objavi stvarno upozorenje.',
-    location: 'Primjer prikaza',
-    badge: 'PRIMJER PRIKAZA',
-    time: 'Demo',
+    body: 'Fotka, lokacija i zadnje viđenje idu odmah na jedno mjesto.',
+    location: 'Pećine · Rijeka',
+    badge: 'HITNO',
+    time: 'prije 14 min',
     tone: 'orange' as Tone,
     image: '/images/design-lab/petpark-reference-feed-cat.png',
   },
   {
     title: 'Primjer objave o pronađenom ljubimcu',
-    body: 'Kartice će se zamijeniti stvarnim objavama kada budu dostupne.',
-    location: 'Primjer prikaza',
-    badge: 'PRIMJER PRIKAZA',
-    time: 'Demo',
+    body: 'Netko je pronašao psa, zajednica dijeli objavu dok se vlasnik ne javi.',
+    location: 'Maksimir · Zagreb',
+    badge: 'PRONAĐEN',
+    time: 'danas',
     tone: 'green' as Tone,
     image: '/images/design-lab/petpark-reference-feed-dog.png',
   },
   {
     title: 'Nova tema: priprema psa za čuvanje',
-    body: 'Kako pomoći psu da se osjeća sigurno i opušteno dok ste vi odsutni.',
+    body: 'Lista stvari koje sitter treba znati prije prvog noćenja.',
     location: 'Forum zajednice',
     badge: 'FORUM',
-    time: 'Demo',
+    time: '12 odgovora',
     tone: 'teal' as Tone,
     Icon: MessageCircle,
   },
   {
     title: 'Članak: kako odabrati groomera',
-    body: 'Savjeti koji će vam pomoći pronaći pravog stručnjaka za vašeg ljubimca.',
+    body: 'Pitanja koja vrijedi postaviti prije prvog termina.',
     location: 'PetPark blog',
     badge: 'BLOG',
-    time: 'Demo',
+    time: 'vodič',
     tone: 'yellow' as Tone,
     Icon: BookOpen,
   },
+];
+
+const careStories = [
+  {
+    title: 'Čuvanje bez nervoze',
+    body: 'Rutina, lijekovi, hranjenje i update fotografije ostaju uz dogovor.',
+    href: '/usluge',
+    image: '/images/services/01-pet-sitting.jpg',
+    Icon: Home,
+    tone: 'orange' as Tone,
+  },
+  {
+    title: 'Kvartovske šetnje',
+    body: 'Brzi dogovor za dane kad posao, kiša ili put promijene plan.',
+    href: '/usluge',
+    image: '/images/services/04-setanje-pasa.jpg',
+    Icon: Footprints,
+    tone: 'green' as Tone,
+  },
+  {
+    title: 'Njega i trening',
+    body: 'Groomeri i treneri nisu samo ikone u gridu, nego stvarni profili s terminima.',
+    href: '/njega',
+    image: '/images/services/02-grooming.jpg',
+    Icon: Scissors,
+    tone: 'teal' as Tone,
+  },
+];
+
+const serviceChips = [
+  { label: 'Čuvanje', href: '/usluge', icon: 'care' as CategoryIconName },
+  { label: 'Šetnja', href: '/usluge', icon: 'walk' as CategoryIconName },
+  { label: 'Grooming', href: '/njega', icon: 'grooming' as CategoryIconName },
+  { label: 'Trening', href: '/dresura', icon: 'training' as CategoryIconName },
+  { label: 'Izgubljeni', href: '/izgubljeni', icon: 'lost' as CategoryIconName },
+  { label: 'Udomljavanje', href: '/udomljavanje', icon: 'adoption' as CategoryIconName },
 ];
 
 const quickAccess = [
@@ -150,20 +183,16 @@ function CategoryGlyph({ name, className = 'h-7 w-7' }: { name: CategoryIconName
 }
 
 function CategoryCard({ label, href, icon, tone }: (typeof categories)[number]) {
-  const cardWidth = label === 'Čuvanje' || label === 'Šetnja' ? 112 : label === 'Udomljavanje' ? 124 : 116;
-
   return (
     <Link
       prefetch={false}
       href={href}
-      style={{ width: cardWidth }}
-      className="flex h-[132px] flex-col items-center justify-center rounded-[18px] border border-[#E9E0D1] bg-[#FFFDF8] text-center shadow-[0_10px_24px_rgba(80,55,25,.09)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2"
+      className="group inline-flex items-center gap-2 rounded-full border border-[#E7DDCC] bg-[#FFFDF8]/86 px-4 py-2 text-sm font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.06)] transition hover:-translate-y-0.5 hover:border-[#F26A00]/35 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2"
     >
-      <span className={cn('mb-3 flex h-[58px] w-[58px] items-center justify-center rounded-[18px]', tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
-        <CategoryGlyph name={icon} className="h-8 w-8" />
+      <span className={cn('flex h-8 w-8 items-center justify-center rounded-full', tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
+        <CategoryGlyph name={icon} className="h-[18px] w-[18px]" />
       </span>
-      <span className="text-[14px] font-semibold leading-none text-[#141c18]">{label}</span>
-      <span className="mt-1.5 max-w-[92px] text-[10px] font-bold leading-3 text-[#718078]">{serviceDetails[icon]}</span>
+      {label}
     </Link>
   );
 }
@@ -215,7 +244,7 @@ function QuickIcon({ tone, Icon }: { tone: Tone; Icon: React.ComponentType<{ cla
 
 function DailySignal({ title, meta, Icon, tone }: (typeof dailySignals)[number]) {
   return (
-    <div className="group flex items-center gap-3 rounded-[18px] border border-[#E7DDCC] bg-[#FFFDF8]/92 p-3 shadow-[0_12px_26px_rgba(80,55,25,.08)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(80,55,25,.12)]">
+    <div className="group flex items-center gap-3 rounded-[18px] border border-[#E7DDCC] bg-[#FFFDF8]/92 p-3 shadow-[0_12px_26px_rgba(80,55,25,.08)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(80,55,25,.12)]" style={{ padding: 12 }}>
       <span
         className={cn(
           'flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px]',
@@ -241,14 +270,13 @@ function MobileCategoryCard({ label, href, icon, tone }: (typeof categories)[num
       prefetch={false}
       href={href}
       aria-label={label}
-      className="group flex min-h-[126px] w-full max-w-[112px] flex-col items-center justify-center rounded-[18px] border border-[#E7DDCC] bg-[#FFFDF8] px-2 text-center shadow-[0_12px_24px_rgba(80,55,25,.08)] transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF6EA] sm:max-w-[124px] md:max-w-[132px] md:min-h-[136px]"
-      style={{ paddingLeft: 8, paddingRight: 8, paddingTop: 12, paddingBottom: 12 }}
+      className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-[#E7DDCC] bg-[#FFFDF8]/92 px-3 py-2 text-[13px] font-black text-[#14231D] shadow-[0_8px_18px_rgba(80,55,25,.06)] transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_12px_24px_rgba(80,55,25,.10)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF6EA]"
+      style={{ padding: '8px 12px' }}
     >
-      <span className={cn('mb-2.5 flex h-[66px] w-[66px] items-center justify-center rounded-[20px] md:h-[72px] md:w-[72px]', tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
-        <CategoryGlyph name={icon} className="h-9 w-9 md:h-10 md:w-10" />
+      <span className={cn('flex h-8 w-8 items-center justify-center rounded-full', tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
+        <CategoryGlyph name={icon} className="h-[18px] w-[18px]" />
       </span>
-      <span className="text-[13px] font-black leading-[15px] text-[#14231D] sm:text-[14px] sm:leading-4">{label}</span>
-      <span className="mt-1 max-w-[92px] text-[10px] font-bold leading-3 text-[#718078]">{serviceDetails[icon]}</span>
+      <span>{label}</span>
     </Link>
   );
 }
@@ -310,6 +338,34 @@ function MobileQuickCard({ title, body, href, Icon, tone }: (typeof quickAccess)
   );
 }
 
+function CareStoryCard({ story, featured = false }: { story: (typeof careStories)[number]; featured?: boolean }) {
+  const Icon = story.Icon;
+
+  return (
+    <Link
+      prefetch={false}
+      href={story.href}
+      className={cn(
+        'group relative overflow-hidden rounded-[26px] border border-[#E7DDCC] bg-[#FFFDF8] shadow-[0_16px_34px_rgba(80,55,25,.09)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_24px_44px_rgba(80,55,25,.13)]',
+        featured ? 'min-h-[300px]' : 'min-h-[210px]',
+      )}
+    >
+      <Image src={story.image} alt="" fill sizes="(max-width: 1024px) 92vw, 420px" className="object-cover transition duration-500 group-hover:scale-105" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#09352F]/88 via-[#09352F]/34 to-transparent" />
+      <div className="absolute left-4 top-4 flex h-12 w-12 items-center justify-center rounded-[16px] border border-white/30 bg-white/90 text-[#0E6B58] shadow-[0_12px_26px_rgba(0,0,0,.12)] backdrop-blur">
+        <Icon className="h-6 w-6" />
+      </div>
+      <div className="absolute inset-x-0 bottom-0 p-5" style={{ padding: 20 }}>
+        <h3 className="font-serif text-[28px] font-black leading-[0.98] tracking-[-0.04em] text-white sm:text-[34px]">{story.title}</h3>
+        <p className="mt-3 max-w-[360px] text-[14px] font-semibold leading-5 text-white/86">{story.body}</p>
+        <span className="mt-4 inline-flex items-center gap-1 text-[13px] font-black text-[#FFE4B6]">
+          Otvori <ChevronRight className="h-4 w-4 transition group-hover:translate-x-1" />
+        </span>
+      </div>
+    </Link>
+  );
+}
+
 function MobileHomepage() {
   return (
     <div className="lg:hidden">
@@ -346,10 +402,10 @@ function MobileHomepage() {
               PetPark zajednica
             </div>
             <h1 className="mt-4 max-w-[680px] font-serif text-[42px] font-black leading-[0.98] tracking-[-0.058em] text-[#003B2F] min-[390px]:text-[45px] sm:text-[58px] md:text-[56px]">
-              Mjesto gdje zajednica pomaže ljubimcima.
+              Sve za ljubimca kad dan ne ide po planu.
             </h1>
             <p className="mt-4 max-w-[610px] text-[16px] font-semibold leading-[24px] text-[#46545A] sm:text-[20px] sm:leading-[30px] md:text-[18px] md:leading-[27px]">
-              Usluge, upozorenja, savjeti i udomljavanje — sve za ljubimce na jednom mjestu.
+              Nađi čuvanje, dogovori šetnju, prijavi nestalog ljubimca ili pitaj zajednicu bez osjećaja da si sam u panici.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link prefetch={false} href="/izgubljeni/prijavi" className="inline-flex h-12 items-center justify-center gap-2 rounded-[14px] bg-[#F26A00] px-5 text-[14px] font-black text-white shadow-[0_14px_26px_rgba(242,106,0,.22)] sm:w-auto sm:text-[15px]" style={{ paddingLeft: 20, paddingRight: 20 }}>
@@ -366,13 +422,13 @@ function MobileHomepage() {
           <div className="petpark-mobile-hero-visual relative mt-7 h-[238px] overflow-hidden rounded-[30px] border border-[#E7DDCC] bg-[#FFFDF8]/75 shadow-[0_22px_46px_rgba(80,55,25,.12)] sm:h-[330px] md:mt-0 md:h-[340px] md:w-[310px] md:shrink-0 md:rounded-[34px]">
             <Image src="/images/design-lab/petpark-reference-hero-mobile-clean.webp" alt="Pas i mačka u PetPark zajednici" fill sizes="(max-width: 640px) 100vw, 0px" className="object-cover object-center sm:hidden" />
             <Image src="/images/design-lab/petpark-reference-hero-tablet-clean.webp" alt="Pas i mačka u PetPark zajednici" fill sizes="(min-width: 640px) 720px, 0px" className="hidden object-cover object-center sm:block" />
-            <div className="absolute left-3 top-3 flex items-center gap-2 rounded-[16px] border border-white/70 bg-[#FFFDF8]/90 px-3 py-2 shadow-[0_10px_22px_rgba(80,55,25,.12)] backdrop-blur">
+            <div className="absolute left-3 top-3 flex items-center gap-2 rounded-[16px] border border-white/70 bg-[#FFFDF8]/90 px-3 py-2 shadow-[0_10px_22px_rgba(80,55,25,.12)] backdrop-blur" style={{ padding: '8px 12px' }}>
               <span className="h-2.5 w-2.5 rounded-[4px] bg-[#159C98]" />
-              <span className="text-[12px] font-black text-[#123D36]">Danas na PetParku</span>
+              <span className="text-[12px] font-black text-[#123D36]">uživo iz zajednice</span>
             </div>
             <div className="absolute bottom-3 left-3 right-3 rounded-[18px] border border-white/70 bg-[#FFFDF8]/88 px-4 py-3 shadow-[0_10px_24px_rgba(80,55,25,.12)] backdrop-blur" style={{ padding: '12px 16px' }}>
-              <p className="text-[12px] font-black uppercase tracking-[0.12em] text-[#C65F26]">Danas na PetParku</p>
-              <p className="mt-0.5 text-[14px] font-extrabold text-[#123D36] sm:text-[15px]">Pronađi pomoć, objavi upozorenje ili pitaj zajednicu.</p>
+              <p className="text-[12px] font-black uppercase tracking-[0.12em] text-[#C65F26]">care brief</p>
+              <p className="mt-0.5 text-[14px] font-extrabold text-[#123D36] sm:text-[15px]">Rutina, navike, fotke i dogovor na jednom mjestu.</p>
             </div>
           </div>
           <div className="mt-4 grid gap-2 sm:grid-cols-3 md:hidden">
@@ -380,8 +436,18 @@ function MobileHomepage() {
           </div>
         </section>
 
-        <section aria-label="PetPark usluge" className="relative z-10 mt-6 grid grid-cols-2 justify-items-center gap-3 py-2 min-[390px]:grid-cols-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-6 md:gap-x-2">
+        <section aria-label="PetPark usluge" className="relative z-10 -mx-1 mt-6 flex gap-2 overflow-x-auto px-1 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {categories.map((category) => <MobileCategoryCard key={category.label} {...category} />)}
+        </section>
+
+        <section className="relative z-10 mt-7 grid gap-3 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <p className="text-[11px] font-black uppercase tracking-[0.14em] text-[#C65F26]">Ne samo kategorije</p>
+            <h2 className="mt-1 font-serif text-[34px] font-black leading-none tracking-[-0.05em] text-[#003B2F]">Tri stvarna scenarija</h2>
+          </div>
+          {careStories.map((story, index) => (
+            <CareStoryCard key={story.title} story={story} featured={index === 0} />
+          ))}
         </section>
 
         <section id="kako-radi-mobile" className="relative z-10 mt-9 flex flex-col rounded-[28px] border border-[#E7DDCC] bg-[#FFF7EC]/72 p-4 shadow-[0_18px_38px_rgba(80,55,25,.08)] backdrop-blur sm:p-5" style={{ padding: 16 }}>
@@ -459,13 +525,13 @@ function PremiumDesktopHomepage({ isPreview }: { isPreview: boolean }) {
           <div className="max-w-[720px]">
             <div className="inline-flex items-center gap-2 rounded-full border border-[#E9E0D1] bg-[#FFFDF8]/92 px-4 py-2 text-xs font-black uppercase text-[#C65F26] shadow-sm">
               <PawPrint className="h-4 w-4 fill-[#F26A00] text-[#F26A00]" />
-              Premium care matching
+              PetPark za stvarne dane
             </div>
             <h1 className="mt-6 font-serif text-[76px] font-black leading-[0.94] tracking-[-0.055em] text-[#003B2F] xl:text-[86px]">
-              Nađi osobu kojoj mirno ostavljaš ljubimca.
+              Sve za ljubimca kad dan ne ide po planu.
             </h1>
             <p className="mt-6 max-w-[640px] text-[20px] font-semibold leading-8 text-[#46545A]">
-              PetPark spaja čuvanje, šetnje, grooming, trening i zajednicu u jedan care brief: potrebe ljubimca, sigurnost doma, komunikacija i povjerenje.
+              PetPark nije samo lista usluga. To je mjesto za čuvanje, šetnje, grooming, trening, izgubljene ljubimce i savjete kada trebaš brz, normalan odgovor.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link prefetch={false} href="/pretraga" className="inline-flex h-14 items-center justify-center gap-2 rounded-[16px] bg-[#F26A00] px-7 text-base font-black text-white shadow-[0_16px_30px_rgba(242,106,0,.24)] transition hover:-translate-y-0.5">
@@ -477,45 +543,45 @@ function PremiumDesktopHomepage({ isPreview }: { isPreview: boolean }) {
                 <ChevronRight className="h-5 w-5" />
               </Link>
             </div>
-            <div className="mt-9 grid max-w-[720px] grid-cols-3 gap-3">
-              {dailySignals.map((signal) => <DailySignal key={signal.title} {...signal} />)}
+            <div className="mt-9 flex max-w-[760px] flex-wrap gap-3">
+              {serviceChips.map((category) => {
+                const source = categories.find((item) => item.icon === category.icon);
+                return <CategoryCard key={category.label} label={category.label} href={category.href} icon={category.icon} tone={source?.tone ?? 'green'} />;
+              })}
             </div>
           </div>
 
           <div className="relative min-h-[610px]">
-            <div className="absolute inset-x-0 top-0 h-[490px] overflow-hidden rounded-[38px] border border-[#E7DDCC] bg-[#FFFDF8]/80 shadow-[0_28px_70px_rgba(80,55,25,.16)]">
+            <div className="absolute inset-x-0 top-0 h-[520px] overflow-hidden rounded-[38px] border border-[#E7DDCC] bg-[#FFFDF8]/80 shadow-[0_28px_70px_rgba(80,55,25,.16)]">
               <Image src="/images/design-lab/petpark-reference-hero-tablet-clean.webp" alt="Pas i mačka u PetPark zajednici" fill sizes="(min-width: 1024px) 48vw, 0px" className="object-cover object-center" priority />
               <div className="absolute left-5 top-5 flex items-center gap-2 rounded-[18px] border border-white/70 bg-[#FFFDF8]/88 px-4 py-2 shadow-[0_12px_28px_rgba(80,55,25,.12)] backdrop-blur">
                 <span className="h-2.5 w-2.5 rounded-[4px] bg-[#159C98]" />
-                <span className="text-sm font-black text-[#123D36]">Danas na PetParku</span>
+                <span className="text-sm font-black text-[#123D36]">uživo iz zajednice</span>
               </div>
-              <div className="absolute inset-x-5 bottom-5 rounded-[24px] border border-white/70 bg-[#FFFDF8]/90 p-5 shadow-[0_16px_32px_rgba(80,55,25,.14)] backdrop-blur">
+              <div className="absolute bottom-5 left-5 max-w-[300px] rounded-[24px] border border-white/70 bg-[#FFFDF8]/90 p-5 shadow-[0_16px_32px_rgba(80,55,25,.14)] backdrop-blur">
                 <p className="text-xs font-black uppercase text-[#C65F26]">Care brief</p>
-                <p className="mt-1 text-lg font-black leading-6 text-[#123D36]">Mirno čuvanje, photo update svaki dan, verified profil.</p>
+                <p className="mt-1 text-base font-black leading-6 text-[#123D36]">Rutina, navike, fotke i dogovor na jednom mjestu.</p>
               </div>
             </div>
-            <div className="absolute -bottom-2 left-6 right-6 grid grid-cols-3 gap-3">
-              {categories.slice(0, 3).map((category) => (
-                <Link key={category.label} prefetch={false} href={category.href} className="rounded-[22px] border border-[#E7DDCC] bg-[#FFFDF8] p-4 text-center shadow-[0_16px_34px_rgba(80,55,25,.10)] transition hover:-translate-y-0.5">
-                  <span className={cn('mx-auto flex h-14 w-14 items-center justify-center rounded-[18px]', category.tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
-                    <CategoryGlyph name={category.icon} className="h-8 w-8" />
-                  </span>
-                  <span className="mt-3 block text-sm font-black text-[#14231D]">{category.label}</span>
-                </Link>
+            <div className="absolute -bottom-3 right-0 grid w-[330px] gap-3">
+              {heroMoments.map((moment, index) => (
+                <div key={moment.title} className={cn('flex items-center gap-3 rounded-[22px] border border-[#E7DDCC] bg-[#FFFDF8]/94 p-4 shadow-[0_16px_34px_rgba(80,55,25,.12)] backdrop-blur', index === 1 && '-ml-10', index === 2 && 'ml-8')} style={{ padding: 16 }}>
+                  <QuickIcon tone={moment.tone} Icon={moment.Icon} />
+                  <div>
+                    <p className="text-sm font-black text-[#123D36]">{moment.title}</p>
+                    <p className="mt-1 text-xs font-bold text-[#68766F]">{moment.meta}</p>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         </section>
 
-        <section aria-label="PetPark usluge" className="grid grid-cols-6 gap-3">
-          {categories.map((category) => (
-            <Link key={category.label} prefetch={false} href={category.href} className="group rounded-[24px] border border-[#E7DDCC] bg-[#FFFDF8] p-4 text-center shadow-[0_12px_26px_rgba(80,55,25,.07)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(80,55,25,.10)]">
-              <span className={cn('mx-auto flex h-16 w-16 items-center justify-center rounded-[20px] transition group-hover:scale-105', category.tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
-                <CategoryGlyph name={category.icon} className="h-9 w-9" />
-              </span>
-              <span className="mt-3 block text-sm font-black text-[#14231D]">{category.label}</span>
-            </Link>
-          ))}
+        <section aria-label="PetPark scenariji" className="grid gap-5 xl:grid-cols-[1.2fr_.8fr]">
+          <CareStoryCard story={careStories[0]} featured />
+          <div className="grid gap-5">
+            {careStories.slice(1).map((story) => <CareStoryCard key={story.title} story={story} />)}
+          </div>
         </section>
 
         <section id="kako-radi" className="grid gap-6 xl:grid-cols-[1.05fr_.95fr]">
