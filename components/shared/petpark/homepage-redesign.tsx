@@ -63,6 +63,12 @@ const heroMoments = [
   { label: 'Šetnja danas', value: 'Maksimir', Icon: MapPin },
 ];
 
+const heroSignals = [
+  { label: 'Sitter', value: 'potvrđuje', Icon: CheckCircle2, tone: 'green' as Tone, className: 'left-0 top-[22%] lg:-left-10' },
+  { label: 'Kvart', value: 'širi alert', Icon: Bell, tone: 'orange' as Tone, className: 'right-1 top-[9%] lg:-right-8' },
+  { label: 'Forum', value: 'ima odgovor', Icon: MessageCircle, tone: 'teal' as Tone, className: 'left-8 bottom-[26%] lg:left-2' },
+];
+
 const storyCards = [
   {
     title: 'Mala Nesta ide na prvo noćenje',
@@ -144,21 +150,60 @@ const shellHideCss = `
   body:has(#petpark-homepage-live-reference) [data-nextjs-dialog-overlay] { display: none !important; }
   body:has(#petpark-homepage-live-reference) main#main-content { overflow: hidden; }
   body:has(#petpark-homepage-live-reference) .pb-20 { padding-bottom: 0 !important; }
+  #petpark-homepage-live-reference {
+    background-size: auto, auto, auto, 22px 22px;
+    background-image:
+      radial-gradient(circle_at_8%_4%,rgba(225,237,216,.86),transparent_28%),
+      radial-gradient(circle_at_88%_8%,rgba(251,233,219,.92),transparent_30%),
+      linear-gradient(180deg,#FAF6EA_0%,#FFF9EF_48%,#FAF6EA_100%),
+      radial-gradient(circle,rgba(15,107,87,.12) 1px,transparent 1.5px);
+  }
   #petpark-homepage-live-reference .petpark-drift { animation: petpark-drift 7s ease-in-out infinite; }
   #petpark-homepage-live-reference .petpark-drift-delay { animation: petpark-drift 8.5s ease-in-out infinite; animation-delay: -2s; }
+  #petpark-homepage-live-reference .petpark-drift-soft { animation: petpark-drift-soft 9s ease-in-out infinite; }
+  #petpark-homepage-live-reference .petpark-pop-in { animation: petpark-pop-in .72s cubic-bezier(.16,1,.3,1) both; animation-delay: var(--delay, 0ms); }
   #petpark-homepage-live-reference .petpark-marquee { animation: petpark-marquee 28s linear infinite; }
+  #petpark-homepage-live-reference .petpark-wave-band { animation: petpark-wave-band 16s ease-in-out infinite alternate; transform-origin: center; }
+  #petpark-homepage-live-reference .petpark-pulse-dot::before {
+    content: "";
+    position: absolute;
+    inset: -6px;
+    border-radius: inherit;
+    border: 1px solid rgba(242,106,0,.22);
+    animation: petpark-pulse 2.4s ease-out infinite;
+  }
   @keyframes petpark-drift {
     0%, 100% { transform: translate3d(0, 0, 0) rotate(-1deg); }
     50% { transform: translate3d(0, -10px, 0) rotate(1deg); }
+  }
+  @keyframes petpark-drift-soft {
+    0%, 100% { transform: translate3d(0, 0, 0) rotate(1deg); }
+    50% { transform: translate3d(10px, -12px, 0) rotate(-2deg); }
+  }
+  @keyframes petpark-pop-in {
+    from { opacity: 0; transform: translate3d(0, 18px, 0) scale(.96); }
+    to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
   }
   @keyframes petpark-marquee {
     from { transform: translate3d(0, 0, 0); }
     to { transform: translate3d(-50%, 0, 0); }
   }
+  @keyframes petpark-wave-band {
+    from { transform: translate3d(-1.5%, 0, 0) skewY(-1deg); }
+    to { transform: translate3d(1.5%, -10px, 0) skewY(1deg); }
+  }
+  @keyframes petpark-pulse {
+    0% { opacity: .75; transform: scale(.86); }
+    100% { opacity: 0; transform: scale(1.7); }
+  }
   @media (prefers-reduced-motion: reduce) {
     #petpark-homepage-live-reference .petpark-drift,
     #petpark-homepage-live-reference .petpark-drift-delay,
-    #petpark-homepage-live-reference .petpark-marquee { animation: none; }
+    #petpark-homepage-live-reference .petpark-drift-soft,
+    #petpark-homepage-live-reference .petpark-pop-in,
+    #petpark-homepage-live-reference .petpark-marquee,
+    #petpark-homepage-live-reference .petpark-wave-band,
+    #petpark-homepage-live-reference .petpark-pulse-dot::before { animation: none; }
   }
 `;
 
@@ -183,7 +228,7 @@ function CategoryRailCard({ label, need, href, icon, tone }: (typeof categories)
     <Link
       prefetch={false}
       href={href}
-      className="group flex min-w-[210px] items-center gap-3 rounded-[22px] border border-[#E5DAC8] bg-[#FFFDF8]/92 p-3 pr-4 shadow-[0_12px_24px_rgba(80,55,25,.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(80,55,25,.11)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] lg:min-w-0"
+      className="group flex min-w-[210px] items-center gap-3 rounded-[22px] border border-[#E5DAC8] bg-[#FFFDF8]/92 p-3 pr-4 shadow-[0_12px_24px_rgba(80,55,25,.07)] transition duration-300 hover:-translate-y-1 hover:rotate-[-.6deg] hover:shadow-[0_18px_34px_rgba(80,55,25,.11)] active:scale-[.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] lg:min-w-0"
     >
       <span className={cn('flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px]', tone === 'orange' ? 'bg-[#FBE9DB]' : 'bg-[#E9F0DF]')}>
         <Image src={officialCategoryIcons[icon]} alt="" width={42} height={42} className="h-[42px] w-[42px]" aria-hidden="true" />
@@ -214,7 +259,7 @@ function QuickIcon({ tone, Icon }: { tone: Tone; Icon: React.ComponentType<{ cla
 
 function StoryCard({ title, text, meta, image, tone }: (typeof storyCards)[number]) {
   return (
-    <article className="group relative min-h-[340px] overflow-hidden rounded-[30px] border border-[#E5DAC8] bg-[#123829] shadow-[0_20px_48px_rgba(24,62,46,.16)] transition duration-200 hover:-translate-y-1">
+    <article className="group relative min-h-[340px] overflow-hidden rounded-[30px] border border-[#E5DAC8] bg-[#123829] shadow-[0_20px_48px_rgba(24,62,46,.16)] transition duration-300 hover:-translate-y-1 hover:rotate-[.5deg]">
       <Image src={image} alt="" fill sizes="(min-width: 1024px) 31vw, 100vw" className="object-cover transition duration-500 group-hover:scale-[1.035]" />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,47,35,.05)_0%,rgba(9,47,35,.78)_100%)]" />
       <div className="absolute inset-x-4 bottom-4 rounded-[24px] border border-white/20 bg-[#123829]/78 p-5 text-white shadow-[0_16px_34px_rgba(0,0,0,.20)] backdrop-blur-md">
@@ -256,7 +301,7 @@ function QuickCard({ title, body, href, Icon, tone }: (typeof quickAccess)[numbe
     <Link
       prefetch={false}
       href={href}
-      className="group flex items-start gap-3 rounded-[24px] border border-[#E5DAC8] bg-[#FFFDF8] p-4 shadow-[0_12px_26px_rgba(80,55,25,.07)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(80,55,25,.11)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00]"
+      className="group flex items-start gap-3 rounded-[24px] border border-[#E5DAC8] bg-[#FFFDF8] p-4 shadow-[0_12px_26px_rgba(80,55,25,.07)] transition duration-300 hover:-translate-y-1 hover:rotate-[-.4deg] hover:shadow-[0_18px_34px_rgba(80,55,25,.11)] active:scale-[.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00]"
     >
       <QuickIcon tone={tone} Icon={Icon} />
       <span className="min-w-0 flex-1">
@@ -270,8 +315,9 @@ function QuickCard({ title, body, href, Icon, tone }: (typeof quickAccess)[numbe
 
 function HeroVisual() {
   return (
-    <div className="relative min-h-[390px] lg:min-h-[620px]">
-      <div className="absolute inset-x-0 top-3 h-[340px] overflow-hidden rounded-[34px] border border-[#E7DDCC] bg-[#FFFDF8]/80 shadow-[0_28px_70px_rgba(80,55,25,.16)] sm:h-[430px] lg:h-[500px] lg:rounded-[42px]">
+    <div className="relative min-h-[430px] lg:min-h-[650px]">
+      <div className="petpark-wave-band absolute inset-x-[-22px] bottom-[34px] h-[270px] rounded-[52%_48%_0_0/42%_48%_0_0] bg-[#A8D8CF] opacity-90 shadow-[inset_0_1px_0_rgba(255,255,255,.35)] sm:bottom-[52px] lg:bottom-[70px]" />
+      <div className="absolute inset-x-0 top-8 h-[340px] overflow-hidden rounded-[34px] border border-[#E7DDCC] bg-[#FFFDF8]/80 shadow-[0_28px_70px_rgba(80,55,25,.16)] sm:h-[430px] lg:top-12 lg:h-[500px] lg:rounded-[42px]">
         <Image
           src="/images/design-lab/petpark-reference-hero-tablet-clean.webp"
           alt="Pas i mačka u PetPark zajednici"
@@ -282,6 +328,29 @@ function HeroVisual() {
         />
         <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,248,238,0)_40%,rgba(17,54,40,.18)_100%)]" />
       </div>
+
+      {heroSignals.map(({ label, value, Icon, tone, className }, index) => (
+        <div
+          key={label}
+          className={cn('petpark-pop-in absolute hidden min-w-[154px] items-center gap-2 rounded-[22px] border border-white/70 bg-[#FFFDF8]/92 p-3 shadow-[0_14px_30px_rgba(80,55,25,.14)] backdrop-blur-md sm:flex', className)}
+          style={{ '--delay': `${index * 120 + 120}ms` } as React.CSSProperties}
+        >
+          <span
+            className={cn(
+              'relative flex h-10 w-10 shrink-0 items-center justify-center rounded-[15px]',
+              tone === 'orange' && 'bg-[#FBE9DB] text-[#F26A00]',
+              tone === 'green' && 'bg-[#E9F0DF] text-[#1D7862]',
+              tone === 'teal' && 'bg-[#DDF1EE] text-[#159C98]',
+            )}
+          >
+            <Icon className="h-5 w-5" />
+          </span>
+          <span>
+            <span className="block text-[11px] font-black uppercase tracking-[0.1em] text-[#C65F26]">{label}</span>
+            <span className="block text-sm font-black leading-4 text-[#123D36]">{value}</span>
+          </span>
+        </div>
+      ))}
 
       <div className="petpark-drift absolute left-4 top-8 max-w-[210px] rounded-[24px] border border-white/70 bg-[#FFFDF8]/92 p-4 shadow-[0_16px_34px_rgba(80,55,25,.14)] backdrop-blur-md sm:left-8 lg:left-[-18px] lg:top-16">
         <div className="flex items-center gap-2">
@@ -306,6 +375,11 @@ function HeroVisual() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="petpark-drift-soft absolute bottom-0 left-3 hidden rounded-[24px] border border-[#E7DDCC] bg-[#123829] px-4 py-3 text-white shadow-[0_16px_34px_rgba(18,56,41,.18)] sm:block lg:left-10">
+        <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#FFE0BC]">Live portal</p>
+        <p className="mt-1 text-sm font-black">3 nova upita u blizini</p>
       </div>
     </div>
   );
@@ -333,7 +407,7 @@ function Header() {
         <Link prefetch={false} href="/prijava" className="hidden h-11 items-center justify-center rounded-full border border-[#D8CBB8] bg-[#FFFDF8] px-5 text-sm font-black text-[#123D36] shadow-[0_8px_18px_rgba(80,55,25,.06)] sm:inline-flex">
           Prijava
         </Link>
-        <Link prefetch={false} href="/postani-sitter" className="inline-flex h-10 items-center justify-center rounded-full bg-[#F26A00] px-4 text-[12px] font-black text-white shadow-[0_12px_24px_rgba(242,106,0,.22)] sm:h-11 sm:px-5 sm:text-sm">
+        <Link prefetch={false} href="/postani-sitter" className="petpark-pulse-dot relative inline-flex h-10 items-center justify-center rounded-full bg-[#F26A00] px-4 text-[12px] font-black text-white shadow-[0_12px_24px_rgba(242,106,0,.22)] transition hover:-translate-y-0.5 active:scale-[.98] sm:h-11 sm:px-5 sm:text-sm">
           Postani sitter
         </Link>
       </div>
@@ -348,38 +422,39 @@ function HomeContent() {
 
       <section className="grid gap-8 pt-3 lg:min-h-[650px] lg:grid-cols-[minmax(0,1.02fr)_minmax(430px,.98fr)] lg:items-center lg:gap-12">
         <div className="relative z-10 max-w-[740px]">
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#E9E0D1] bg-[#FFFDF8]/92 px-4 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-[#C65F26] shadow-sm sm:text-xs">
+          <div className="petpark-pop-in inline-flex items-center gap-2 rounded-full border border-[#E9E0D1] bg-[#FFFDF8]/92 px-4 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-[#C65F26] shadow-sm sm:text-xs">
             <PawPrint className="h-4 w-4 fill-[#F26A00] text-[#F26A00]" />
             PetPark portal za stvarne dane
           </div>
-          <h1 className="mt-5 max-w-[720px] font-serif text-[44px] font-black leading-[0.98] tracking-[-0.058em] text-[#003B2F] min-[390px]:text-[48px] sm:text-[64px] lg:mt-7 lg:text-[78px] xl:text-[86px]">
+          <h1 className="petpark-pop-in mt-5 max-w-[720px] font-serif text-[40px] font-black leading-[0.98] tracking-[-0.058em] text-[#003B2F] min-[390px]:text-[43px] sm:text-[64px] lg:mt-7 lg:text-[78px] xl:text-[86px]" style={{ '--delay': '90ms' } as React.CSSProperties}>
             Kad ljubimcu treba netko pravi, ne samo oglas.
           </h1>
-          <p className="mt-5 max-w-[650px] text-[16px] font-semibold leading-[25px] text-[#46545A] sm:text-[19px] sm:leading-[30px] lg:mt-6 lg:text-[20px] lg:leading-8">
+          <p className="petpark-pop-in mt-5 max-w-[650px] text-[16px] font-semibold leading-[25px] text-[#46545A] sm:text-[19px] sm:leading-[30px] lg:mt-6 lg:text-[20px] lg:leading-8" style={{ '--delay': '170ms' } as React.CSSProperties}>
             PetPark spaja usluge, kvartovske objave, savjete i udomljavanje u portal koji se ponaša kao živa zajednica, a izgleda dovoljno ozbiljno da mu vjeruješ.
           </p>
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row lg:mt-8">
-            <Link prefetch={false} href="/pretraga" className="inline-flex h-13 items-center justify-center gap-2 rounded-[16px] bg-[#F26A00] px-6 text-[15px] font-black text-white shadow-[0_16px_30px_rgba(242,106,0,.24)] transition hover:-translate-y-0.5 sm:h-14 sm:px-7 sm:text-base">
+          <div className="petpark-pop-in mt-7 flex flex-col gap-3 sm:flex-row lg:mt-8" style={{ '--delay': '250ms' } as React.CSSProperties}>
+            <Link prefetch={false} href="/pretraga" className="inline-flex h-13 items-center justify-center gap-2 rounded-[16px] bg-[#F26A00] px-6 text-[15px] font-black text-white shadow-[0_16px_30px_rgba(242,106,0,.24)] transition hover:-translate-y-1 hover:rotate-[-.5deg] active:scale-[.98] sm:h-14 sm:px-7 sm:text-base">
               <Search className="h-5 w-5" />
               Kreni od potrebe
             </Link>
-            <Link prefetch={false} href="/izgubljeni/prijavi" className="inline-flex h-13 items-center justify-center gap-2 rounded-[16px] border border-[#4F7772] bg-[#FFFDF8] px-6 text-[15px] font-black text-[#103D3A] shadow-[0_10px_22px_rgba(80,55,25,.07)] transition hover:-translate-y-0.5 sm:h-14 sm:px-7 sm:text-base">
+            <Link prefetch={false} href="/izgubljeni/prijavi" className="inline-flex h-13 items-center justify-center gap-2 rounded-[16px] border border-[#4F7772] bg-[#FFFDF8] px-6 text-[15px] font-black text-[#103D3A] shadow-[0_10px_22px_rgba(80,55,25,.07)] transition hover:-translate-y-1 hover:rotate-[.5deg] active:scale-[.98] sm:h-14 sm:px-7 sm:text-base">
               <Bell className="h-5 w-5" />
               Objavi upozorenje
             </Link>
           </div>
-          <div className="mt-7 grid gap-3 sm:grid-cols-3 lg:mt-9">
-            {trustItems.map(({ title, body, Icon }) => (
-              <div key={title} className="rounded-[22px] border border-[#E7DDCC] bg-[#FFFDF8]/88 p-4 shadow-[0_12px_24px_rgba(80,55,25,.06)]">
-                <Icon className="h-6 w-6 text-[#159C98]" />
-                <p className="mt-3 text-sm font-black leading-5 text-[#003B2F]">{title}</p>
-                <p className="mt-1 text-xs font-semibold leading-4 text-[#65746E]">{body}</p>
-              </div>
-            ))}
-          </div>
         </div>
 
         <HeroVisual />
+      </section>
+
+      <section aria-label="PetPark povjerenje" className="petpark-pop-in grid gap-3 sm:grid-cols-3" style={{ '--delay': '330ms' } as React.CSSProperties}>
+        {trustItems.map(({ title, body, Icon }) => (
+          <div key={title} className="rounded-[22px] border border-[#E7DDCC] bg-[#FFFDF8]/88 p-4 shadow-[0_12px_24px_rgba(80,55,25,.06)] transition duration-300 hover:-translate-y-1 hover:rotate-[-.5deg]">
+            <Icon className="h-6 w-6 text-[#159C98]" />
+            <p className="mt-3 text-sm font-black leading-5 text-[#003B2F]">{title}</p>
+            <p className="mt-1 text-xs font-semibold leading-4 text-[#65746E]">{body}</p>
+          </div>
+        ))}
       </section>
 
       <section aria-label="PetPark usluge" className="-mx-[18px] overflow-hidden border-y border-[#E5DAC8] bg-[#FFF8ED]/70 py-4 sm:-mx-8 lg:mx-0 lg:rounded-[28px] lg:border lg:px-4 lg:shadow-[0_12px_26px_rgba(80,55,25,.06)]">
