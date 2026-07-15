@@ -1,15 +1,21 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {
+  BadgeCheck,
   Bell,
   BookOpen,
   ChevronRight,
+  Footprints,
   Heart,
+  HeartHandshake,
+  Home,
   MapPin,
   MessageCircle,
   PawPrint,
   Search,
+  Scissors,
   ShieldCheck,
+  type LucideIcon,
   UsersRound,
 } from 'lucide-react';
 import { PetParkLogo } from '@/components/shared/brand';
@@ -21,24 +27,6 @@ type HomepageRedesignProps = {
 
 type CategoryIconName = 'care' | 'walk' | 'grooming' | 'training' | 'lost' | 'adoption';
 type Tone = 'orange' | 'green' | 'teal' | 'yellow';
-
-const officialCategoryIcons: Record<CategoryIconName, string> = {
-  care: '/images/design-lab/official/icons/icon-only/cuvanje.svg',
-  walk: '/images/design-lab/official/icons/icon-only/setnja.svg',
-  grooming: '/images/design-lab/official/icons/icon-only/grooming.svg',
-  training: '/images/design-lab/official/icons/icon-only/trening.svg',
-  lost: '/images/design-lab/official/icons/icon-only/izgubljeni.svg',
-  adoption: '/images/design-lab/official/icons/icon-only/udomljavanje.svg',
-};
-
-const officialCategoryCards: Record<CategoryIconName, string> = {
-  care: '/images/design-lab/official/icons/card-with-label/cuvanje.svg',
-  walk: '/images/design-lab/official/icons/card-with-label/setnja.svg',
-  grooming: '/images/design-lab/official/icons/card-with-label/grooming.svg',
-  training: '/images/design-lab/official/icons/card-with-label/trening.svg',
-  lost: '/images/design-lab/official/icons/card-with-label/izgubljeni.svg',
-  adoption: '/images/design-lab/official/icons/card-with-label/udomljavanje.svg',
-};
 
 const navItems = [
   { label: 'Usluge', href: '/usluge' },
@@ -129,72 +117,19 @@ const shellHideCss = `
   }
 `;
 
-function CategoryGlyph({ name }: { name: CategoryIconName }) {
-  const common = 'h-7 w-7';
+const categoryIconMap: Record<CategoryIconName, LucideIcon> = {
+  care: Home,
+  walk: Footprints,
+  grooming: Scissors,
+  training: BadgeCheck,
+  lost: MapPin,
+  adoption: HeartHandshake,
+};
 
-  if (name === 'care') {
-    return (
-      <svg viewBox="0 0 48 48" className={common} fill="none" aria-hidden="true">
-        <path d="M13.5 24 24 15.2 34.5 24" stroke="currentColor" strokeWidth="4.4" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M17 23.2v12h14v-12" fill="currentColor" />
-        <circle cx="24" cy="30" r="3.8" fill="#fff7ec" />
-        <circle cx="24" cy="30" r="1.35" fill="currentColor" />
-      </svg>
-    );
-  }
+function CategoryGlyph({ name, className = 'h-7 w-7' }: { name: CategoryIconName; className?: string }) {
+  const Icon = categoryIconMap[name];
 
-  if (name === 'walk') {
-    return (
-      <svg viewBox="0 0 48 48" className={common} fill="none" aria-hidden="true">
-        <circle cx="17" cy="31" r="4.7" stroke="currentColor" strokeWidth="4" />
-        <circle cx="31" cy="17" r="4.7" stroke="currentColor" strokeWidth="4" />
-        <path d="M20.7 27.3 27.3 20.7" stroke="currentColor" strokeWidth="4.4" strokeLinecap="round" />
-        <path d="M13.7 34.3 10.8 37.2M34.3 13.7l2.9-2.9" stroke="currentColor" strokeWidth="3.4" strokeLinecap="round" />
-      </svg>
-    );
-  }
-
-  if (name === 'grooming') {
-    return (
-      <svg viewBox="0 0 48 48" className={common} fill="none" aria-hidden="true">
-        <path d="m14 14 20 20" stroke="currentColor" strokeWidth="4.4" strokeLinecap="round" />
-        <path d="m34 14-20 20" stroke="currentColor" strokeWidth="4.4" strokeLinecap="round" />
-        <circle cx="14" cy="35" r="4.3" stroke="currentColor" strokeWidth="3.7" />
-        <circle cx="34" cy="35" r="4.3" stroke="currentColor" strokeWidth="3.7" />
-      </svg>
-    );
-  }
-
-  if (name === 'training') {
-    return (
-      <svg viewBox="0 0 48 48" className={common} fill="none" aria-hidden="true">
-        <path d="M8 19.5 24 11.5l16 8-16 8-16-8Z" fill="currentColor" />
-        <path d="M15.5 25.2v6.9c4.7 3.1 12.3 3.1 17 0v-6.9" fill="currentColor" />
-        <path d="M38.5 21.2v9" stroke="currentColor" strokeWidth="3.3" strokeLinecap="round" />
-        <circle cx="38.5" cy="33" r="2.1" fill="currentColor" />
-      </svg>
-    );
-  }
-
-  if (name === 'lost') {
-    return (
-      <svg viewBox="0 0 48 48" className={common} fill="none" aria-hidden="true">
-        <path d="M24 41s12.5-11.9 12.5-23.4a12.5 12.5 0 0 0-25 0C11.5 29.1 24 41 24 41Z" fill="currentColor" />
-        <circle cx="24" cy="18" r="5.1" fill="#eef3e6" />
-      </svg>
-    );
-  }
-
-  return (
-    <svg viewBox="0 0 48 48" className={common} fill="none" aria-hidden="true">
-      <circle cx="24" cy="16.2" r="4.6" fill="currentColor" />
-      <circle cx="14.5" cy="20.6" r="3.8" fill="currentColor" />
-      <circle cx="33.5" cy="20.6" r="3.8" fill="currentColor" />
-      <circle cx="18.5" cy="29.5" r="3.8" fill="currentColor" />
-      <circle cx="29.5" cy="29.5" r="3.8" fill="currentColor" />
-      <path d="M24 38.5c-5.8-3.9-8.2-6.4-8.2-9.1 0-2.2 1.7-3.8 3.9-3.8 1.7 0 3.2.9 4.3 2.4 1.1-1.5 2.6-2.4 4.3-2.4 2.2 0 3.9 1.6 3.9 3.8 0 2.7-2.4 5.2-8.2 9.1Z" fill="#fff7ec" />
-    </svg>
-  );
+  return <Icon className={className} aria-hidden="true" strokeWidth={2.3} />;
 }
 
 function CategoryCard({ label, href, icon, tone }: (typeof categories)[number]) {
@@ -207,8 +142,8 @@ function CategoryCard({ label, href, icon, tone }: (typeof categories)[number]) 
       style={{ width: cardWidth }}
       className="flex h-[121px] flex-col items-center justify-center rounded-[11px] border border-[#E9E0D1] bg-[#FFFDF8] text-center shadow-[0_10px_24px_rgba(80,55,25,.09)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2"
     >
-      <span className={cn('mb-[15px] flex h-[59px] w-[59px] items-center justify-center rounded-full', tone === 'orange' ? 'bg-[#FBE9DB]' : 'bg-[#E9F0DF]')}>
-        <img src={officialCategoryIcons[icon]} alt="" width={44} height={44} className="h-11 w-11" aria-hidden="true" />
+      <span className={cn('mb-[15px] flex h-[59px] w-[59px] items-center justify-center rounded-[18px]', tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
+        <CategoryGlyph name={icon} className="h-8 w-8" />
       </span>
       <span className="text-[14px] font-semibold leading-none text-[#141c18]">{label}</span>
     </Link>
@@ -270,8 +205,8 @@ function MobileCategoryCard({ label, href, icon, tone }: (typeof categories)[num
       className="group flex min-h-[126px] w-full max-w-[112px] flex-col items-center justify-center rounded-[18px] border border-[#E7DDCC] bg-[#FFFDF8] px-2 text-center shadow-[0_12px_24px_rgba(80,55,25,.08)] transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2 focus-visible:ring-offset-[#FAF6EA] sm:max-w-[124px] md:max-w-[132px] md:min-h-[136px]"
       style={{ paddingLeft: 8, paddingRight: 8, paddingTop: 12, paddingBottom: 12 }}
     >
-      <span className={cn('mb-2.5 flex h-[66px] w-[66px] items-center justify-center rounded-full md:h-[72px] md:w-[72px]', tone === 'orange' ? 'bg-[#FBE9DB]' : 'bg-[#E9F0DF]')}>
-        <img src={officialCategoryIcons[icon]} alt="" width={52} height={52} className="h-[52px] w-[52px] select-none md:h-[58px] md:w-[58px]" aria-hidden="true" draggable={false} />
+      <span className={cn('mb-2.5 flex h-[66px] w-[66px] items-center justify-center rounded-[20px] md:h-[72px] md:w-[72px]', tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
+        <CategoryGlyph name={icon} className="h-9 w-9 md:h-10 md:w-10" />
       </span>
       <span className="text-[13px] font-black leading-[15px] text-[#14231D] sm:text-[14px] sm:leading-4">{label}</span>
     </Link>
@@ -517,8 +452,8 @@ function PremiumDesktopHomepage({ isPreview }: { isPreview: boolean }) {
             <div className="absolute -bottom-2 left-6 right-6 grid grid-cols-3 gap-3">
               {categories.slice(0, 3).map((category) => (
                 <Link key={category.label} prefetch={false} href={category.href} className="rounded-[22px] border border-[#E7DDCC] bg-[#FFFDF8] p-4 text-center shadow-[0_16px_34px_rgba(80,55,25,.10)] transition hover:-translate-y-0.5">
-                  <span className={cn('mx-auto flex h-14 w-14 items-center justify-center rounded-full', category.tone === 'orange' ? 'bg-[#FBE9DB]' : 'bg-[#E9F0DF]')}>
-                    <img src={officialCategoryIcons[category.icon]} alt="" width={42} height={42} className="h-[42px] w-[42px]" aria-hidden="true" />
+                  <span className={cn('mx-auto flex h-14 w-14 items-center justify-center rounded-[18px]', category.tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
+                    <CategoryGlyph name={category.icon} className="h-8 w-8" />
                   </span>
                   <span className="mt-3 block text-sm font-black text-[#14231D]">{category.label}</span>
                 </Link>
@@ -530,8 +465,8 @@ function PremiumDesktopHomepage({ isPreview }: { isPreview: boolean }) {
         <section aria-label="PetPark usluge" className="grid grid-cols-6 gap-3">
           {categories.map((category) => (
             <Link key={category.label} prefetch={false} href={category.href} className="group rounded-[24px] border border-[#E7DDCC] bg-[#FFFDF8] p-4 text-center shadow-[0_12px_26px_rgba(80,55,25,.07)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_34px_rgba(80,55,25,.10)]">
-              <span className={cn('mx-auto flex h-16 w-16 items-center justify-center rounded-full transition group-hover:scale-105', category.tone === 'orange' ? 'bg-[#FBE9DB]' : 'bg-[#E9F0DF]')}>
-                <img src={officialCategoryIcons[category.icon]} alt="" width={48} height={48} className="h-12 w-12" aria-hidden="true" />
+              <span className={cn('mx-auto flex h-16 w-16 items-center justify-center rounded-[20px] transition group-hover:scale-105', category.tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
+                <CategoryGlyph name={category.icon} className="h-9 w-9" />
               </span>
               <span className="mt-3 block text-sm font-black text-[#14231D]">{category.label}</span>
             </Link>
