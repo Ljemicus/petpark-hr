@@ -124,10 +124,10 @@ const liveFeed = [
 ];
 
 const quickAccess = [
-  { title: 'Pitaj zajednicu', body: 'Kratko pitanje, stvaran odgovor vlasnika ili stručnjaka.', href: '/forum', Icon: MessageCircle, tone: 'teal' as Tone },
-  { title: 'Prijavi izgubljenog', body: 'Objava s lokacijom i jasnim kontaktom.', href: '/izgubljeni/prijavi', Icon: Bell, tone: 'orange' as Tone },
-  { title: 'Pronađi uslugu', body: 'Kreni od potrebe ljubimca, ne od beskrajnog kataloga.', href: '/usluge', Icon: Search, tone: 'green' as Tone },
-  { title: 'Pročitaj vodič', body: 'Praktični savjeti za rutinu, zdravlje i ponašanje.', href: '/blog', Icon: BookOpen, tone: 'yellow' as Tone },
+  { title: 'Pitaj zajednicu', body: 'Kad nisi siguran, pitaj ljude koji su to već prošli.', href: '/forum', Icon: MessageCircle, tone: 'teal' as Tone },
+  { title: 'Prijavi izgubljenog', body: 'Fotografija, lokacija i kontakt odmah idu pred kvart.', href: '/izgubljeni/prijavi', Icon: Bell, tone: 'orange' as Tone },
+  { title: 'Pronađi pomoć', body: 'Čuvanje, šetnja ili njega kad ti dan ode u stranu.', href: '/usluge', Icon: Search, tone: 'green' as Tone },
+  { title: 'Pročitaj vodič', body: 'Kratki savjeti za one male brige koje vlasnici dobro znaju.', href: '/blog', Icon: BookOpen, tone: 'yellow' as Tone },
 ];
 
 const flowItems = [
@@ -138,9 +138,9 @@ const flowItems = [
 ];
 
 const trustItems = [
-  { title: 'Jasniji prvi korak', body: 'Upit kreće od ljubimca, rutine i datuma.', Icon: CheckCircle2 },
-  { title: 'Manje slijepog biranja', body: 'Profili, grad, iskustvo i način rada su odmah vidljivi.', Icon: ShieldCheck },
-  { title: 'Portal, ne samo oglasnik', body: 'Usluge, savjeti, upozorenja i udomljavanje žive zajedno.', Icon: UsersRound },
+  { title: 'Mirniji prvi dogovor', body: 'Odmah kažeš rutinu, navike, datume i što ljubimac ne voli.', Icon: CheckCircle2 },
+  { title: 'Ljudi iz tvog kraja', body: 'Vidiš gdje rade, kako komuniciraju i kome bi stvarno vjerovao.', Icon: ShieldCheck },
+  { title: 'Kad se nešto dogodi', body: 'Upit, savjet ili upozorenje ne ostaje zakopano u chatu.', Icon: UsersRound },
 ];
 
 const shellHideCss = `
@@ -370,12 +370,12 @@ function MotionFlowSection() {
     <section className="relative flex flex-col overflow-hidden rounded-[34px] border border-[#0F6B57]/18 bg-[#0F6B57] p-5 text-white shadow-[0_24px_60px_rgba(18,56,41,.18)] sm:p-7 lg:grid lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:gap-8 lg:p-8">
       <div className="petpark-sheen pointer-events-none absolute inset-0 opacity-70" />
       <div className="relative z-10">
-        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#FFE0BC]">PetPark u pokretu</p>
+        <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#FFE0BC]">Dan s ljubimcem</p>
         <h2 className="mt-3 max-w-[520px] font-serif text-[34px] font-black leading-[.98] tracking-[-0.055em] sm:text-5xl lg:text-[58px]">
-          Ne stoji kao katalog. Radi kao dnevni tok.
+          Nije katalog. Više je kao netko tko je tu kad zapne.
         </h2>
         <p className="mt-4 max-w-[520px] text-[15px] font-semibold leading-7 text-white/74 sm:text-base">
-          Upit, odgovor, šetnja, alert i savjet trebaju izgledati kao da se stvarno događaju. Zato je PetPark više feed nego statična brošura.
+          Jedan dan trebaš čuvanje, drugi savjet, treći pomoć oko izgubljenog ljubimca. PetPark drži te trenutke zajedno, bez traženja po deset grupa.
         </p>
         <div className="mt-6 flex flex-col gap-3 sm:flex-row">
           <Link prefetch={false} href="/pretraga" className="inline-flex h-12 items-center justify-center gap-2 rounded-[16px] bg-[#FFE0BC] px-5 text-sm font-black text-[#123829] shadow-[0_14px_28px_rgba(0,0,0,.14)] transition hover:-translate-y-1 active:scale-[.98]">
@@ -526,22 +526,22 @@ function HomeContent() {
         <div className="relative z-10 max-w-[740px]">
           <div className="petpark-pop-in inline-flex items-center gap-2 rounded-full border border-[#E9E0D1] bg-[#FFFDF8]/92 px-4 py-2 text-[11px] font-black uppercase tracking-[0.12em] text-[#C65F26] shadow-sm sm:text-xs">
             <PawPrint className="h-4 w-4 fill-[#F26A00] text-[#F26A00]" />
-            PetPark portal za stvarne dane
+            Za dane kad trebaš nekoga svog
           </div>
           <h1 className="petpark-pop-in mt-5 max-w-[720px] font-serif text-[40px] font-black leading-[0.98] tracking-[-0.058em] text-[#003B2F] min-[390px]:text-[43px] sm:text-[64px] lg:mt-7 lg:text-[78px] xl:text-[86px]" style={{ '--delay': '90ms' } as React.CSSProperties}>
-            Kad ljubimcu treba netko pravi, ne samo oglas.
+            Kad ne možeš biti uz njih, nađi nekoga tko može.
           </h1>
           <p className="petpark-pop-in mt-5 max-w-[650px] text-[16px] font-semibold leading-[25px] text-[#46545A] sm:text-[19px] sm:leading-[30px] lg:mt-6 lg:text-[20px] lg:leading-8" style={{ '--delay': '170ms' } as React.CSSProperties}>
-            PetPark spaja usluge, kvartovske objave, savjete i udomljavanje u portal koji se ponaša kao živa zajednica, a izgleda dovoljno ozbiljno da mu vjeruješ.
+            Čuvanje preko vikenda, šetnja nakon posla, grooming prije puta ili alarm kad se ljubimac izgubi. PetPark je mjesto za sve one situacije kad ti treba pomoć, ali ne želiš birati naslijepo.
           </p>
           <div className="petpark-pop-in mt-7 flex flex-col gap-3 sm:flex-row lg:mt-8" style={{ '--delay': '250ms' } as React.CSSProperties}>
             <Link prefetch={false} href="/pretraga" className="inline-flex h-13 items-center justify-center gap-2 rounded-[16px] bg-[#F26A00] px-6 text-[15px] font-black text-white shadow-[0_16px_30px_rgba(242,106,0,.24)] transition hover:-translate-y-1 hover:rotate-[-.5deg] active:scale-[.98] sm:h-14 sm:px-7 sm:text-base">
               <Search className="h-5 w-5" />
-              Kreni od potrebe
+              Nađi pomoć danas
             </Link>
             <Link prefetch={false} href="/izgubljeni/prijavi" className="inline-flex h-13 items-center justify-center gap-2 rounded-[16px] border border-[#4F7772] bg-[#FFFDF8] px-6 text-[15px] font-black text-[#103D3A] shadow-[0_10px_22px_rgba(80,55,25,.07)] transition hover:-translate-y-1 hover:rotate-[.5deg] active:scale-[.98] sm:h-14 sm:px-7 sm:text-base">
               <Bell className="h-5 w-5" />
-              Objavi upozorenje
+              Prijavi izgubljenog
             </Link>
           </div>
         </div>
@@ -569,15 +569,15 @@ function HomeContent() {
 
       <section id="kako-radi" className="grid gap-5 lg:grid-cols-[.92fr_1.08fr] lg:items-start">
         <div className="rounded-[32px] border border-[#E5DAC8] bg-[#123829] p-6 text-white shadow-[0_22px_54px_rgba(18,56,41,.18)] lg:sticky lg:top-6 lg:min-h-[520px] lg:p-8">
-          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#FFE0BC]">PetPark ritam</p>
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-[#FFE0BC]">Kako ljudi stvarno traže</p>
           <h2 className="mt-3 max-w-[520px] font-serif text-[40px] font-black leading-[0.98] tracking-[-0.055em] sm:text-5xl lg:text-[58px]">
-            Prvo situacija. Onda usluga.
+            Prvo problem. Onda prava osoba.
           </h2>
           <p className="mt-5 max-w-[500px] text-[15px] font-semibold leading-7 text-white/74 sm:text-base">
-            Vlasnici najčešće dolaze s konkretnom situacijom: subota, put, kvart, pas koji vuče ili životinja koja treba dom. PetPark ih vodi od tog trenutka do prave pomoći.
+            Nitko ne kreće od kategorije. Kreće od toga da radiš do kasno, putuješ za vikend, pas treba više kretanja ili mačka ne voli nepoznate ljude. PetPark te od toga vodi do pomoći koja ima smisla.
           </p>
           <div className="mt-8 grid gap-3">
-            {['Tko je ljubimac?', 'Što se događa danas?', 'Tko može stvarno pomoći?'].map((step, index) => (
+            {['Kakav je ljubimac?', 'Što se stvarno događa?', 'Tko mu može odgovarati?'].map((step, index) => (
               <div key={step} className="flex items-center gap-3 rounded-[20px] border border-white/12 bg-white/8 p-3">
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#FFE0BC] text-sm font-black text-[#123829]">{index + 1}</span>
                 <span className="text-sm font-black">{step}</span>
@@ -598,8 +598,8 @@ function HomeContent() {
         <div className="rounded-[32px] border border-[#E7DDCC] bg-[#FFF7EC]/82 p-5 shadow-[0_18px_38px_rgba(80,55,25,.08)] sm:p-6">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#C65F26]">Portal feed</p>
-              <h2 className="mt-1 font-serif text-[36px] font-black tracking-[-0.05em] text-[#003B2F] sm:text-5xl">Danas se događa</h2>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#C65F26]">Iz susjedstva</p>
+              <h2 className="mt-1 font-serif text-[36px] font-black tracking-[-0.05em] text-[#003B2F] sm:text-5xl">Što se danas događa</h2>
             </div>
             <Link prefetch={false} href="/zajednica" className="inline-flex items-center gap-1 rounded-full bg-[#FFFDF8] px-4 py-2 text-sm font-black text-[#C65F26] shadow-sm">
               Sve <ChevronRight className="h-4 w-4" />
