@@ -4,7 +4,9 @@ import {
   BadgeCheck,
   Bell,
   BookOpen,
+  Camera,
   ChevronRight,
+  Clock3,
   Footprints,
   Heart,
   HeartHandshake,
@@ -42,6 +44,21 @@ const categories: { label: string; href: string; icon: CategoryIconName; tone: '
   { label: 'Trening', href: '/dresura', icon: 'training', tone: 'green' },
   { label: 'Izgubljeni', href: '/izgubljeni', icon: 'lost', tone: 'green' },
   { label: 'Udomljavanje', href: '/udomljavanje', icon: 'adoption', tone: 'orange' },
+];
+
+const serviceDetails: Record<CategoryIconName, string> = {
+  care: 'noćenje i posjete',
+  walk: 'šetnje po kvartu',
+  grooming: 'kupanje i šišanje',
+  training: 'rad s trenerom',
+  lost: 'brza objava',
+  adoption: 'novi dom',
+};
+
+const dailySignals = [
+  { title: 'Photo update iz čuvanja', meta: 'mirna poruka vlasniku', Icon: Camera, tone: 'orange' as Tone },
+  { title: 'Šetnja u 18:30', meta: 'dogovor po kvartu', Icon: Clock3, tone: 'green' as Tone },
+  { title: 'Upit za vikend', meta: 'miran stan i rutina', Icon: PawPrint, tone: 'teal' as Tone },
 ];
 
 const feedItems = [
@@ -133,19 +150,20 @@ function CategoryGlyph({ name, className = 'h-7 w-7' }: { name: CategoryIconName
 }
 
 function CategoryCard({ label, href, icon, tone }: (typeof categories)[number]) {
-  const cardWidth = label === 'Čuvanje' || label === 'Šetnja' ? 90 : label === 'Udomljavanje' ? 100 : 96;
+  const cardWidth = label === 'Čuvanje' || label === 'Šetnja' ? 112 : label === 'Udomljavanje' ? 124 : 116;
 
   return (
     <Link
       prefetch={false}
       href={href}
       style={{ width: cardWidth }}
-      className="flex h-[121px] flex-col items-center justify-center rounded-[11px] border border-[#E9E0D1] bg-[#FFFDF8] text-center shadow-[0_10px_24px_rgba(80,55,25,.09)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2"
+      className="flex h-[132px] flex-col items-center justify-center rounded-[18px] border border-[#E9E0D1] bg-[#FFFDF8] text-center shadow-[0_10px_24px_rgba(80,55,25,.09)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_28px_rgba(80,55,25,.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F26A00] focus-visible:ring-offset-2"
     >
-      <span className={cn('mb-[15px] flex h-[59px] w-[59px] items-center justify-center rounded-[18px]', tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
+      <span className={cn('mb-3 flex h-[58px] w-[58px] items-center justify-center rounded-[18px]', tone === 'orange' ? 'bg-[#FBE9DB] text-[#C65F26]' : 'bg-[#E9F0DF] text-[#0F6B57]')}>
         <CategoryGlyph name={icon} className="h-8 w-8" />
       </span>
       <span className="text-[14px] font-semibold leading-none text-[#141c18]">{label}</span>
+      <span className="mt-1.5 max-w-[92px] text-[10px] font-bold leading-3 text-[#718078]">{serviceDetails[icon]}</span>
     </Link>
   );
 }
@@ -195,6 +213,27 @@ function QuickIcon({ tone, Icon }: { tone: Tone; Icon: React.ComponentType<{ cla
   );
 }
 
+function DailySignal({ title, meta, Icon, tone }: (typeof dailySignals)[number]) {
+  return (
+    <div className="group flex items-center gap-3 rounded-[18px] border border-[#E7DDCC] bg-[#FFFDF8]/92 p-3 shadow-[0_12px_26px_rgba(80,55,25,.08)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(80,55,25,.12)]">
+      <span
+        className={cn(
+          'flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px]',
+          tone === 'orange' && 'bg-[#FBE9DB] text-[#C65F26]',
+          tone === 'green' && 'bg-[#E9F0DF] text-[#0F6B57]',
+          tone === 'teal' && 'bg-[#DDF1EE] text-[#08776F]',
+        )}
+      >
+        <Icon className="h-5 w-5" />
+      </span>
+      <span className="min-w-0">
+        <span className="block text-[13px] font-black leading-4 text-[#123D36]">{title}</span>
+        <span className="mt-0.5 block text-[11px] font-bold leading-4 text-[#66736D]">{meta}</span>
+      </span>
+    </div>
+  );
+}
+
 
 function MobileCategoryCard({ label, href, icon, tone }: (typeof categories)[number]) {
   return (
@@ -209,6 +248,7 @@ function MobileCategoryCard({ label, href, icon, tone }: (typeof categories)[num
         <CategoryGlyph name={icon} className="h-9 w-9 md:h-10 md:w-10" />
       </span>
       <span className="text-[13px] font-black leading-[15px] text-[#14231D] sm:text-[14px] sm:leading-4">{label}</span>
+      <span className="mt-1 max-w-[92px] text-[10px] font-bold leading-3 text-[#718078]">{serviceDetails[icon]}</span>
     </Link>
   );
 }
@@ -326,10 +366,17 @@ function MobileHomepage() {
           <div className="petpark-mobile-hero-visual relative mt-7 h-[238px] overflow-hidden rounded-[30px] border border-[#E7DDCC] bg-[#FFFDF8]/75 shadow-[0_22px_46px_rgba(80,55,25,.12)] sm:h-[330px] md:mt-0 md:h-[340px] md:w-[310px] md:shrink-0 md:rounded-[34px]">
             <Image src="/images/design-lab/petpark-reference-hero-mobile-clean.webp" alt="Pas i mačka u PetPark zajednici" fill sizes="(max-width: 640px) 100vw, 0px" className="object-cover object-center sm:hidden" />
             <Image src="/images/design-lab/petpark-reference-hero-tablet-clean.webp" alt="Pas i mačka u PetPark zajednici" fill sizes="(min-width: 640px) 720px, 0px" className="hidden object-cover object-center sm:block" />
+            <div className="absolute left-3 top-3 flex items-center gap-2 rounded-[16px] border border-white/70 bg-[#FFFDF8]/90 px-3 py-2 shadow-[0_10px_22px_rgba(80,55,25,.12)] backdrop-blur">
+              <span className="h-2.5 w-2.5 rounded-[4px] bg-[#159C98]" />
+              <span className="text-[12px] font-black text-[#123D36]">Danas na PetParku</span>
+            </div>
             <div className="absolute bottom-3 left-3 right-3 rounded-[18px] border border-white/70 bg-[#FFFDF8]/88 px-4 py-3 shadow-[0_10px_24px_rgba(80,55,25,.12)] backdrop-blur" style={{ padding: '12px 16px' }}>
               <p className="text-[12px] font-black uppercase tracking-[0.12em] text-[#C65F26]">Danas na PetParku</p>
               <p className="mt-0.5 text-[14px] font-extrabold text-[#123D36] sm:text-[15px]">Pronađi pomoć, objavi upozorenje ili pitaj zajednicu.</p>
             </div>
+          </div>
+          <div className="mt-4 grid gap-2 sm:grid-cols-3 md:hidden">
+            {dailySignals.map((signal) => <DailySignal key={signal.title} {...signal} />)}
           </div>
         </section>
 
@@ -431,19 +478,17 @@ function PremiumDesktopHomepage({ isPreview }: { isPreview: boolean }) {
               </Link>
             </div>
             <div className="mt-9 grid max-w-[720px] grid-cols-3 gap-3">
-              {trustItems.slice(0, 3).map(({ title, body, Icon }) => (
-                <div key={title} className="rounded-[20px] border border-[#E7DDCC] bg-[#FFFDF8]/88 p-4 shadow-[0_12px_24px_rgba(80,55,25,.06)]">
-                  <Icon className="h-6 w-6 text-[#159C98]" />
-                  <p className="mt-3 text-sm font-black leading-5 text-[#003B2F]">{title}</p>
-                  <p className="mt-1 text-xs font-semibold leading-4 text-[#65746E]">{body}</p>
-                </div>
-              ))}
+              {dailySignals.map((signal) => <DailySignal key={signal.title} {...signal} />)}
             </div>
           </div>
 
           <div className="relative min-h-[610px]">
             <div className="absolute inset-x-0 top-0 h-[490px] overflow-hidden rounded-[38px] border border-[#E7DDCC] bg-[#FFFDF8]/80 shadow-[0_28px_70px_rgba(80,55,25,.16)]">
               <Image src="/images/design-lab/petpark-reference-hero-tablet-clean.webp" alt="Pas i mačka u PetPark zajednici" fill sizes="(min-width: 1024px) 48vw, 0px" className="object-cover object-center" priority />
+              <div className="absolute left-5 top-5 flex items-center gap-2 rounded-[18px] border border-white/70 bg-[#FFFDF8]/88 px-4 py-2 shadow-[0_12px_28px_rgba(80,55,25,.12)] backdrop-blur">
+                <span className="h-2.5 w-2.5 rounded-[4px] bg-[#159C98]" />
+                <span className="text-sm font-black text-[#123D36]">Danas na PetParku</span>
+              </div>
               <div className="absolute inset-x-5 bottom-5 rounded-[24px] border border-white/70 bg-[#FFFDF8]/90 p-5 shadow-[0_16px_32px_rgba(80,55,25,.14)] backdrop-blur">
                 <p className="text-xs font-black uppercase text-[#C65F26]">Care brief</p>
                 <p className="mt-1 text-lg font-black leading-6 text-[#123D36]">Mirno čuvanje, photo update svaki dan, verified profil.</p>
