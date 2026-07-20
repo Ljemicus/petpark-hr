@@ -172,7 +172,7 @@ export function AuthPage() {
 
                 <div className="flex flex-col gap-3 text-sm font-bold text-[color:var(--pp-color-muted-text)] sm:flex-row sm:items-center sm:justify-between">
                   <label className="inline-flex items-center gap-2">
-                    <input type="checkbox" className="size-4 rounded border-[color:var(--pp-color-warm-border)] accent-[color:var(--pp-color-orange-primary)]" />
+                    <input id="remember-me" type="checkbox" aria-label="Zapamti me" className="size-4 rounded border-[color:var(--pp-color-warm-border)] accent-[color:var(--pp-color-orange-primary)]" />
                     Zapamti me
                   </label>
                   <Link href="/zaboravljena-lozinka" className="text-[color:var(--pp-color-orange-primary)] hover:underline">

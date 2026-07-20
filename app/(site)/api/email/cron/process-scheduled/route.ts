@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { requireAdminOrCron } from '@/lib/admin-guard';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { sendEmail } from '@/lib/email';
 import { getWelcomeSequence } from '@/lib/email-sequences';
 import { appLogger } from '@/lib/logger';
@@ -12,15 +13,10 @@ import type { User } from '@/lib/types';
  */
 export async function GET(request: NextRequest) {
   try {
-    // Verify cron secret
-    const authHeader = request.headers.get('authorization');
-    const cronSecret = process.env.CRON_SECRET;
-    
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const guard = await requireAdminOrCron(request);
+    if (!guard.ok) return guard.response;
 
-    const supabase = await createClient();
+    const supabase = createAdminClient();
     
     // Get pending scheduled emails that should be sent
     const { data: pendingEmails, error } = await supabase

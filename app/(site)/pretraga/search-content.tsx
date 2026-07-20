@@ -253,7 +253,7 @@ function FilterPanel({
       <div className="mt-5 space-y-5">
         <label className="space-y-2 block">
           <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Usluga</span>
-          <Select value={selectedService} onChange={(event) => onSelectedServiceChange(event.target.value)}>
+          <Select aria-label="Odaberi uslugu" value={selectedService} onChange={(event) => onSelectedServiceChange(event.target.value)}>
             <option value="">Sve usluge</option>
             <option value="boarding">Čuvanje kod sittera</option>
             <option value="house-sitting">Čuvanje kod vlasnika</option>
@@ -267,7 +267,7 @@ function FilterPanel({
 
         <label className="space-y-2 block">
           <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Lokacija</span>
-          <Select value={city} onChange={(event) => onCityChange(event.target.value)}>
+          <Select aria-label="Odaberi lokaciju" value={city} onChange={(event) => onCityChange(event.target.value)}>
             <option value="">Svi gradovi</option>
             {CITIES.map((item) => <option key={item} value={item}>{item}</option>)}
           </Select>
@@ -276,14 +276,14 @@ function FilterPanel({
         <div className="space-y-2">
           <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Raspon cijene</span>
           <div className="grid grid-cols-2 gap-2">
-            <Input inputMode="numeric" placeholder="Od €" value={minPrice} onChange={(event) => onMinPriceChange(event.target.value.replace(/[^0-9]/g, ''))} />
-            <Input inputMode="numeric" placeholder="Do €" value={maxPrice} onChange={(event) => onMaxPriceChange(event.target.value.replace(/[^0-9]/g, ''))} />
+            <Input aria-label="Minimalna cijena" inputMode="numeric" placeholder="Od €" value={minPrice} onChange={(event) => onMinPriceChange(event.target.value.replace(/[^0-9]/g, ''))} />
+            <Input aria-label="Maksimalna cijena" inputMode="numeric" placeholder="Do €" value={maxPrice} onChange={(event) => onMaxPriceChange(event.target.value.replace(/[^0-9]/g, ''))} />
           </div>
         </div>
 
         <label className="space-y-2 block">
           <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Ocjena</span>
-          <Select value={minRating} onChange={(event) => onMinRatingChange(event.target.value)}>
+          <Select aria-label="Odaberi minimalnu ocjenu" value={minRating} onChange={(event) => onMinRatingChange(event.target.value)}>
             <option value="">Bilo koja ocjena</option>
             <option value="4.5">4.5+</option>
             <option value="4">4.0+</option>
@@ -293,7 +293,7 @@ function FilterPanel({
 
         <label className="space-y-2 block">
           <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Datum početka</span>
-          <Input type="date" value={date} onChange={(event) => onDateChange(event.target.value)} />
+          <Input aria-label="Datum početka" type="date" value={date} onChange={(event) => onDateChange(event.target.value)} />
         </label>
 
         <div className="space-y-3">
@@ -310,7 +310,7 @@ function FilterPanel({
             <span className="block text-sm font-black text-[color:var(--pp-color-forest-text)]">Samo verificirani</span>
             <span className="mt-1 block text-xs font-semibold text-[color:var(--pp-color-muted-text)]">Prikaži provjerene profile.</span>
           </span>
-          <input type="checkbox" checked={verifiedOnly} onChange={(event) => onVerifiedChange(event.target.checked)} className="size-5 accent-[color:var(--pp-color-orange-primary)]" />
+          <input type="checkbox" aria-label="Prikaži samo verificirane profile" checked={verifiedOnly} onChange={(event) => onVerifiedChange(event.target.checked)} className="size-5 accent-[color:var(--pp-color-orange-primary)]" />
         </label>
 
         <Button onClick={onApply} className="w-full"><SlidersHorizontal className="size-4" /> Primijeni filtere</Button>
@@ -545,18 +545,18 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
                 <form action="/pretraga" className="space-y-4">
                   <label className="relative block">
                     <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
-                    <Input name="q" placeholder="Sitter, grooming, trening..." value={query} onChange={(event) => setQuery(event.target.value)} className="pl-12" />
+                    <Input name="q" aria-label="Pojam pretrage" placeholder="Sitter, grooming, trening..." value={query} onChange={(event) => setQuery(event.target.value)} className="pl-12" />
                   </label>
                   <label className="relative block">
                     <MapPin className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-orange-primary)]" aria-hidden />
-                    <Input name="city" placeholder="Grad ili kvart" value={city} onChange={(event) => setCity(event.target.value)} className="pl-12" />
+                    <Input name="city" aria-label="Grad ili kvart" placeholder="Grad ili kvart" value={city} onChange={(event) => setCity(event.target.value)} className="pl-12" />
                   </label>
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <Select name="pet">
+                    <Select name="pet" aria-label="Odaberi ljubimca">
                       <option>Luna - pas, 12 kg</option>
                       <option>Novi ljubimac</option>
                     </Select>
-                    <Select name="need">
+                    <Select name="need" aria-label="Odaberi posebnu potrebu">
                       <option>Senior friendly</option>
                       <option>Reaktivni psi</option>
                       <option>Lijekovi</option>

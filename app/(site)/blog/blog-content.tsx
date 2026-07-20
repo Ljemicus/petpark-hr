@@ -117,7 +117,7 @@ export function BlogContent({ articles, initialCategory }: BlogContentProps) {
               <Card radius="28" tone="cream" className="p-4 sm:p-5">
                 <label className="relative block">
                   <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
-                  <Input placeholder="Pretraži savjete..." value={query} onChange={(event) => setQuery(event.target.value)} className="pl-12" />
+                  <Input aria-label="Pretraži savjete" placeholder="Pretraži savjete..." value={query} onChange={(event) => setQuery(event.target.value)} className="pl-12" />
                 </label>
               </Card>
             </div>
@@ -201,7 +201,7 @@ export function BlogContent({ articles, initialCategory }: BlogContentProps) {
               <Card radius="28" tone="sage" className="p-5">
                 <h2 className="flex items-center gap-2 text-xl font-black tracking-[-0.03em] text-[color:var(--pp-color-forest-text)]"><Mail className="size-5 text-[color:var(--pp-color-teal-accent)]" /> Newsletter</h2>
                 <p className="mt-3 text-sm font-semibold leading-6 text-[color:var(--pp-color-muted-text)]">Uskoro: tjedni PetPark savjeti bez spama i bez vanjskog slanja u ovom prolazu.</p>
-                <Input disabled placeholder="email@primjer.com" className="mt-4" />
+                <Input disabled aria-label="Email za newsletter" placeholder="email@primjer.com" className="mt-4" />
                 <Button disabled className="mt-3 w-full">Prijavi me</Button>
               </Card>
 

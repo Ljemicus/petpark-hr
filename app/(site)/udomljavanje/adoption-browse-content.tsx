@@ -176,7 +176,7 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
               <div className="space-y-4">
                 <label className="relative block">
                   <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
-                  <Input placeholder="Pretraži po imenu, pasmini, gradu..." value={search} onChange={(event) => setSearch(event.target.value)} className="pl-12" />
+                  <Input aria-label="Pretraži udomljavanje" placeholder="Pretraži po imenu, pasmini, gradu..." value={search} onChange={(event) => setSearch(event.target.value)} className="pl-12" />
                 </label>
                 <div className="flex flex-wrap gap-2">
                   <FilterPill active={speciesFilter === 'dog'} onClick={() => setSpeciesFilter(speciesFilter === 'dog' ? 'all' : 'dog')}>Pas</FilterPill>
@@ -187,7 +187,7 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
               <div className="grid gap-3 sm:grid-cols-3 lg:w-[620px]">
                 <label className="space-y-2">
                   <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Dob</span>
-                  <Select value={ageFilter} onChange={(event) => setAgeFilter(event.target.value)}>
+                  <Select aria-label="Filtriraj po dobi" value={ageFilter} onChange={(event) => setAgeFilter(event.target.value)}>
                     <option value="all">Sve dobi</option>
                     <option value="young">Mladi</option>
                     <option value="adult">Odrasli</option>
@@ -195,7 +195,7 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
                 </label>
                 <label className="space-y-2">
                   <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Veličina</span>
-                  <Select value={sizeFilter} onChange={(event) => setSizeFilter(event.target.value)}>
+                  <Select aria-label="Filtriraj po veličini" value={sizeFilter} onChange={(event) => setSizeFilter(event.target.value)}>
                     <option value="all">Sve</option>
                     <option value="small">Mali</option>
                     <option value="medium">Srednji</option>
@@ -204,7 +204,7 @@ export function AdoptionBrowseContent({ listings }: { listings: AdoptionListingC
                 </label>
                 <label className="space-y-2">
                   <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Lokacija</span>
-                  <Select value={cityFilter} onChange={(event) => setCityFilter(event.target.value)}>
+                  <Select aria-label="Filtriraj po lokaciji" value={cityFilter} onChange={(event) => setCityFilter(event.target.value)}>
                     <option value="all">Svi gradovi</option>
                     {CITIES.map((city) => <option key={city} value={city}>{city}</option>)}
                   </Select>

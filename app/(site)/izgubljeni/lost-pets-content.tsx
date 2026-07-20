@@ -255,7 +255,7 @@ export function LostPetsContent({ initialPets = [] }: LostPetsContentProps) {
               <div className="space-y-4">
                 <label className="relative block">
                   <Search className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
-                  <Input placeholder="Pretraži po imenu, pasmini, lokaciji..." value={search} onChange={(event) => setSearch(event.target.value)} className="pl-12" />
+                  <Input aria-label="Pretraži izgubljene ljubimce" placeholder="Pretraži po imenu, pasmini, lokaciji..." value={search} onChange={(event) => setSearch(event.target.value)} className="pl-12" />
                 </label>
                 <div className="flex flex-wrap gap-2">
                   <FilterPill active={statusFilter === 'lost'} onClick={() => setStatusFilter(statusFilter === 'lost' ? 'all' : 'lost')}>Izgubljeni</FilterPill>

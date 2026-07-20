@@ -25,23 +25,23 @@ export function SearchFilterBar({ service, city, date, petType, query, submitLab
       <div className="grid min-w-0 gap-3 md:grid-cols-5">
         <label className="min-w-0 space-y-1 text-sm font-bold text-[color:var(--pp-muted)]">
           Usluga
-          <input name="service" defaultValue={service} className="w-full rounded-[var(--pp-radius-16)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] px-3 py-2.5 text-[color:var(--pp-ink)] outline-none transition focus:border-[color:var(--pp-logo-teal)] focus:ring-2 focus:ring-[color:var(--pp-logo-teal)]/25" />
+          <input name="service" aria-label="Usluga" defaultValue={service} className="w-full rounded-[var(--pp-radius-16)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] px-3 py-2.5 text-[color:var(--pp-ink)] outline-none transition focus:border-[color:var(--pp-logo-teal)] focus:ring-2 focus:ring-[color:var(--pp-logo-teal)]/25" />
         </label>
         <label className="min-w-0 space-y-1 text-sm font-bold text-[color:var(--pp-muted)]">
           Grad
-          <input name="city" defaultValue={city} className="w-full rounded-[var(--pp-radius-16)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] px-3 py-2.5 text-[color:var(--pp-ink)] outline-none transition focus:border-[color:var(--pp-logo-teal)] focus:ring-2 focus:ring-[color:var(--pp-logo-teal)]/25" />
+          <input name="city" aria-label="Grad" defaultValue={city} className="w-full rounded-[var(--pp-radius-16)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] px-3 py-2.5 text-[color:var(--pp-ink)] outline-none transition focus:border-[color:var(--pp-logo-teal)] focus:ring-2 focus:ring-[color:var(--pp-logo-teal)]/25" />
         </label>
         <label className="min-w-0 space-y-1 text-sm font-bold text-[color:var(--pp-muted)]">
           Datum
-          <input name="date" defaultValue={date} className="w-full rounded-[var(--pp-radius-16)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] px-3 py-2.5 text-[color:var(--pp-ink)] outline-none transition focus:border-[color:var(--pp-logo-teal)] focus:ring-2 focus:ring-[color:var(--pp-logo-teal)]/25" />
+          <input name="date" aria-label="Datum" defaultValue={date} className="w-full rounded-[var(--pp-radius-16)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] px-3 py-2.5 text-[color:var(--pp-ink)] outline-none transition focus:border-[color:var(--pp-logo-teal)] focus:ring-2 focus:ring-[color:var(--pp-logo-teal)]/25" />
         </label>
         <label className="min-w-0 space-y-1 text-sm font-bold text-[color:var(--pp-muted)]">
           Ljubimac
-          <input name="petType" defaultValue={petType} className="w-full rounded-[var(--pp-radius-16)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] px-3 py-2.5 text-[color:var(--pp-ink)] outline-none transition focus:border-[color:var(--pp-logo-teal)] focus:ring-2 focus:ring-[color:var(--pp-logo-teal)]/25" />
+          <input name="petType" aria-label="Ljubimac" defaultValue={petType} className="w-full rounded-[var(--pp-radius-16)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] px-3 py-2.5 text-[color:var(--pp-ink)] outline-none transition focus:border-[color:var(--pp-logo-teal)] focus:ring-2 focus:ring-[color:var(--pp-logo-teal)]/25" />
         </label>
         <label className="min-w-0 space-y-1 text-sm font-bold text-[color:var(--pp-muted)]">
           Pojam
-          <input name="query" defaultValue={query} className="w-full rounded-[var(--pp-radius-16)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] px-3 py-2.5 text-[color:var(--pp-ink)] outline-none transition focus:border-[color:var(--pp-logo-teal)] focus:ring-2 focus:ring-[color:var(--pp-logo-teal)]/25" />
+          <input name="query" aria-label="Pojam" defaultValue={query} className="w-full rounded-[var(--pp-radius-16)] border border-[color:var(--pp-line)] bg-[color:var(--pp-warm-white)] px-3 py-2.5 text-[color:var(--pp-ink)] outline-none transition focus:border-[color:var(--pp-logo-teal)] focus:ring-2 focus:ring-[color:var(--pp-logo-teal)]/25" />
         </label>
       </div>
       <div className="mt-4 flex min-w-0 flex-col items-stretch justify-between gap-3 sm:flex-row sm:flex-wrap sm:items-center">

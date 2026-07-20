@@ -218,6 +218,7 @@ export function DogFriendlyContent({ locations, forcedLanguage, nonce }: { locat
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <Input
               type="text"
+              aria-label={isEn ? 'Search dog-friendly places' : 'Pretraži dog-friendly mjesta'}
               placeholder={isEn ? 'Search places, cities, tags...' : 'Pretraži lokacije, gradove, tagove...'}
               value={search}
               onChange={(e) => setSearch(e.target.value)}

@@ -1,5 +1,6 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { requireAdminOrCron } from '@/lib/admin-guard';
 
 type HealthCheck = {
   status: 'ok' | 'warning' | 'error';
@@ -11,9 +12,15 @@ const isConfigured = (value: string | undefined, placeholder: string) => Boolean
 
 // Health check endpoint for monitoring and load balancers.
 // Keep this side-effect free: no test writes, no synthetic Sentry events, no secrets in response.
-export async function GET() {
+export async function GET(request: NextRequest) {
   const startTime = Date.now();
   const checks: Record<string, HealthCheck> = {};
+  const wantsDetails = request.nextUrl.searchParams.get('detail') === 'true';
+
+  if (wantsDetails) {
+    const guard = await requireAdminOrCron(request);
+    if (!guard.ok) return guard.response;
+  }
 
   // Check Supabase connection. Prefer service role on the server because public RLS can intentionally block anon reads.
   try {
@@ -77,16 +84,25 @@ export async function GET() {
     .filter(([name]) => name === 'database' || name === 'redis')
     .every(([, check]) => check.status === 'ok' || check.status === 'warning');
 
+  const status = criticalChecksHealthy ? 'healthy' : 'unhealthy';
+  const body = wantsDetails
+    ? {
+        status,
+        timestamp: new Date().toISOString(),
+        version: process.env.NEXT_PUBLIC_APP_VERSION || 'unknown',
+        buildSha: process.env.VERCEL_GIT_COMMIT_SHA || process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || 'unknown',
+        environment: process.env.NODE_ENV,
+        responseTime: totalResponseTime,
+        checks,
+      }
+    : {
+        status,
+        timestamp: new Date().toISOString(),
+        responseTime: totalResponseTime,
+      };
+
   return NextResponse.json(
-    {
-      status: criticalChecksHealthy ? 'healthy' : 'unhealthy',
-      timestamp: new Date().toISOString(),
-      version: process.env.NEXT_PUBLIC_APP_VERSION || 'unknown',
-      buildSha: process.env.VERCEL_GIT_COMMIT_SHA || process.env.NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA || 'unknown',
-      environment: process.env.NODE_ENV,
-      responseTime: totalResponseTime,
-      checks,
-    },
+    body,
     {
       status: criticalChecksHealthy ? 200 : 503,
       headers: {

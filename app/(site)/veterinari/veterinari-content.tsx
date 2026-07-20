@@ -87,7 +87,7 @@ export function VeterinariContent({ veterinarians, forcedLanguage }: VeterinariC
           <div className="flex items-center gap-2 flex-1">
             <Search className="h-5 w-5 text-muted-foreground" />
             <Select value={selectedCity} onValueChange={(v) => setSelectedCity(v ?? 'all')}>
-              <SelectTrigger className="w-[220px]">
+              <SelectTrigger aria-label={isEn ? 'Choose city' : 'Odaberite grad'} className="w-[220px]">
                 <SelectValue placeholder={isEn ? 'Choose city' : 'Odaberite grad'} />
               </SelectTrigger>
               <SelectContent>
@@ -104,7 +104,9 @@ export function VeterinariContent({ veterinarians, forcedLanguage }: VeterinariC
           <div className="flex items-center gap-4">
             <label className="flex items-center gap-2 cursor-pointer select-none">
               <input
+                id="station-only"
                 type="checkbox"
+                aria-label={isEn ? 'Veterinary stations only' : 'Samo veterinarske stanice'}
                 checked={stationOnly}
                 onChange={(e) => setStationOnly(e.target.checked)}
                 className="h-4 w-4 rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"

@@ -262,7 +262,7 @@ export function ReportLostPetContent() {
                 <div>
                   <Label>{isEn ? 'Species *' : 'Vrsta *'}</Label>
                   <Select value={species} onValueChange={setSpecies}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger aria-label={isEn ? 'Species' : 'Vrsta'}><SelectValue /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="pas">{isEn ? 'Dog' : 'Pas'}</SelectItem>
                       <SelectItem value="macka">{isEn ? 'Cat' : 'Mačka'}</SelectItem>
@@ -281,7 +281,7 @@ export function ReportLostPetContent() {
                 <div>
                   <Label>{isEn ? 'Sex' : 'Spol'}</Label>
                   <Select value={gender} onValueChange={setGender}>
-                    <SelectTrigger><SelectValue placeholder={isEn ? 'Choose' : 'Odaberi'} /></SelectTrigger>
+                    <SelectTrigger aria-label={isEn ? 'Sex' : 'Spol'}><SelectValue placeholder={isEn ? 'Choose' : 'Odaberi'} /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="muško">{isEn ? 'Male' : 'Muško'}</SelectItem>
                       <SelectItem value="žensko">{isEn ? 'Female' : 'Žensko'}</SelectItem>
@@ -291,11 +291,11 @@ export function ReportLostPetContent() {
               </div>
               <div className="flex flex-wrap gap-6 pt-2">
                 <div className="flex items-center gap-2">
-                  <Switch checked={hasMicrochip} onCheckedChange={setHasMicrochip} />
+                  <Switch aria-label={isEn ? 'Has microchip' : 'Ima mikročip'} checked={hasMicrochip} onCheckedChange={setHasMicrochip} />
                   <Label>{isEn ? 'Has microchip' : 'Ima mikročip'}</Label>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Switch checked={hasCollar} onCheckedChange={setHasCollar} />
+                  <Switch aria-label={isEn ? 'Has collar with phone number' : 'Ima ogrlicu s brojem'} checked={hasCollar} onCheckedChange={setHasCollar} />
                   <Label>{isEn ? 'Has collar with phone number' : 'Ima ogrlicu s brojem'}</Label>
                 </div>
               </div>
@@ -315,7 +315,7 @@ export function ReportLostPetContent() {
                 <div>
                   <Label>{isEn ? 'City *' : 'Grad *'}</Label>
                   <Select value={city} onValueChange={(v) => { setCity(v); setCityError(''); }} required>
-                    <SelectTrigger><SelectValue placeholder={isEn ? 'Choose city' : 'Odaberi grad'} /></SelectTrigger>
+                    <SelectTrigger aria-label={isEn ? 'City' : 'Grad'}><SelectValue placeholder={isEn ? 'Choose city' : 'Odaberi grad'} /></SelectTrigger>
                     <SelectContent>
                       {CITIES.map(c => (
                         <SelectItem key={c} value={c}>{c}</SelectItem>
