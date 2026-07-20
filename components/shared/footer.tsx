@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MapPin, Mail, ChevronUp, Check, Loader2, Send } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '@/lib/i18n';
 import { CookieSettingsButton } from '@/components/shared/cookie-consent-banner';
 import { Button } from '@/components/ui/button';
@@ -83,42 +82,24 @@ function FooterNewsletter() {
           disabled={isLoading || isSuccess || !email}
           className="relative h-11 px-6 rounded-xl bg-gradient-to-r from-warm-orange to-amber-500 hover:from-warm-orange/90 hover:to-amber-500/90 text-white font-semibold shadow-lg shadow-orange-500/20 transition-all duration-300 hover:shadow-xl hover:shadow-orange-500/30"
         >
-          <AnimatePresence mode="wait">
+          <span className="flex items-center gap-2">
             {isLoading ? (
-              <motion.div
-                key="loading"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="flex items-center gap-2"
-              >
+              <>
                 <Loader2 className="h-4 w-4 animate-spin" />
                 <span>{t('footer.newsletter_loading') || 'Slanje...'}</span>
-              </motion.div>
+              </>
             ) : isSuccess ? (
-              <motion.div
-                key="success"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="flex items-center gap-2"
-              >
+              <>
                 <Check className="h-4 w-4" />
                 <span>{t('footer.newsletter_sent') || 'Poslano!'}</span>
-              </motion.div>
+              </>
             ) : (
-              <motion.div
-                key="default"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                className="flex items-center gap-2"
-              >
+              <>
                 <Send className="h-4 w-4" />
                 <span>{t('footer.newsletter_submit') || 'Pretplati se'}</span>
-              </motion.div>
+              </>
             )}
-          </AnimatePresence>
+          </span>
         </Button>
       </form>
       <p className="text-xs text-gray-500 mt-3">
@@ -201,39 +182,33 @@ export function Footer() {
               <FooterNewsletter />
               
               <div className="flex items-center gap-3 mt-6">
-                <motion.a 
+                <a
                   href="https://facebook.com/petparkhr" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-blue-600 flex items-center justify-center transition-all duration-300 group/social"
+                  className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-blue-600 flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 group/social"
                   aria-label="Facebook"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
                 >
                   <FacebookIcon className="h-5 w-5 text-gray-300 group-hover/social:text-white transition-colors duration-300" />
-                </motion.a>
-                <motion.a 
+                </a>
+                <a
                   href="https://instagram.com/petparkhr" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center transition-all duration-300 group/social"
+                  className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 group/social"
                   aria-label="Instagram"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
                 >
                   <InstagramIcon className="h-5 w-5 text-gray-300 group-hover/social:text-white transition-colors duration-300" />
-                </motion.a>
-                <motion.a 
+                </a>
+                <a
                   href="https://x.com/petparkhr" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-black flex items-center justify-center transition-all duration-300 group/social"
+                  className="w-10 h-10 rounded-xl bg-gray-800 hover:bg-black flex items-center justify-center transition-all duration-300 hover:-translate-y-0.5 hover:scale-105 group/social"
                   aria-label="X"
-                  whileHover={{ scale: 1.1, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
                 >
                   <TwitterIcon className="h-5 w-5 text-gray-300 group-hover/social:text-white transition-colors duration-300" />
-                </motion.a>
+                </a>
               </div>
             </div>
             <div>
@@ -304,22 +279,15 @@ export function Footer() {
       </footer>
       
       {/* Back to top button */}
-      <AnimatePresence>
-        {showBackToTop && (
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            onClick={scrollToTop}
-            className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-gradient-to-r from-warm-orange to-amber-500 text-white shadow-xl shadow-orange-500/30 flex items-center justify-center hover:shadow-2xl hover:shadow-orange-500/40 transition-all duration-300"
-            whileHover={{ scale: 1.1, y: -2 }}
-            whileTap={{ scale: 0.95 }}
-            aria-label="Povratak na vrh"
-          >
-            <ChevronUp className="h-5 w-5" />
-          </motion.button>
-        )}
-      </AnimatePresence>
+      {showBackToTop && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-gradient-to-r from-warm-orange to-amber-500 text-white shadow-xl shadow-orange-500/30 flex items-center justify-center hover:shadow-2xl hover:shadow-orange-500/40 transition-all duration-300 hover:-translate-y-0.5 hover:scale-105"
+          aria-label="Povratak na vrh"
+        >
+          <ChevronUp className="h-5 w-5" />
+        </button>
+      )}
     </>
   );
 }

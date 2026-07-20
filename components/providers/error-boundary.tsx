@@ -1,7 +1,6 @@
 'use client';
 
 import { Component, ReactNode, ErrorInfo } from 'react';
-import { motion } from 'framer-motion';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
@@ -43,11 +42,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
       return (
         <div className="min-h-[50vh] flex items-center justify-center px-4">
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            className="text-center max-w-md"
-          >
+          <div className="text-center max-w-md">
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-100 dark:bg-red-900/20 flex items-center justify-center">
               <AlertTriangle className="w-10 h-10 text-red-600 dark:text-red-400" />
             </div>
@@ -78,7 +73,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 </Button>
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       );
     }

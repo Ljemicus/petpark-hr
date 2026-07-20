@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { Cormorant_Garamond, Inter, Nunito } from 'next/font/google';
+import { Inter, Nunito } from 'next/font/google';
 import './globals.css';
 import { WebsiteJsonLd, SiteNavigationJsonLd } from '@/components/seo/json-ld';
 import { DEFAULT_LOCALE } from '@/lib/i18n';
@@ -17,14 +17,6 @@ const inter = Inter({
 const nunito = Nunito({
   subsets: ['latin', 'latin-ext'],
   variable: '--font-heading',
-  weight: ['600', '700', '800'],
-  display: 'swap',
-});
-
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin', 'latin-ext'],
-  variable: '--font-display',
-  weight: ['600', '700'],
   display: 'swap',
 });
 
@@ -108,11 +100,9 @@ export default async function RootLayout({
   const routeLocale = DEFAULT_LOCALE;
 
   return (
-    <html lang={routeLocale} className={`${inter.variable} ${nunito.variable} ${cormorant.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang={routeLocale} className={`${inter.variable} ${nunito.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="theme-color" content="#f97316" />
         <link rel="preconnect" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
         <link rel="dns-prefetch" href="https://hmtlcgjcxhjecsbmmxol.supabase.co" />
