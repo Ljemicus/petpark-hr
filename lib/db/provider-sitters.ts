@@ -45,6 +45,16 @@ interface ProviderServiceRow {
   is_active: boolean | null;
 }
 
+interface ProviderSitterFilters {
+  city?: string;
+  service?: ServiceType;
+  min_rating?: number;
+  min_price?: number;
+  max_price?: number;
+  sort?: 'rating' | 'reviews' | 'price_asc' | 'price_desc';
+  limit?: number;
+}
+
 interface AvailabilitySlotRow {
   id: string;
   provider_id: string;
@@ -78,6 +88,15 @@ function mapServices(values: string[] | null | undefined): ServiceType[] {
   return Array.from(new Set(mapped));
 }
 
+function mapProviderServices(services: ProviderServiceRow[]): ServiceType[] {
+  const mapped = services
+    .filter((service) => service.is_active !== false)
+    .map((service) => SERVICE_MAP[String(service.service_code).toLowerCase()])
+    .filter((value): value is ServiceType => Boolean(value));
+
+  return Array.from(new Set(mapped));
+}
+
 function buildPrices(services: ProviderServiceRow[]): Record<ServiceType, number> {
   const base: Record<ServiceType, number> = {
     boarding: 0,
@@ -97,6 +116,11 @@ function buildPrices(services: ProviderServiceRow[]): Record<ServiceType, number
   return base;
 }
 
+function sitterLowestPrice(profile: SitterProfile & { user: User }): number {
+  const values = Object.values(profile.prices || {}).filter((value) => typeof value === 'number' && value > 0);
+  return values.length ? Math.min(...values) : Number.POSITIVE_INFINITY;
+}
+
 function toUser(profile: ProfileRow, provider: ProviderRow): User {
   return {
     id: profile.id,
@@ -108,6 +132,120 @@ function toUser(profile: ProfileRow, provider: ProviderRow): User {
     city: profile.city || provider.city || null,
     created_at: profile.created_at || new Date().toISOString(),
   };
+}
+
+function toSitter(
+  provider: ProviderRow,
+  profile: ProfileRow,
+  settings: ProviderSitterSettingsRow | null,
+  services: ProviderServiceRow[]
+): SitterProfile & { user: User } {
+  const settingsServices = mapServices(settings?.services);
+  const providerServices = mapProviderServices(services);
+
+  return {
+    user_id: provider.profile_id || profile.id,
+    bio: provider.bio || null,
+    experience_years: Number(provider.experience_years || 0),
+    services: settingsServices.length > 0 ? settingsServices : providerServices,
+    prices: buildPrices(services),
+    verified: provider.verified_status === 'verified',
+    superhost: Boolean(settings?.superhost),
+    response_time: provider.response_time_label || null,
+    rating_avg: Number(provider.rating_avg || 0),
+    review_count: Number(provider.review_count || 0),
+    location_lat: null,
+    location_lng: null,
+    city: provider.city || profile.city || null,
+    photos: (settings?.photos || []) as string[],
+    created_at: provider.created_at || new Date().toISOString(),
+    instant_booking: Boolean(provider.instant_booking_enabled),
+    user: toUser(profile, provider),
+  };
+}
+
+export async function getProviderSitters(filters?: ProviderSitterFilters): Promise<(SitterProfile & { user: User })[]> {
+  if (!isSupabaseConfigured()) return [];
+
+  const supabase = createAdminClient();
+  let query = supabase
+    .from('providers')
+    .select('*')
+    .eq('provider_kind', 'sitter')
+    .eq('public_status', 'listed');
+
+  if (filters?.city) {
+    query = query.eq('city', filters.city);
+  }
+
+  if (filters?.limit) {
+    query = query.limit(filters.limit);
+  }
+
+  const { data, error } = await query;
+  if (error || !data) return [];
+
+  const providers = data as ProviderRow[];
+  const providerIds = providers.map((provider) => provider.id);
+  const profileIds = providers.map((provider) => provider.profile_id).filter(Boolean) as string[];
+
+  const [{ data: profiles }, { data: settings }, { data: services }] = await Promise.all([
+    profileIds.length > 0 ? supabase.from('profiles').select('*').in('id', profileIds) : Promise.resolve({ data: [] }),
+    providerIds.length > 0 ? supabase.from('provider_sitter_settings').select('*').in('provider_id', providerIds) : Promise.resolve({ data: [] }),
+    providerIds.length > 0 ? supabase.from('provider_services').select('*').in('provider_id', providerIds).eq('is_active', true) : Promise.resolve({ data: [] }),
+  ]);
+
+  const profileMap = new Map(((profiles as ProfileRow[] | null) || []).map((row) => [row.id, row]));
+  const settingsMap = new Map(((settings as ProviderSitterSettingsRow[] | null) || []).map((row) => [row.provider_id, row]));
+  const servicesByProvider = new Map<string, ProviderServiceRow[]>();
+
+  for (const service of ((services as ProviderServiceRow[] | null) || [])) {
+    const list = servicesByProvider.get(service.provider_id) || [];
+    list.push(service);
+    servicesByProvider.set(service.provider_id, list);
+  }
+
+  let sitters = providers
+    .map((provider) => {
+      const profile = provider.profile_id ? profileMap.get(provider.profile_id) : null;
+      if (!profile) return null;
+      return toSitter(provider, profile, settingsMap.get(provider.id) || null, servicesByProvider.get(provider.id) || []);
+    })
+    .filter((profile): profile is SitterProfile & { user: User } => Boolean(profile));
+
+  if (filters?.service) {
+    sitters = sitters.filter((profile) => profile.services.includes(filters.service!));
+  }
+
+  if (filters?.min_rating !== undefined) {
+    sitters = sitters.filter((profile) => profile.rating_avg >= filters.min_rating!);
+  }
+
+  if (filters?.min_price !== undefined) {
+    sitters = sitters.filter((profile) => sitterLowestPrice(profile) >= filters.min_price!);
+  }
+
+  if (filters?.max_price !== undefined) {
+    sitters = sitters.filter((profile) => sitterLowestPrice(profile) <= filters.max_price!);
+  }
+
+  switch (filters?.sort) {
+    case 'reviews':
+      sitters.sort((a, b) => b.review_count - a.review_count);
+      break;
+    case 'price_asc':
+      sitters.sort((a, b) => sitterLowestPrice(a) - sitterLowestPrice(b));
+      break;
+    case 'price_desc':
+      sitters.sort((a, b) => sitterLowestPrice(b) - sitterLowestPrice(a));
+      break;
+    case 'rating':
+    default:
+      sitters.sort((a, b) => b.rating_avg - a.rating_avg || b.review_count - a.review_count);
+      break;
+  }
+
+  return sitters;
 }
 
 export async function getProviderSitterById(providerId: string): Promise<(SitterProfile & { user: User }) | null> {
@@ -133,23 +271,12 @@ export async function getProviderSitterById(providerId: string): Promise<(Sitter
   if (!profile) return null;
 
   return {
-    user_id: provider.profile_id,
-    bio: provider.bio || null,
-    experience_years: Number(provider.experience_years || 0),
-    services: mapServices((settings as ProviderSitterSettingsRow | null)?.services),
-    prices: buildPrices((services as ProviderServiceRow[]) || []),
-    verified: provider.verified_status === 'verified',
-    superhost: Boolean((settings as ProviderSitterSettingsRow | null)?.superhost),
-    response_time: provider.response_time_label || null,
-    rating_avg: Number(provider.rating_avg || 0),
-    review_count: Number(provider.review_count || 0),
-    location_lat: null,
-    location_lng: null,
-    city: provider.city || profile.city || null,
-    photos: ((settings as ProviderSitterSettingsRow | null)?.photos || []) as string[],
-    created_at: provider.created_at || new Date().toISOString(),
-    instant_booking: Boolean(provider.instant_booking_enabled),
-    user: toUser(profile as ProfileRow, provider as ProviderRow),
+    ...toSitter(
+      provider as ProviderRow,
+      profile as ProfileRow,
+      (settings as ProviderSitterSettingsRow | null) ?? null,
+      (services as ProviderServiceRow[]) || []
+    ),
   };
 }
 

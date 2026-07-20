@@ -175,13 +175,27 @@ function QuickEntryBlock() {
   );
 }
 
-function ServiceGroup({ kicker, title, description, cards }: { kicker: string; title: string; description: string; cards: HubCard[] }) {
+function ServiceGroup({
+  kicker,
+  title,
+  description,
+  cards,
+  disabled = false,
+  ctaLabel = 'Otvori',
+}: {
+  kicker: string;
+  title: string;
+  description: string;
+  cards: HubCard[];
+  disabled?: boolean;
+  ctaLabel?: string;
+}) {
   return (
     <section aria-labelledby={`service-hub-${kicker.toLowerCase().replaceAll(' ', '-')}`} className="min-w-0 space-y-8">
       <SectionHeader kicker={kicker} title={title} description={description} />
       <div className="grid min-w-0 gap-5 md:grid-cols-2 xl:grid-cols-3">
         {cards.map((card) => (
-          <ServiceCard key={card.title} {...card} ctaLabel="Otvori" />
+          <ServiceCard key={card.title} {...card} ctaLabel={ctaLabel} disabled={disabled} />
         ))}
       </div>
     </section>
@@ -229,6 +243,8 @@ export function ServiceHubOverview({ mode = 'preview' }: ServiceHubOverviewProps
           title="Kategorije koje gradimo pažljivo."
           description="Nove cjeline ostaju vidljive kao smjer razvoja, ali bez glumljenja aktivne ponude tamo gdje se ona još gradi."
           cards={upcomingServices}
+          ctaLabel="U pripremi"
+          disabled
         />
 
         <section aria-labelledby="service-hub-trust-title" className="space-y-8">

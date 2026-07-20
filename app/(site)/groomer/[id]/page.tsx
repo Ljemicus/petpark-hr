@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { robotsMeta, shouldIndexGroomer } from '@/lib/seo/indexability';
 import type { Groomer } from '@/lib/types';
@@ -14,21 +15,7 @@ async function createGroomerShell(id: string): Promise<Groomer> {
   const groomer = await getProviderGroomerById(id);
   if (groomer) return groomer;
 
-  return {
-    id,
-    name: 'Profil groomera',
-    city: 'Hrvatska',
-    services: ['kupanje'],
-    prices: { sisanje: 0, kupanje: 0, trimanje: 0, nokti: 0, cetkanje: 0 },
-    rating: 0,
-    review_count: 0,
-    bio: 'Podaci o groomeru učitavaju se.',
-    verified: false,
-    specialization: 'oba',
-    address: '',
-    phone: '',
-    email: '',
-  };
+  notFound();
 }
 
 export async function generateMetadata({ params }: GroomerPageProps): Promise<Metadata> {

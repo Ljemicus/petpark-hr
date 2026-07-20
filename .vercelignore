@@ -1,1 +1,6 @@
 mobile/
+screenshots/
+scripts/capture-homepage-icons-refined.mjs
+scripts/generate-petpark-curated-icons-preview*.mjs
+scripts/generate-petpark-icon-system-v1.mjs
+scripts/split-petpark-refined-icons.mjs

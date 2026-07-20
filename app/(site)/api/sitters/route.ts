@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSitters } from '@/lib/db';
+import { getProviderSitters } from '@/lib/db/provider-sitters';
 import type { ServiceType } from '@/lib/types';
 import { appLogger } from '@/lib/logger';
 import { rateLimitAsync } from '@/lib/rate-limit';
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const data = await getSitters({
+    const data = await getProviderSitters({
       city,
       service,
       min_rating: minRating ? Number(minRating) : undefined,

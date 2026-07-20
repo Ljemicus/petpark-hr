@@ -70,6 +70,7 @@ function FooterNewsletter() {
       <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
         <Input
           type="email"
+          aria-label="Email adresa za newsletter"
           placeholder={t('footer.email_placeholder') || "Vaša email adresa"}
           value={email}
           onChange={(e) => setEmail(e.target.value)}

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getGroomers } from '@/lib/db';
+import { getProviderGroomers } from '@/lib/db/provider-groomers';
 import type { GroomingServiceType } from '@/lib/types';
 import { appLogger } from '@/lib/logger';
 import { rateLimitAsync } from '@/lib/rate-limit';
@@ -15,7 +15,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const data = await getGroomers({ city, service });
+    const data = await getProviderGroomers({ city, service });
     return NextResponse.json(data);
   } catch (err) {
     appLogger.error('groomers.list', 'failed to fetch groomers', { error: String(err) });

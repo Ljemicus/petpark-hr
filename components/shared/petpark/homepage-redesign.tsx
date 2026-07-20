@@ -59,8 +59,8 @@ const categories: {
 
 const heroMoments = [
   { label: 'Vikend čuvanje', value: 'Rijeka', Icon: Home },
-  { label: 'Photo update', value: '19:40', Icon: Camera },
-  { label: 'Šetnja danas', value: 'Maksimir', Icon: MapPin },
+  { label: 'Foto update', value: 'nakon šetnje', Icon: Camera },
+  { label: 'Šetnja u kvartu', value: 'Maksimir', Icon: MapPin },
 ];
 
 const heroSignals = [
@@ -99,7 +99,7 @@ const liveFeed = [
     body: 'Treba netko miran, bez drugih životinja u stanu. Hrana i lijekovi su već pripremljeni.',
     location: 'Trešnjevka, Zagreb',
     badge: 'UPIT',
-    time: 'prije 11 min',
+    time: 'primjer upita',
     tone: 'orange' as Tone,
     Icon: CalendarDays,
   },
@@ -108,7 +108,7 @@ const liveFeed = [
     body: 'Objava ima lokaciju, fotografiju i kontakt. Zajednica širi prema kvartovskim grupama.',
     location: 'Kantrida, Rijeka',
     badge: 'ALERT',
-    time: 'prije 24 min',
+    time: 'primjer objave',
     tone: 'green' as Tone,
     Icon: Bell,
   },
@@ -132,7 +132,7 @@ const quickAccess = [
 
 const flowItems = [
   { title: 'Upit poslan sitteru', meta: 'Luna · subota i nedjelja', Icon: CalendarDays, tone: 'orange' as Tone },
-  { title: 'Foto update stigao', meta: 'Šetnja završena u 19:40', Icon: Camera, tone: 'green' as Tone },
+  { title: 'Foto update stigao', meta: 'Šetnja završena i zabilježena', Icon: Camera, tone: 'green' as Tone },
   { title: 'Kvart prati objavu', meta: 'Kantrida · pronađen pas', Icon: Bell, tone: 'orange' as Tone },
   { title: 'Forum ima odgovor', meta: 'pas vuče na povodcu', Icon: MessageCircle, tone: 'teal' as Tone },
 ];
@@ -480,7 +480,7 @@ function HeroVisual() {
       </div>
 
       <div className="petpark-drift-soft absolute bottom-0 left-3 hidden rounded-[24px] border border-[#E7DDCC] bg-[#123829] px-4 py-3 text-white shadow-[0_16px_34px_rgba(18,56,41,.18)] sm:block lg:left-10">
-        <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#FFE0BC]">Live portal</p>
+        <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#FFE0BC]">Care portal</p>
         <p className="mt-1 text-sm font-black">3 nova upita u blizini</p>
       </div>
     </div>
@@ -614,7 +614,7 @@ function HomeContent() {
           {quickAccess.map((item) => <QuickCard key={item.title} {...item} />)}
           <div className="overflow-hidden rounded-[28px] border border-[#E5DAC8] bg-[#FFFDF8] py-4 shadow-[0_12px_26px_rgba(80,55,25,.07)]">
             <div className="petpark-marquee flex w-[200%] gap-3 whitespace-nowrap px-4 text-[13px] font-black text-[#123D36]">
-              {['Čuvanje u Rijeci', 'Šetnja nakon posla', 'Grooming termin', 'Pitanje treneru', 'Izgubljeni ljubimac', 'Udomljavanje', 'Kvartovska preporuka', 'Photo update'].concat(['Čuvanje u Rijeci', 'Šetnja nakon posla', 'Grooming termin', 'Pitanje treneru', 'Izgubljeni ljubimac', 'Udomljavanje', 'Kvartovska preporuka', 'Photo update']).map((item, index) => (
+              {['Čuvanje u Rijeci', 'Šetnja nakon posla', 'Grooming termin', 'Pitanje treneru', 'Izgubljeni ljubimac', 'Udomljavanje', 'Kvartovska preporuka', 'Foto update'].concat(['Čuvanje u Rijeci', 'Šetnja nakon posla', 'Grooming termin', 'Pitanje treneru', 'Izgubljeni ljubimac', 'Udomljavanje', 'Kvartovska preporuka', 'Foto update']).map((item, index) => (
                 <span key={`${item}-${index}`} className="rounded-full bg-[#FAF3E7] px-4 py-2">{item}</span>
               ))}
             </div>

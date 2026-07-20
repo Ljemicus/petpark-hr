@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { Breadcrumbs } from '@/components/shared/breadcrumbs';
 import { robotsMeta, shouldIndexTrainer } from '@/lib/seo/indexability';
 import type { Trainer } from '@/lib/types';
@@ -14,21 +15,7 @@ async function createTrainerShell(id: string): Promise<Trainer> {
   const trainer = await getProviderTrainerById(id);
   if (trainer) return trainer;
 
-  return {
-    id,
-    name: 'Profil trenera',
-    city: 'Hrvatska',
-    specializations: ['osnovna'],
-    price_per_hour: 0,
-    certificates: [],
-    rating: 0,
-    review_count: 0,
-    bio: 'Podaci o treneru učitavaju se.',
-    certified: false,
-    address: '',
-    phone: '',
-    email: '',
-  };
+  notFound();
 }
 
 export async function generateMetadata({ params }: TrainerPageProps): Promise<Metadata> {

@@ -75,6 +75,7 @@ interface ProviderGroomerReview {
 }
 
 const GROOMER_SERVICE_CODE_MAP: Record<string, GroomingServiceType> = {
+  grooming_basic: 'kupanje',
   grooming_haircut: 'sisanje',
   grooming_bath: 'kupanje',
   grooming_trimming: 'trimanje',
