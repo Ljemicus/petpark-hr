@@ -92,22 +92,22 @@ const careServiceSegments: Array<{ label: string; value: string; icon: typeof Se
 ];
 
 const premiumNeedChips = [
-  'Verified',
+  'Verificirano',
   'Ograđeno dvorište',
   'Bez drugih ljubimaca',
   'Oralni lijekovi',
   'Senior friendly',
   'Reaktivni psi',
   'Instant booking',
-  'Photo updates',
+  'Foto update',
   'GPS šetnja',
   'Meet & greet',
 ];
 
 const trustHighlights = [
-  { label: 'ID provjera', value: 'verified' },
-  { label: 'Photo updates', value: 'svaki dan' },
-  { label: 'Response time', value: '< 2h' },
+  { label: 'ID provjera', value: 'verificirano' },
+  { label: 'Foto update', value: 'svaki dan' },
+  { label: 'Vrijeme odgovora', value: '< 2h' },
   { label: 'Meet & greet', value: 'besplatno' },
 ];
 
@@ -355,7 +355,7 @@ function ServiceResultCard({ provider }: { provider: UnifiedProvider }) {
         <div className="mt-4 grid gap-2 text-xs font-black text-[color:var(--pp-color-muted-text)] sm:grid-cols-3">
           <span className="rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] px-3 py-2">{specialty}</span>
           <span className="rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] px-3 py-2">{responseLabel}</span>
-          <span className="rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] px-3 py-2">Photo update</span>
+          <span className="rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] px-3 py-2">Foto update</span>
         </div>
         <div className="mt-5 flex items-center justify-between border-t border-[color:var(--pp-color-warm-border)] pt-4">
           <Rating value={provider.rating} count={provider.reviews} />
@@ -704,7 +704,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
               <aside className="space-y-5 xl:sticky xl:top-28 xl:self-start">
                 <Card radius="28" shadow="small" className="overflow-hidden p-5">
                   <div className="rounded-[var(--pp-radius-card-24)] bg-[color:var(--pp-color-forest-text)] p-5 text-white">
-                    <p className="text-xs font-black uppercase tracking-[0.16em] text-white/60">Care plan</p>
+                    <p className="text-xs font-black uppercase tracking-[0.16em] text-white/60">Plan skrbi</p>
                     <h2 className="mt-2 text-2xl font-black tracking-[-0.04em]">Luna, 12 kg</h2>
                     <p className="mt-2 text-sm font-semibold leading-6 text-white/72">Mirna rutina, dvije šetnje dnevno, nema drugih pasa u istom prostoru.</p>
                   </div>
@@ -715,7 +715,7 @@ export function SearchContent({ providers, initialParams, resultsAnchorId }: Sea
                     </div>
                     <div className="flex items-center gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] p-3">
                       <Camera className="size-5 text-[color:var(--pp-color-teal-accent)]" aria-hidden />
-                      <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Photo update svaki dan</span>
+                      <span className="text-sm font-black text-[color:var(--pp-color-forest-text)]">Foto update svaki dan</span>
                     </div>
                     <div className="flex items-center gap-3 rounded-[var(--pp-radius-control)] bg-[color:var(--pp-color-cream-surface)] p-3">
                       <Navigation className="size-5 text-[color:var(--pp-color-success)]" aria-hidden />

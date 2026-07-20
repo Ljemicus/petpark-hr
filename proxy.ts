@@ -12,6 +12,10 @@ const GROOMER_DEMO_RE = /^groomer[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}
 const MOCK_TRAINER_RE = /^tr-\d+$/i;
 const MOCK_GROOMER_RE = /^gr-\d+$/i;
 
+function isAllowedSitterId(id: string) {
+  return UUID_RE.test(id);
+}
+
 function isAllowedTrainerId(id: string) {
   return UUID_RE.test(id) || TRAINER_DEMO_RE.test(id) || MOCK_TRAINER_RE.test(id);
 }
@@ -20,19 +24,50 @@ function isAllowedGroomerId(id: string) {
   return UUID_RE.test(id) || GROOMER_DEMO_RE.test(id) || MOCK_GROOMER_RE.test(id);
 }
 
-function maybeHard404DynamicProfile(request: NextRequest) {
+async function providerExists(request: NextRequest, id: string, kind: 'sitter' | 'groomer' | 'trainer') {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceRoleKey) return true;
+
+  const supabase = createServerClient(supabaseUrl, serviceRoleKey, {
+    cookies: {
+      getAll() { return request.cookies.getAll(); },
+      setAll() { /* proxy guard is read-only */ },
+    },
+  });
+
+  const { data, error } = await supabase
+    .from('providers')
+    .select('id')
+    .eq('id', id)
+    .eq('provider_kind', kind)
+    .eq('public_status', 'listed')
+    .maybeSingle();
+
+  if (error) return true;
+  return Boolean(data);
+}
+
+async function maybeHard404DynamicProfile(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  if (pathname.startsWith('/sitter/')) {
+    const id = pathname.slice('/sitter/'.length);
+    if (id && (!isAllowedSitterId(id) || !(await providerExists(request, id, 'sitter')))) {
+      return NextResponse.rewrite(new URL('/hard-404', request.url), { status: 404 });
+    }
+  }
 
   if (pathname.startsWith('/trener/')) {
     const id = pathname.slice('/trener/'.length);
-    if (id && !isAllowedTrainerId(id)) {
+    if (id && (!isAllowedTrainerId(id) || (UUID_RE.test(id) && !(await providerExists(request, id, 'trainer'))))) {
       return NextResponse.rewrite(new URL('/hard-404', request.url), { status: 404 });
     }
   }
 
   if (pathname.startsWith('/groomer/')) {
     const id = pathname.slice('/groomer/'.length);
-    if (id && !isAllowedGroomerId(id)) {
+    if (id && (!isAllowedGroomerId(id) || (UUID_RE.test(id) && !(await providerExists(request, id, 'groomer'))))) {
       return NextResponse.rewrite(new URL('/hard-404', request.url), { status: 404 });
     }
   }
@@ -186,7 +221,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  const forced404 = maybeHard404DynamicProfile(request);
+  const forced404 = await maybeHard404DynamicProfile(request);
   if (forced404) {
     return decorateProxyResponse(forced404, request, requestId, locale, cspValue, nonce);
   }
