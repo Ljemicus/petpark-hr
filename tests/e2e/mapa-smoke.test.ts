@@ -7,8 +7,8 @@ test.describe('/mapa smoke', () => {
     await page.goto(`${baseUrl}/mapa`, { waitUntil: 'domcontentloaded' });
 
     await expect(page.getByRole('heading', { name: 'PetPark mapa' })).toBeVisible();
-    await expect(page.getByPlaceholder('Grad, kvart ili adresa')).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'U blizini' })).toBeVisible();
+    await expect(page.getByPlaceholder('Grad, kvart ili adresa').first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Moduli na mapi' })).toBeVisible();
     await expect(page.getByText('Odabrano')).toBeVisible();
   });
 });

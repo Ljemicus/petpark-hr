@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 // CSP Report URI endpoint
 // Receives CSP violation reports from browsers
@@ -21,8 +22,22 @@ interface CSPReportBody {
   'csp-report'?: CSPReport;
 }
 
+const MAX_REPORT_BYTES = 16 * 1024;
+
 export async function POST(request: Request) {
   try {
+    const contentLength = Number(request.headers.get('content-length') || '0');
+    if (contentLength > MAX_REPORT_BYTES) {
+      return NextResponse.json({ error: 'Report too large' }, { status: 413 });
+    }
+
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('x-real-ip')
+      || 'unknown';
+    if (!(await rateLimitAsync(`csp-report:${ip}`, 60, 60_000, { route: 'csp-report', failClosed: false }))) {
+      return NextResponse.json({ error: 'Too many reports' }, { status: 429 });
+    }
+
     const body: CSPReportBody = await request.json();
     const report = body['csp-report'];
 

@@ -352,7 +352,7 @@ export function Rating({
 }) {
   return (
     <div className={cn('inline-flex items-center gap-2 text-sm font-extrabold text-[color:var(--pp-color-forest-text)]', className)}>
-      <span className="inline-flex items-center gap-0.5" aria-label={`${value.toFixed(1)} od 5`}>
+      <span className="inline-flex items-center gap-0.5" role="img" aria-label={`${value.toFixed(1)} od 5`}>
         {Array.from({ length: 5 }, (_, index) => (
           <Star
             key={index}

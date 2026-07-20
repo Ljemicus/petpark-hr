@@ -8,7 +8,7 @@ test.describe('/zajednica smoke', () => {
 
     await expect(page.getByRole('heading', { name: 'PetPark zajednica' })).toBeVisible();
     await expect(page.getByRole('link', { name: /Nova objava/ }).first()).toBeVisible();
-    await expect(page.getByText('Popularne teme')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Popularne teme' }).first()).toBeVisible();
     await expect(page.getByText('Objave i preporuke')).toBeVisible();
   });
 });

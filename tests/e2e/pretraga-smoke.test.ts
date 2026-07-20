@@ -6,16 +6,16 @@ test.describe('/pretraga smoke', () => {
   test('renders universal search hub with no query', async ({ page }) => {
     await page.goto(`${baseUrl}/pretraga`, { waitUntil: 'domcontentloaded' });
 
-    await expect(page.getByRole('heading', { name: 'Pretraži PetPark' })).toBeVisible();
-    await expect(page.getByPlaceholder('Što tražite?')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Pronađi savršen match za svog ljubimca.' })).toBeVisible();
+    await expect(page.getByPlaceholder('Sitter, grooming, trening...')).toBeVisible();
     await expect(page.getByRole('button', { name: /Usluge/ })).toBeVisible();
   });
 
   test('renders with supported category and city params', async ({ page }) => {
     await page.goto(`${baseUrl}/pretraga?category=usluge&city=Zagreb`, { waitUntil: 'domcontentloaded' });
 
-    await expect(page.getByRole('heading', { name: 'Pretraži PetPark' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Pronađi savršen match za svog ljubimca.' })).toBeVisible();
     await expect(page.getByText('Usluge i provideri')).toBeVisible();
-    await expect(page.getByText('Zagreb').first()).toBeVisible();
+    await expect(page.getByRole('combobox', { name: 'Odaberi lokaciju' })).toHaveValue('Zagreb');
   });
 });

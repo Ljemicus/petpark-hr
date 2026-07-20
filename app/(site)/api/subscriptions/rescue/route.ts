@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { apiError } from '@/lib/api-errors';
 import { appLogger } from '@/lib/logger';
+import { rateLimitAsync } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
@@ -10,7 +11,7 @@ export async function POST(request: NextRequest) {
     // Parse form data
     const formData = await request.formData();
     const organizationId = formData.get('organization_id') as string;
-    const email = formData.get('email') as string;
+    const email = (formData.get('email') as string | null)?.toLowerCase().trim() || '';
 
     if (!organizationId || !email) {
       return apiError({ 
@@ -27,6 +28,18 @@ export async function POST(request: NextRequest) {
         status: 400, 
         code: 'INVALID_EMAIL', 
         message: 'Please enter a valid email address' 
+      });
+    }
+
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('x-real-ip')
+      || 'unknown';
+    const rateLimitKey = `rescue-subscription:${ip}:${email}`;
+    if (!(await rateLimitAsync(rateLimitKey, 5, 60 * 60_000, { route: 'rescue-subscription', failClosed: false }))) {
+      return apiError({
+        status: 429,
+        code: 'RATE_LIMITED',
+        message: 'Too many subscription attempts. Please try again later',
       });
     }
 
@@ -66,7 +79,7 @@ export async function POST(request: NextRequest) {
       .from('rescue_email_subscriptions')
       .insert({
         organization_id: organizationId,
-        email: email.toLowerCase().trim(),
+        email,
         subscribed_at: new Date().toISOString(),
       });
 

@@ -79,6 +79,7 @@ async function maybeHard404DynamicProfile(request: NextRequest) {
 const CSRF_EXCLUDED_ROUTES = [
   '/api/payments/webhook', // Stripe signature is the authenticator.
   '/api/cron/', // Cron routes must enforce CRON_SECRET at handler level.
+  '/api/csp-report', // Browsers cannot attach custom CSRF headers to CSP reports.
 ];
 
 function isCsrfExcludedRoute(pathname: string): boolean {
