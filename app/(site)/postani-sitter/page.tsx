@@ -87,7 +87,7 @@ export default function PostaniSitterPage() {
             </p>
 
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight font-[var(--font-heading)] mb-5 text-white">
-              Postani osoba kojoj vlasnici vjeruju
+              Postani osoba kojoj vlasnici vjeruju{' '}
               <span className="block text-white/80">kad trebaju čuvanje</span>
             </h1>
 
